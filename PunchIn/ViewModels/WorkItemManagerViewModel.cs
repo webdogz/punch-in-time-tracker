@@ -16,7 +16,7 @@ namespace PunchIn.ViewModels
             parentViewModel = vm;
         }
 
-        public ObservableCollection<PunchMenuItemModel> TreeItems
+        public ObservableCollection<PunchMenuItemViewModel> TreeItems
         {
             get { return treeItems; }
             set
@@ -25,6 +25,6 @@ namespace PunchIn.ViewModels
                 OnPropertyChanged("TreeItems");
             }
         }
-        private ObservableCollection<PunchMenuItemModel> treeItems;
+        private ObservableCollection<PunchMenuItemViewModel> treeItems;
     }
 }

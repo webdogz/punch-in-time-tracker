@@ -92,7 +92,6 @@
     <Compile Include="Controls\TimeEntryUserControl.xaml.cs">
       <DependentUpon>TimeEntryUserControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\TrayWindow.cs" />
     <Compile Include="Controls\WorkItemManagerUserControl.xaml.cs">
       <DependentUpon>WorkItemManagerUserControl.xaml</DependentUpon>
     </Compile>
@@ -110,17 +109,12 @@
     <Compile Include="ViewModels\ShortcutMenuItemViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="ViewModels\NotifyIconViewModel.cs" />
-    <Compile Include="Models\ShortcutMenuItemModel.cs" />
     <Compile Include="ViewModels\TimeEntryViewModel.cs" />
     <Compile Include="ViewModels\TimeTrackViewModel.cs" />
-    <Compile Include="Models\PunchMenuItemModel.cs" />
     <Compile Include="ViewModels\WorkItemManagerViewModel.cs" />
     <Compile Include="ViewModels\WorkItemViewModel.cs" />
     <Compile Include="Views\CurrentTaskPopup.xaml.cs">
       <DependentUpon>CurrentTaskPopup.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Junk\ReportsWindow.xaml.cs">
-      <DependentUpon>ReportsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\TimeEntryDialog.xaml.cs">
       <DependentUpon>TimeEntryDialog.xaml</DependentUpon>
@@ -207,22 +201,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="DesignData\SampleTreeData.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="NotifyIconResources.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <DesignDataWithDesignTimeCreatableTypes Include="DesignData\SampleTimeTrackTreeView.xaml">
-      <SubType>Designer</SubType>
-    </DesignDataWithDesignTimeCreatableTypes>
     <Page Include="Views\CurrentTaskPopup.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Junk\ReportsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
