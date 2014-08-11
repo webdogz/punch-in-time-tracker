@@ -1,0 +1,68 @@
+﻿<Window x:Class="PunchIn.Views.WorkItemsManager"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        Title="Work Items" Height="350" Width="525" Icon="/Resources/stopwatch.ico">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <ComboBox Margin="5"
+                  ItemsSource="{Binding Path=WorkItems}"
+                  DisplayMemberPath="Title"
+                  SelectedItem="{Binding Path=CurrentWorkItem, Mode=TwoWay}">
+        </ComboBox>
+
+        <DataGrid Grid.Row="1" Margin="5" AutoGenerateColumns="False"
+                  ItemsSource="{Binding Path=CurrentWorkItem.Entries}"
+                  SelectedItem="{Binding Path=CurrentEntry}"
+                  SelectionMode="Extended">
+            <DataGrid.Columns>
+                <DataGridTemplateColumn IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Image Source="{Binding ImageSource}" Margin="5" Width="20" Height="20" Stretch="Fill"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Binding="{Binding Path=Description}"
+                                    Header="Description"/>
+                <DataGridTemplateColumn Header="Start Time">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Path=StartDate}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <xctk:DateTimePicker Style="{StaticResource DateTimePickerStyle}" 
+                                                 Value="{Binding Path=StartDate, Mode=TwoWay}"
+                                                 Watermark="Start (yyyy.MM.dd HH:mm)"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="End Time">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Path=StartDate}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <xctk:DateTimePicker Style="{StaticResource DateTimePickerStyle}" 
+                                                 Value="{Binding Path=EndDate, Mode=TwoWay}"
+                                                 Watermark="End (yyyy.MM.dd HH:mm)" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Binding="{Binding Path=Status}"
+                                    Header="Status" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Window>
+

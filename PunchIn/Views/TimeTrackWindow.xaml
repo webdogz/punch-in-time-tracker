@@ -1,0 +1,53 @@
+﻿<Window x:Class="PunchIn.Views.TimeTrackWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ctrl="clr-namespace:PunchIn.Controls"
+        xmlns:models="clr-namespace:PunchIn.Models"
+        xmlns:vm="clr-namespace:PunchIn.ViewModels"
+        Title="TimeTrackWindow" Width="500" Height="360">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <ToolBarTray Background="{DynamicResource mainToolBarBrushGradient}">
+            <ToolBar Band="1" BandIndex="1" Background="{DynamicResource mainToolBarBrushGradient}">
+                <ToolBar.Header>
+                    <StackPanel Margin="0,0,10,5" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Image Source="/PunchIn;component/Resources/clock_select_remain.png" Stretch="None" />
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="Punch In" FontFamily="Showcard Gothic" 
+                                   FontSize="17" />
+                            <TextBlock Text="Management" FontWeight="Black" />
+                        </StackPanel>
+                    </StackPanel>
+                </ToolBar.Header>
+                <Separator />
+                <Button ToolTip="Add">
+                    <StackPanel>
+                        <Image Source="/PunchIn;component/Resources/app_add.png" />
+                    </StackPanel>
+                </Button>
+                <Button ToolTip="Save">
+                    <StackPanel>
+                        <Image Source="/PunchIn;component/Resources/app_save.png" />
+                    </StackPanel>
+                </Button>
+                <Separator />
+                <Button ToolTip="Report my time">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Image Source="/PunchIn;component/Resources/report.png" Width="32" Height="32" />
+                        <TextBlock Text="Reports" VerticalAlignment="Center" Margin="3,0,0,0" />
+                    </StackPanel>
+                </Button>
+                <Button ToolTip="Export to Excel">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Image Source="/PunchIn;component/Resources/excel.png" Width="32" Height="32" />
+                        <TextBlock Text="Export" VerticalAlignment="Center" Margin="3,0,0,0" />
+                    </StackPanel>
+                </Button>
+            </ToolBar>
+        </ToolBarTray>
+        <ctrl:WorkItemManagerUserControl Grid.Row="1" DataContext="{Binding}" />
+    </Grid>
+</Window>

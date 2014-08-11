@@ -1,0 +1,28 @@
+﻿<Window x:Class="PunchIn.Views.WorkItemDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:ctrl="clr-namespace:PunchIn.Controls"
+        xmlns:vm="clr-namespace:PunchIn.ViewModels"
+        xmlns:models="clr-namespace:PunchIn.Models"
+        Title="Work Item" Width="480" SizeToContent="Height" 
+        Icon="/PunchIn;component/Resources/tasks.ico" ResizeMode="NoResize">
+    <Window.DataContext>
+        <vm:WorkItemViewModel/>
+    </Window.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <ctrl:WorkItemUserControl />
+        <StackPanel Orientation="Horizontal"
+                    Grid.Row="1"
+                    HorizontalAlignment="Right">
+            <ctrl:IconButton Style="{StaticResource IconButtonStyle}" Content="Save" ImageSource="/Resources/save.png"
+                             IsDefault="True" Click="OKButton_Click"/>
+            <ctrl:IconButton Style="{StaticResource IconButtonStyle}" Content="Cancel" ImageSource="/Resources/cancel.png"
+                             IsCancel="True"/>
+        </StackPanel>
+    </Grid>
+</Window>
