@@ -13,18 +13,6 @@ namespace PunchIn.Controls
         public WorkItemManagerUserControl()
         {
             InitializeComponent();
-            this.Loaded += delegate
-            {
-                mainTree.DataContext = (DataContext as NotifyIconViewModel).WorkItemMenus;
-            };
-        }
-
-        private void TreeView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            NotifyIconViewModel currentVM = DataContext as NotifyIconViewModel;
-            TreeView tw = sender as TreeView;
-            PunchMenuItemViewModel twVM = tw.DataContext as PunchMenuItemViewModel;
-            Console.WriteLine(twVM.Text);
         }
     }
 }

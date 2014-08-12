@@ -1,6 +1,5 @@
 ﻿using Hardcodet.Wpf.TaskbarNotification;
 using PunchIn.Models;
-using PunchIn.ViewModels;
 using PunchIn.Views;
 using System;
 using System.Diagnostics;
@@ -14,9 +13,7 @@ using System.Windows.Threading;
 namespace PunchIn.ViewModels
 {
     /// <summary>
-    /// Provides bindable properties and commands for the NotifyIcon. In this sample, the
-    /// view model is assigned to the NotifyIcon in XAML. Alternatively, the startup routing
-    /// in App.xaml.cs could have created this view model, and assigned it to the NotifyIcon.
+    /// Provides bindable properties and commands for the NotifyIcon
     /// </summary>
     public class NotifyIconViewModel : ViewModelBase
     {
@@ -54,7 +51,7 @@ namespace PunchIn.ViewModels
             menu.Children.Add(null); // add a seperator
             foreach (WorkItem item in this.viewModel.WorkItems.Where(w => w.Status != States.Done))
             {
-                string icon = (item.WorkType.ToString() ?? "task").ToLower();
+                string icon = (item.WorkType.ToString() ?? WorkTypes.Task.ToString()).ToLower();
                 int id = 0;
                 switch (item.WorkType)
                 {
@@ -173,9 +170,9 @@ namespace PunchIn.ViewModels
         {
             await Task.Run(() => 
             {
+                // TODO: Should this be a User Setting?
                 DirectoryInfo rootPath = new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Favorites), "HIN SC2TFS"));
                 ShortcutMenus = GetShortcutMenu(rootPath, "Shortcuts");
-                Debug.WriteLine("Shortcut menu done!");
             });
         }
         private ShortcutMenuItemViewModel GetShortcutMenu(DirectoryInfo root, string name)
@@ -224,8 +221,6 @@ namespace PunchIn.ViewModels
             }
         }
         private TimeEntryViewModel currentTimeEntry = null;
-
-        
 
         #region Commands
         public ICommand PunchInCommand

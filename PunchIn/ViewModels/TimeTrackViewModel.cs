@@ -6,7 +6,6 @@ using PunchIn.Models;
 using PunchIn.Services;
 using System.ComponentModel;
 using System.Linq;
-using System.Collections.ObjectModel;
 
 namespace PunchIn.ViewModels
 {
