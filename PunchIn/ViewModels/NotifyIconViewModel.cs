@@ -51,32 +51,36 @@ namespace PunchIn.ViewModels
             menu.Children.Add(null); // add a seperator
             foreach (WorkItem item in this.viewModel.WorkItems.Where(w => w.Status != States.Done))
             {
-                string icon = (item.WorkType.ToString() ?? WorkTypes.Task.ToString()).ToLower();
-                int id = 0;
-                switch (item.WorkType)
-                {
-                    case WorkTypes.BacklogItem:
-                    case WorkTypes.Datafix:
-                    case WorkTypes.Bug:
-                        id = item.TfsId ?? 0;
-                        break;
-                    case WorkTypes.Change:
-                        id = item.Change ?? 0;
-                        break;
-                    case WorkTypes.ServiceCall:
-                        id = item.ServiceCall ?? 0;
-                        break;
-                }
-                PunchMenuItemViewModel m = new PunchMenuItemViewModel
-                {
-                    Text = string.Format("[{0}] {1}", id, item.Title),
-                    Icon = string.Format("Resources/{0}.png", icon),
-                    Id = item.Id,
-                    Command = WorkItemSelectCommand
-                };
-                menu.Children.Add(m);
+                menu.Children.Add(NewPunchMenuItem(item));
             }
             return menu;
+        }
+
+        private PunchMenuItemViewModel NewPunchMenuItem(WorkItem item)
+        {
+            string icon = (item.WorkType.ToString() ?? WorkTypes.Task.ToString()).ToLower();
+            int id = 0;
+            switch (item.WorkType)
+            {
+                case WorkTypes.BacklogItem:
+                case WorkTypes.Datafix:
+                case WorkTypes.Bug:
+                    id = item.TfsId ?? 0;
+                    break;
+                case WorkTypes.Change:
+                    id = item.Change ?? 0;
+                    break;
+                case WorkTypes.ServiceCall:
+                    id = item.ServiceCall ?? 0;
+                    break;
+            }
+            return new PunchMenuItemViewModel
+            {
+                Text = string.Format("[{0}] {1}", id, item.Title),
+                Icon = string.Format("Resources/{0}.png", icon),
+                Id = item.Id,
+                Command = SelectWorkItemCommand
+            };
         }
 
         public PunchMenuItemViewModel WorkItemMenus
@@ -171,7 +175,8 @@ namespace PunchIn.ViewModels
             await Task.Run(() => 
             {
                 // TODO: Should this be a User Setting?
-                DirectoryInfo rootPath = new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Favorites), "HIN SC2TFS"));
+                DirectoryInfo rootPath = new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Favorites), "HIN"));
+                if (!rootPath.Exists) rootPath.Create();
                 ShortcutMenus = GetShortcutMenu(rootPath, "Shortcuts");
             });
         }
@@ -272,22 +277,43 @@ namespace PunchIn.ViewModels
                         {
                             ViewModel.AddWorkItemCommand.Execute(dialog.Model);
                             ViewModel.SaveWorkItemCommand.Execute(null);
+                            WorkItemMenus.Children.Add(NewPunchMenuItem(dialog.Model));
                         }
                     }
                 };
             }
         }
-        public ICommand WorkItemSelectCommand
+        public ICommand SelectWorkItemCommand
         {
             get
             {
                 return new DelegateCommand
                 {
-                    CanExecuteFunc = (o) => true,
+                    CanExecuteFunc = (idParam) => 
+                        {
+                            try
+                            {
+                                Guid id = (Guid)idParam;
+                                return this.ViewModel.CurrentWorkItem != null && !id.Equals(this.ViewModel.CurrentWorkItem.Id);
+                            }
+                            catch { return true; }
+                        },
                     CommandAction = (idParam) =>
                         {
                             Guid id = (Guid)idParam;
+                            
+                            // are we already punched in?
+                            if (this.CurrentTimeEntry != null)
+                            {
+                                // since we have a current time entry, this will punch out and clean up timer
+                                this.PunchInCommand.Execute(null);
+                            }
                             this.ViewModel.SelectWorkItemById(id);
+                            // punch back in with new time entry
+                            if (this.ViewModel.CurrentWorkItem != null && this.CurrentTimeEntry == null)
+                            {
+                                this.PunchInCommand.Execute(null);
+                            }
                         }
                 };
             }
