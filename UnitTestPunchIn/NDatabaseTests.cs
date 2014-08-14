@@ -56,6 +56,42 @@ namespace UnitTestPunchIn
         }
 
         [TestMethod]
+        public void CanMapWorkItemToWorkItemWithoutDuplication()
+        {
+            WorkItem item = null;
+            int beforeCount, afterCount;
+            using (var db = OdbFactory.Open(GetDbName()))
+            {
+                item = db.QueryAndExecute<WorkItem>().FirstOrDefault();
+                beforeCount = item.Entries.Count;
+            }
+            item.Entries.Add(new TimeEntry
+            {
+                Description = "New Entry for first item",
+                StartDate = DateTime.Now,
+                Status = States.InProgress
+            });
+            using (var db = OdbFactory.Open(GetDbName()))
+            {
+                var mapper = ObjectMapperManager.DefaultInstance.GetMapper<WorkItem, WorkItem>();
+                WorkItem wi = mapper.Map(item, db.QueryAndExecute<WorkItem>().FirstOrDefault(w => w.Id == item.Id));
+
+                Assert.AreEqual(wi.Id, item.Id);
+                
+                db.Store<WorkItem>(wi);
+
+                var first = db.QueryAndExecute<WorkItem>().FirstOrDefault();
+                var items = new List<WorkItem>();
+                items.Add(item);
+                items.Add(wi);
+                items.Add(first);
+                PrintWorkItems(items);
+                afterCount = first.Entries.Count;
+            }
+            Assert.AreNotEqual(beforeCount, afterCount);
+        }
+
+        [TestMethod]
         public void QueryWorkItemAndTimeEntries()
         {
             List<WorkItem> items;
@@ -239,7 +275,7 @@ namespace UnitTestPunchIn
 
         private static string ProduceDbName(string login)
         {
-            var dbName = string.Format("{0}_punchin.ndb", login);
+            var dbName = string.Format("{0}_punchin-test.ndb", login);
 
             var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "My Time");
 

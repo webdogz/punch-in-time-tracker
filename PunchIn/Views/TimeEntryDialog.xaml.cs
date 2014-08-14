@@ -1,4 +1,5 @@
-﻿using PunchIn.ViewModels;
+﻿using PunchIn.Controls;
+using PunchIn.ViewModels;
 using System.Windows;
 
 namespace PunchIn.Views
@@ -6,7 +7,7 @@ namespace PunchIn.Views
     /// <summary>
     /// Interaction logic for TimeEntryDialog.xaml
     /// </summary>
-    public partial class TimeEntryDialog : Window
+    public partial class TimeEntryDialog : ModernWindow
     {
         private readonly TimeEntryViewModel viewModel;
         public TimeEntryDialog()

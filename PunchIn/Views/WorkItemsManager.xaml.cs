@@ -1,4 +1,5 @@
-﻿using PunchIn.ViewModels;
+﻿using PunchIn.Controls;
+using PunchIn.ViewModels;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -8,7 +9,7 @@ namespace PunchIn.Views
     /// <summary>
     /// Interaction logic for WorkItemsManager.xaml
     /// </summary>
-    public partial class WorkItemsManager : Window
+    public partial class WorkItemsManager : MetroWindow
     {
         private readonly TimeTrackViewModel viewModel;
         public WorkItemsManager(TimeTrackViewModel vm)

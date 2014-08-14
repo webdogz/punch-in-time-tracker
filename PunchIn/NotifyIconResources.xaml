@@ -7,9 +7,9 @@
                     xmlns:m="clr-namespace:PunchIn.Models"
                     xmlns:views="clr-namespace:PunchIn.Views"
                     xmlns:local="clr-namespace:PunchIn">
-    
-    <Image x:Key="icon" Source="{Binding Icon}" x:Shared="false" />
-    <Image x:Key="punchIcon" Source="{Binding PunchMenuIcon}" x:Shared="false" />
+
+    <Image x:Key="icon" Source="{Binding Icon}" Height="16" Width="16" x:Shared="false" />
+    <Image x:Key="punchIcon" Source="{Binding PunchMenuIcon}" Height="16" Width="16" x:Shared="false" />
 
     <ControlTemplate x:Key="MenuSeparatorTemplate">
         <Separator Style="{StaticResource {x:Static MenuItem.SeparatorStyleKey}}" />
@@ -36,7 +36,7 @@
         </MenuItem>
         <MenuItem Header="Options">
             <MenuItem.Icon>
-                <Image Source="Resources/settings.png" VerticalAlignment="Center" />
+                <Image Source="Resources/settings.png" Height="16" Width="16" VerticalAlignment="Center" />
             </MenuItem.Icon>
             <MenuItem.Items>
                 <MenuItem Header="Show Work Items" Command="{Binding ShowWindowCommand}" />

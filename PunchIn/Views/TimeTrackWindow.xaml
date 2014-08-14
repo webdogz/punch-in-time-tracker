@@ -1,17 +1,18 @@
-﻿<Window x:Class="PunchIn.Views.TimeTrackWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:ctrl="clr-namespace:PunchIn.Controls"
-        xmlns:models="clr-namespace:PunchIn.Models"
-        xmlns:vm="clr-namespace:PunchIn.ViewModels"
-        Title="TimeTrackWindow" Width="500" Height="360">
+﻿<ctrl:ModernWindow x:Class="PunchIn.Views.TimeTrackWindow"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:app="clr-namespace:PunchIn"
+                  xmlns:ctrl="clr-namespace:PunchIn.Controls"
+                  xmlns:models="clr-namespace:PunchIn.Models"
+                  xmlns:vm="clr-namespace:PunchIn.ViewModels"
+                  Title="Manage My Time" Width="760" Height="480">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <ToolBarTray Background="{DynamicResource mainToolBarBrushGradient}">
-            <ToolBar Band="1" BandIndex="1" Background="{DynamicResource mainToolBarBrushGradient}">
+        <ToolBarTray Background="{x:Null}">
+            <ToolBar Band="1" BandIndex="1" Background="{x:Null}">
                 <ToolBar.Header>
                     <StackPanel Margin="0,0,10,5" Orientation="Horizontal" VerticalAlignment="Center">
                         <Image Source="/PunchIn;component/Resources/clock_select_remain.png" Stretch="None" />
@@ -50,4 +51,4 @@
         </ToolBarTray>
         <ctrl:WorkItemManagerUserControl Grid.Row="1" DataContext="{Binding}" />
     </Grid>
-</Window>
+</ctrl:ModernWindow>

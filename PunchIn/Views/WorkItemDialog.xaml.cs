@@ -1,4 +1,5 @@
 ﻿using EmitMapper;
+using PunchIn.Controls;
 using PunchIn.Models;
 using PunchIn.ViewModels;
 using System.Windows;
@@ -8,18 +9,25 @@ namespace PunchIn.Views
     /// <summary>
     /// Interaction logic for WorkItemDialog.xaml
     /// </summary>
-    public partial class WorkItemDialog : Window
+    public partial class WorkItemDialog : ModernWindow
     {
         public WorkItemDialog()
         {
             InitializeComponent();
+            this.Loaded += (s, e) =>
+            {
+                this.SetTrayPosition();
+            };
         }
         public WorkItemDialog(WorkItem model)
             : this()
         {
             var mapper = ObjectMapperManager.DefaultInstance.GetMapper<WorkItem, WorkItemViewModel>();
             WorkItemViewModel vm = mapper.Map(model);
-            this.Loaded += (s, e) => { this.DataContext = vm; this.SetTrayPosition(); };
+            this.Loaded += (s, e) => 
+            { 
+                this.DataContext = vm;
+            };
         }
         private void SetTrayPosition()
         {

@@ -7,6 +7,9 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="NotifyIconResources.xaml" />
+                <!--<ResourceDictionary Source="MetroResources.xaml" />-->
+                <ResourceDictionary Source="/PunchIn;component/Assets/MetroUI.xaml" />
+                <ResourceDictionary Source="/PunchIn;component/Assets/MetroUI.Light.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

@@ -25,7 +25,7 @@
             <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
         
-        <GridSplitter Width="5" Background="Black" Grid.Column="1"
+        <GridSplitter Width="5" Grid.Column="1"
                       VerticalAlignment="Stretch"
                       HorizontalAlignment="Center"
                       ResizeDirection="Columns"/>
@@ -36,7 +36,44 @@
                     <GridViewColumn>
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <Image Source="{Binding Path=Icon}"  Style="{DynamicResource parentImage}" />
+                                <Image Name="workTypeImage" Source="/PunchIn;component/Resources/exit.png"  Style="{DynamicResource parentImage}" />
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding Path=WorkType, UpdateSourceTrigger=PropertyChanged}" 
+                                                 Value="BacklogItem">
+                                        <Setter TargetName="workTypeImage" Property="Source" 
+                                                Value="/PunchIn;component/Resources/backlogitem.png"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Path=WorkType, UpdateSourceTrigger=PropertyChanged}" 
+                                                 Value="Bug">
+                                        <Setter TargetName="workTypeImage" Property="Source" 
+                                                Value="/PunchIn;component/Resources/bug.png"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Path=WorkType, UpdateSourceTrigger=PropertyChanged}" 
+                                                 Value="Change">
+                                        <Setter TargetName="workTypeImage" Property="Source" 
+                                                Value="/PunchIn;component/Resources/change.png"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Path=WorkType, UpdateSourceTrigger=PropertyChanged}" 
+                                                 Value="Datafix">
+                                        <Setter TargetName="workTypeImage" Property="Source" 
+                                                Value="/PunchIn;component/Resources/datafix.png"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Path=WorkType, UpdateSourceTrigger=PropertyChanged}" 
+                                                 Value="ServiceCall">
+                                        <Setter TargetName="workTypeImage" Property="Source" 
+                                                Value="/PunchIn;component/Resources/servicecall.png"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Path=WorkType, UpdateSourceTrigger=PropertyChanged}" 
+                                                 Value="Support">
+                                        <Setter TargetName="workTypeImage" Property="Source" 
+                                                Value="/PunchIn;component/Resources/support.png"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Path=WorkType, UpdateSourceTrigger=PropertyChanged}" 
+                                                 Value="Task">
+                                        <Setter TargetName="workTypeImage" Property="Source" 
+                                                Value="/PunchIn;component/Resources/task.png"/>
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>

@@ -209,7 +209,7 @@ namespace UnitTestPunchIn
 
         private static string ProduceDbName(string login)
         {
-            var dbName = string.Format("{0}_punchin.ndb", login);
+            var dbName = string.Format("{0}_punchin-test.ndb", login);
 
             var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "My Time");
 
