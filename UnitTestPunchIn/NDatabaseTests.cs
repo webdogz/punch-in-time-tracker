@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using EmitMapper;
 using PunchIn.Models;
+using EmitMapper.MappingConfiguration;
 
 namespace UnitTestPunchIn
 {
@@ -73,7 +74,12 @@ namespace UnitTestPunchIn
             });
             using (var db = OdbFactory.Open(GetDbName()))
             {
-                var mapper = ObjectMapperManager.DefaultInstance.GetMapper<WorkItem, WorkItem>();
+                //var mapper = ObjectMapperManager.DefaultInstance.GetMapper<WorkItem, WorkItem>();
+                var mapper = ObjectMapperManager.DefaultInstance.GetMapper<WorkItem, WorkItem>(
+                    new DefaultMapConfig().ConstructBy<WorkItem>(() => new WorkItem(item.Id))
+                );
+
+
                 WorkItem wi = mapper.Map(item, db.QueryAndExecute<WorkItem>().FirstOrDefault(w => w.Id == item.Id));
 
                 Assert.AreEqual(wi.Id, item.Id);
