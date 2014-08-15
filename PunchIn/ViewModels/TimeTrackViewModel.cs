@@ -37,11 +37,7 @@ namespace PunchIn.ViewModels
                 workItems = value;
                 OnPropertyChanged("WorkItems");
                 if (CurrentWorkItem == null)
-                {
-                    //WorkItem wi = workItems.Where(w => w.Entries.Any(e => e.EndDate == null)).LastOrDefault() ?? workItems.LastOrDefault();
-                    //if (wi == null) workItems.LastOrDefault();
                     CurrentWorkItem = workItems.Where(w => w.Entries.Any(e => e.EndDate == null)).LastOrDefault() ?? workItems.LastOrDefault();
-                }
             }
         }
         private IEnumerable<WorkItem>  workItems;
@@ -51,10 +47,17 @@ namespace PunchIn.ViewModels
             get { return currentWorkItem; }
             set
             {
-                currentWorkItem = value;
-                OnPropertyChanged("CurrentWorkItem");
-                CurrentEntry = null;
-                Entries = new BindingList<TimeEntry>(currentWorkItem.Entries);
+                if (this.currentWorkItem != value)
+                {
+                    this.currentWorkItem = value;
+                    OnPropertyChanged("CurrentWorkItem");
+                    
+                    Entries = new BindingList<TimeEntry>(currentWorkItem.Entries);
+                    if (CurrentWorkItem != null)
+                        CurrentEntry = CurrentWorkItem.Entries.LastOrDefault(e => e.EndDate == null);
+                    else
+                        CurrentEntry = null;
+                }
             }
         }
         private WorkItem currentWorkItem;

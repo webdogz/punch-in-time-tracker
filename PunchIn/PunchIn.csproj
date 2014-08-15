@@ -93,6 +93,7 @@
     <Compile Include="Controls\Converters\StringToResourceConverter.cs" />
     <Compile Include="Controls\Converters\ToLowerConverter.cs" />
     <Compile Include="Controls\Converters\ToUpperConverter.cs" />
+    <Compile Include="Controls\Converters\WorkItemToViewModelConverter.cs" />
     <Compile Include="Controls\IconButton.cs" />
     <Compile Include="Controls\MetroWindow.cs" />
     <Compile Include="Controls\ModernButton.cs" />

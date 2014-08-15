@@ -6,11 +6,15 @@ namespace PunchIn.ViewModels
     public class TimeEntryViewModel : ViewModelBase
     {
         private readonly TimeTrackViewModel parent;
-        public TimeEntryViewModel(TimeTrackViewModel parent)
+        public TimeEntryViewModel(TimeTrackViewModel parent/*, TimeEntry currentEntry = null*/)
         {
+            //TODO: Refactor all this if/else/then crap code to something a little more elegant :)
             this.parent = parent;
             CurrentWorkItem = this.parent.CurrentWorkItem;
-            CurrentEntry = new TimeEntry { StartDate = DateTime.Now, Status = States.Analysis };
+            if (this.parent.CurrentEntry != null)
+                CurrentEntry = this.parent.CurrentEntry;
+            else
+                CurrentEntry = new TimeEntry { StartDate = DateTime.Now, Status = States.Analysis };
         }
 
         public void PunchIn()

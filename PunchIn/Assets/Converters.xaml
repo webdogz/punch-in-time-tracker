@@ -9,5 +9,6 @@
     <converters:ToUpperConverter x:Key="ToUpperConverter" />
     <converters:ToLowerConverter x:Key="ToLowerConverter" />
     <converters:StringToResourceConverter x:Key="stringToResourceConverter" />
+    <converters:WorkItemToViewModelConverter x:Key="workItemToViewModelConverter" />
 
 </ResourceDictionary>
