@@ -8,5 +8,6 @@
     <converters:NullOrEmptyStringToVisibilityConverter x:Key="NullOrEmptyStringToVisibilityConverter" />
     <converters:ToUpperConverter x:Key="ToUpperConverter" />
     <converters:ToLowerConverter x:Key="ToLowerConverter" />
+    <converters:StringToResourceConverter x:Key="stringToResourceConverter" />
 
 </ResourceDictionary>

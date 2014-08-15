@@ -8,22 +8,33 @@
                     xmlns:views="clr-namespace:PunchIn.Views"
                     xmlns:local="clr-namespace:PunchIn">
 
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/PunchIn;component/Assets/Converters.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+    
     <Image x:Key="icon" Source="{Binding Icon}" Height="16" Width="16" x:Shared="false" />
     <Image x:Key="punchIcon" Source="{Binding PunchMenuIcon}" Height="16" Width="16" x:Shared="false" />
+    <ContentControl x:Key="contentIcon" x:Shared="false">
+        <Rectangle Fill="{Binding Icon, Converter={StaticResource stringToResourceConverter}}" Height="16" Width="16" />
+    </ContentControl>
 
     <ControlTemplate x:Key="MenuSeparatorTemplate">
         <Separator Style="{StaticResource {x:Static MenuItem.SeparatorStyleKey}}" />
     </ControlTemplate>
 
     <ContextMenu x:Shared="false" x:Key="SysTrayMenu" Placement="MousePoint">
-        <MenuItem Header="{Binding PunchMenuText}" Command="{Binding PunchInCommand}" Icon="{StaticResource punchIcon}" />
+        <MenuItem Header="{Binding PunchMenuText}" Command="{Binding PunchInCommand}">
+            <MenuItem.Icon>
+                <Rectangle Fill="{Binding PunchMenuIcon, Converter={StaticResource stringToResourceConverter}}" Height="16" Width="16" />
+            </MenuItem.Icon>
+        </MenuItem>
         <Separator />
         <MenuItem Header="{Binding Path=Text}" DataContext="{Binding Path=WorkItemMenus}" ItemsSource="{Binding Path=Children}">
             <MenuItem.Resources>
-                <HierarchicalDataTemplate DataType="{x:Type vm:PunchMenuItemViewModel}" ItemsSource="{Binding Path=Children}" />
+                <HierarchicalDataTemplate DataType="{x:Type vm:PunchMenuItemViewModel}" ItemsSource="{Binding Path=Children}"/>
                 <Style TargetType="{x:Type MenuItem}">
-                    <Setter Property="Header" Value="{Binding Path=Text}" />
-                    <Setter Property="Icon" Value="{StaticResource icon}"/>
+                    <Setter Property="Header" Value="{Binding Path=Text}"/>
+                    <Setter Property="Icon" Value="{StaticResource contentIcon}"/>
                     <Setter Property="Command" Value="{Binding Path=Command}" />
                     <Setter Property="CommandParameter" Value="{Binding Path=Id}" />
                     <Style.Triggers>
@@ -34,24 +45,10 @@
                 </Style>
             </MenuItem.Resources>
         </MenuItem>
-        <MenuItem Header="Options">
+        <MenuItem Header="Options" Command="{Binding ShowWindowCommand}">
             <MenuItem.Icon>
-                <Image Source="Resources/settings.png" Height="16" Width="16" VerticalAlignment="Center" />
+                <Rectangle Fill="{DynamicResource ResourceKey=settings}" Height="16" Width="16" />
             </MenuItem.Icon>
-            <MenuItem.Items>
-                <MenuItem Header="Show Work Items" Command="{Binding ShowWindowCommand}" />
-                <MenuItem Header="Pause">
-                    <MenuItem.Icon>
-                        <Image Source="Resources/punchin.png" Height="16" Width="16" />
-                    </MenuItem.Icon>
-                </MenuItem>
-                <MenuItem Header="Stop">
-                    <MenuItem.Icon>
-                        <Image Source="Resources/punchout.png" Height="16" Width="16" />
-                    </MenuItem.Icon>
-                </MenuItem>
-                <MenuItem Header="Hide Window" Command="{Binding HideWindowCommand}" />
-            </MenuItem.Items>
         </MenuItem>
         <Separator />
         <MenuItem Header="{Binding Path=Text}" DataContext="{Binding Path=ShortcutMenus}" ItemsSource="{Binding Path=Children}">
@@ -68,7 +65,7 @@
         <Separator />
         <MenuItem Header="Exit" Command="{Binding ExitApplicationCommand}">
             <MenuItem.Icon>
-                <Image Source="Resources/exit.png" Height="16" Width="16" />
+                <Rectangle Fill="{DynamicResource ResourceKey=exit}" Height="16" Width="16" />
             </MenuItem.Icon>
         </MenuItem>
     </ContextMenu>

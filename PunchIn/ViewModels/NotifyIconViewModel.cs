@@ -41,11 +41,11 @@ namespace PunchIn.ViewModels
         }
         private PunchMenuItemViewModel GetWorkItemMenuItems()
         {
-            PunchMenuItemViewModel menu = new PunchMenuItemViewModel() { Text = "Work Items", Icon = "Resources/list.png" };
+            PunchMenuItemViewModel menu = new PunchMenuItemViewModel() { Text = "Work Items", Icon = "list"/*"Resources/list.png"*/ };
             menu.Children.Add(new PunchMenuItemViewModel
             {
                 Text = "New Work Item...",
-                Icon = "Resources/add.png",
+                Icon = "add", //"Resources/add.png",
                 Command = NewWorkItemCommand
             });
             menu.Children.Add(null); // add a seperator
@@ -77,7 +77,7 @@ namespace PunchIn.ViewModels
             return new PunchMenuItemViewModel
             {
                 Text = string.Format("[{0}] {1}", id, item.Title),
-                Icon = string.Format("Resources/{0}.png", icon),
+                Icon = icon, //string.Format("Resources/{0}.png", icon),
                 Id = item.Id,
                 Command = SelectWorkItemCommand
             };
@@ -128,12 +128,12 @@ namespace PunchIn.ViewModels
                 OnPropertyChanged("IsTimerActive");
                 if (isTimerActive)
                 {
-                    PunchMenuIcon = "Resources/punchout.png";
+                    PunchMenuIcon = "punchout";// "Resources/punchout.png";
                     PunchMenuText = "Punch Out";
                 }
                 else
                 {
-                    PunchMenuIcon = "Resources/punchin.png";
+                    PunchMenuIcon = "punchin";//"Resources/punchin.png";
                     PunchMenuText = "Punch In...";
                 }
                 IsTimerDone = !IsTimerActive;

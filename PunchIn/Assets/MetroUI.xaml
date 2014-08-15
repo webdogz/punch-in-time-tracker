@@ -5,11 +5,46 @@
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="Button.xaml" />
+        <ResourceDictionary Source="Calendar.xaml" />
+        <ResourceDictionary Source="CheckBox.xaml" />
         <ResourceDictionary Source="ComboBox.xaml" />
+        <ResourceDictionary Source="ContextMenu.xaml" />
+        <ResourceDictionary Source="DataGrid.xaml" />
+        <ResourceDictionary Source="DatePicker.xaml" />
+        <ResourceDictionary Source="GridSplitter.xaml" />
+        <ResourceDictionary Source="Label.xaml" />
         <ResourceDictionary Source="ListBox.xaml" />
         <ResourceDictionary Source="ListView.xaml" />
+        <ResourceDictionary Source="MenuItem.xaml" />
+        <ResourceDictionary Source="PasswordBox.xaml" />
+        <ResourceDictionary Source="RadioButton.xaml" />
+        <ResourceDictionary Source="ScrollBar.xaml" />
         <ResourceDictionary Source="TextBlock.xaml" />
         <ResourceDictionary Source="TextBox.xaml" />
+        <ResourceDictionary Source="ToolTip.xaml" />
+        <ResourceDictionary Source="TreeView.xaml" />
+
+        <!-- icons -->
+        <ResourceDictionary Source="Icons/add.xaml" />
+        <ResourceDictionary Source="Icons/backlogitem.xaml" />
+        <ResourceDictionary Source="Icons/bug.xaml" />
+        <ResourceDictionary Source="Icons/cancel.xaml" />
+        <ResourceDictionary Source="Icons/change.xaml" />
+        <ResourceDictionary Source="Icons/datafix.xaml" />
+        <ResourceDictionary Source="Icons/excel.xaml" />
+        <ResourceDictionary Source="Icons/exit.xaml" />
+        <ResourceDictionary Source="Icons/folder.xaml" />
+        <ResourceDictionary Source="Icons/list.xaml" />
+        <ResourceDictionary Source="Icons/punchin.xaml" />
+        <ResourceDictionary Source="Icons/punchout.xaml" />
+        <ResourceDictionary Source="Icons/report.xaml" />
+        <ResourceDictionary Source="Icons/save.xaml" />
+        <ResourceDictionary Source="Icons/servicecall.xaml" />
+        <ResourceDictionary Source="Icons/settings.xaml" />
+        <ResourceDictionary Source="Icons/shortcut.xaml" />
+        <ResourceDictionary Source="Icons/support.xaml" />
+        <ResourceDictionary Source="Icons/task.xaml" />
+        <ResourceDictionary Source="Icons/timer.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
     <!-- default accent colors and brushes -->

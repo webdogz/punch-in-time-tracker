@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+	<DrawingBrush x:Key="change" Stretch="Uniform">
+		<DrawingBrush.Drawing>
+			<DrawingGroup ClipGeometry="F1 M 0,0L 44,0L 44,44L 0,44L 0,0">
+				<DrawingGroup.Children>
+                    <GeometryDrawing Brush="{DynamicResource ButtonText}" Geometry="F1 M 5.42859,3L 26.4643,3L 38,14.5357L 38,41L 5.42859,41L 5.42859,3 Z M 24.3691,6.61905L 9.04764,6.61905L 9.04764,37.381L 34.381,37.381L 34.381,16.631"/>
+					<GeometryDrawing Brush="#FFB45000" Geometry="F1 M 32.8535,33L 10.7471,33C 9.75097,32.0038 9.75097,30.3888 10.7471,29.3927L 20.2972,11.7471C 21.2934,10.751 22.9084,10.751 23.9045,11.7471L 32.8535,29.3927C 33.8496,30.3888 33.8496,32.0039 32.8535,33 Z M 19.6746,17.0575L 20.7374,25.7726L 22.8631,25.7726L 23.9259,17.0575L 19.6746,17.0575 Z M 21.8003,27.048C 20.8611,27.048 20.0998,27.8093 20.0998,28.7485C 20.0998,29.6876 20.8611,30.449 21.8003,30.449C 22.7394,30.449 23.5008,29.6876 23.5008,28.7485C 23.5008,27.8093 22.7394,27.048 21.8003,27.048 Z "/>
+				</DrawingGroup.Children>
+			</DrawingGroup>
+		</DrawingBrush.Drawing>
+	</DrawingBrush>
+</ResourceDictionary>
