@@ -20,11 +20,7 @@ namespace Webdogz.UI.Controls
         /// Identifies the Buttons dependency property.
         /// </summary>
         public static readonly DependencyProperty ButtonsProperty = DependencyProperty.Register("Buttons", typeof(IEnumerable<Button>), typeof(ModernDialog));
-        /// <summary>
-        /// Identifies the Buttons dependency property.
-        /// </summary>
-        public static readonly DependencyProperty IsTrayWindowProperty = DependencyProperty.Register("IsTrayWindow", typeof(bool), typeof(ModernDialog), new PropertyMetadata(false));
-
+        
         private ICommand closeCommand;
 
         private Button okButton;
@@ -73,36 +69,6 @@ namespace Webdogz.UI.Controls
             if (Application.Current != null && Application.Current.MainWindow != this) {
                 this.Owner = Application.Current.MainWindow;
             }
-
-            this.Loaded += ModernDialog_Loaded;
-        }
-
-        void ModernDialog_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (IsTrayWindow)
-            {
-                SetTrayPosition();
-            }
-        }
-
-        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
-        {
-            base.OnClosing(e);
-            try
-            {
-                this.Loaded -= ModernDialog_Loaded;
-            }
-            catch { }
-        }
-
-        public void SetTrayPosition()
-        {
-            try
-            {
-                this.Top = SystemParameters.WorkArea.Height - this.ActualHeight;
-                this.Left = SystemParameters.WorkArea.Width - this.ActualWidth;
-            }
-            catch { }
         }
 
         private Button CreateCloseDialogButton(string content, bool isDefault, bool isCancel, MessageBoxResult result)
@@ -197,11 +163,6 @@ namespace Webdogz.UI.Controls
             }
         }
 
-        public bool IsTrayWindow
-        {
-            get { return (bool)GetValue(IsTrayWindowProperty); }
-            set { SetValue(IsTrayWindowProperty, value); }
-        }
         /// <summary>
         /// Gets or sets the background content of this window instance.
         /// </summary>

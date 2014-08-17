@@ -25,7 +25,7 @@ namespace PunchIn.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("#FF1BA1E2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("#FF76608A")]
         public global::System.Windows.Media.Color SelectedAccentColor {
             get {
                 return ((global::System.Windows.Media.Color)(this["SelectedAccentColor"]));
@@ -37,13 +37,25 @@ namespace PunchIn.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("/Webdogz.UI;component/Assets/MetroUI.Light.xaml")]
+        [global::System.Configuration.DefaultSettingValueAttribute("/PunchIn;component/Assets/Themes/underworld.xaml")]
         public global::System.Uri SelectedThemeSource {
             get {
                 return ((global::System.Uri)(this["SelectedThemeSource"]));
             }
             set {
                 this["SelectedThemeSource"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0,0,720,600")]
+        public global::System.Windows.Rect MainWindowLocation {
+            get {
+                return ((global::System.Windows.Rect)(this["MainWindowLocation"]));
+            }
+            set {
+                this["MainWindowLocation"] = value;
             }
         }
     }

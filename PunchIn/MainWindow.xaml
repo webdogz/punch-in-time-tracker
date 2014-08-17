@@ -12,21 +12,21 @@
     </wui:ModernWindow.TitleLinks>
 
     <wui:ModernWindow.MenuLinkGroups>
-        <wui:LinkGroup DisplayName="Manage" GroupKey="main">
+        <wui:LinkGroup DisplayName="Manage">
             <wui:LinkGroup.Links>
                 <wui:Link DisplayName="Tracker" Source="/Pages/Tracker.xaml" />
             </wui:LinkGroup.Links>
         </wui:LinkGroup>
-        <wui:LinkGroup DisplayName="Reports" GroupKey="reports">
+        <wui:LinkGroup DisplayName="Reports">
             <wui:LinkGroup.Links>
-                <wui:Link DisplayName="Weekly" Source="/Pages/Splash.xaml" />
-                <wui:Link DisplayName="Export" Source="/Pages/Splash.xaml" />
+                <wui:Link DisplayName="Weekly" Source="/Pages/ReportsWeekly.xaml" />
+                <wui:Link DisplayName="Export" Source="/Pages/ReportsExport.xaml" />
             </wui:LinkGroup.Links>
         </wui:LinkGroup>
         <wui:LinkGroup DisplayName="Settings" GroupKey="settings">
             <wui:LinkGroup.Links>
                 <wui:Link DisplayName="Theme" Source="/Pages/Settings.xaml" />
-                <wui:Link DisplayName="Preferences" Source="/Pages/Splash.xaml" />
+                <wui:Link DisplayName="Preferences" Source="/Pages/Preferences.xaml" />
             </wui:LinkGroup.Links>
         </wui:LinkGroup>
     </wui:ModernWindow.MenuLinkGroups>

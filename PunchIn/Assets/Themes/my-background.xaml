@@ -1,0 +1,15 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/Webdogz.UI;component/Assets/MetroUI.Light.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+    <Color x:Key="AccentColor">#0082AD</Color>
+    
+    <Rectangle x:Key="WindowBackgroundContent" x:Shared="false">
+        <Rectangle.Fill>
+            <ImageBrush Opacity=".2" ImageSource="/Themes/my-background.jpg" Stretch="UniformToFill" />
+        </Rectangle.Fill>
+    </Rectangle>
+</ResourceDictionary>

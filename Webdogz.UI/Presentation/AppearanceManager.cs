@@ -99,31 +99,47 @@ namespace Webdogz.UI.Presentation
             if (source == null) {
                 throw new ArgumentNullException("source");
             }
+            ResourceDictionary themeDict;
+            if (source.IsAbsoluteUri && source.Scheme.StartsWith("pack"))
+            {
+                System.Windows.Resources.StreamResourceInfo info = Application.GetRemoteStream(source);
+                System.Windows.Markup.XamlReader reader = new System.Windows.Markup.XamlReader();
+                themeDict = (ResourceDictionary)reader.LoadAsync(info.Stream);
+            }
+            else
+                themeDict = new ResourceDictionary { Source = source };
 
-            var oldThemeDict = GetThemeDictionary();
-            var dictionaries = Application.Current.Resources.MergedDictionaries;
-            var themeDict = new ResourceDictionary { Source = source };
+            AddTheme(themeDict, useThemeAccentColor);
 
+            OnPropertyChanged("ThemeSource");
+        }
+
+        public void AddTheme(ResourceDictionary resourceTheme, bool useThemeAccentColor)
+        {
             // if theme defines an accent color, use it
-            var accentColor = themeDict[KeyAccentColor] as Color?;
-            if (accentColor.HasValue) {
+            var accentColor = resourceTheme[KeyAccentColor] as Color?;
+            if (accentColor.HasValue)
+            {
                 // remove from the theme dictionary and apply globally if useThemeAccentColor is true
-                themeDict.Remove(KeyAccentColor);
+                resourceTheme.Remove(KeyAccentColor);
 
-                if (useThemeAccentColor) {
+                if (useThemeAccentColor)
+                {
                     ApplyAccentColor(accentColor.Value);
                 }
             }
 
+            var dictionaries = Application.Current.Resources.MergedDictionaries;
+            
+            var oldResourceTheme = GetThemeDictionary();
             // add new before removing old theme to avoid dynamicresource not found warnings
-            dictionaries.Add(themeDict);
+            dictionaries.Add(resourceTheme);
 
             // remove old theme
-            if (oldThemeDict != null) {
-                dictionaries.Remove(oldThemeDict);
+            if (oldResourceTheme != null)
+            {
+                dictionaries.Remove(oldResourceTheme);
             }
-
-            OnPropertyChanged("ThemeSource");
         }
 
         private void ApplyAccentColor(Color accentColor)
@@ -171,8 +187,8 @@ namespace Webdogz.UI.Presentation
         {
             try
             {
-                AccentColor = accentColor;
                 ThemeSource = themeSource;
+                AccentColor = accentColor;
                 UserSettingsLoaded = true;
             }
             catch (Exception ex)

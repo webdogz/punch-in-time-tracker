@@ -3,16 +3,15 @@
                     xmlns:wui="http://schema.webdogz/wui">
 
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="/Webdogz.UI;component/Assets/MetroUI.Dark.xaml" />
+        <ResourceDictionary Source="/Webdogz.UI;component/Assets/MetroUI.Light.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
-    <Color x:Key="AccentColor">#fff472d0</Color>
+    <Color x:Key="AccentColor">#f472d0</Color>
 
     <Rectangle x:Key="WindowBackgroundContent" x:Shared="false" Margin="32">
         <Rectangle.Fill>
-            <ImageBrush Opacity=".1" ImageSource="Images/underworld.png" Stretch="None"  AlignmentX="Right" AlignmentY="Bottom" />
+            <ImageBrush Opacity=".1" ImageSource="/Themes/hello-kitty.png" Stretch="None"  AlignmentX="Right" AlignmentY="Bottom" />
         </Rectangle.Fill>
-        
     </Rectangle>
 
 </ResourceDictionary>

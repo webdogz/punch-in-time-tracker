@@ -3,10 +3,13 @@
   <Profiles />
   <Settings>
     <Setting Name="SelectedAccentColor" Type="System.Windows.Media.Color" Scope="User">
-      <Value Profile="(Default)">#FF1BA1E2</Value>
+      <Value Profile="(Default)">#FF76608A</Value>
     </Setting>
     <Setting Name="SelectedThemeSource" Type="System.Uri" Scope="User">
-      <Value Profile="(Default)">/Webdogz.UI;component/Assets/MetroUI.Light.xaml</Value>
+      <Value Profile="(Default)">/PunchIn;component/Assets/Themes/underworld.xaml</Value>
+    </Setting>
+    <Setting Name="MainWindowLocation" Type="System.Windows.Rect" Scope="User">
+      <Value Profile="(Default)">0,0,720,600</Value>
     </Setting>
   </Settings>
 </SettingsFile>

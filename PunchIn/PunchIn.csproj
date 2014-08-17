@@ -87,8 +87,30 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Controls\IconButton.cs" />
+    <Compile Include="Controls\TrayDialog.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Content\PreferenceDisplayFormats.xaml.cs">
+      <DependentUpon>PreferenceDisplayFormats.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Content\PrefereneFileLocations.xaml.cs">
+      <DependentUpon>PrefereneFileLocations.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Content\ReportLastWeek.xaml.cs">
+      <DependentUpon>ReportLastWeek.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Content\ReportThisWeek.xaml.cs">
+      <DependentUpon>ReportThisWeek.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Preferences.xaml.cs">
+      <DependentUpon>Preferences.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\ReportsExport.xaml.cs">
+      <DependentUpon>ReportsExport.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\ReportsWeekly.xaml.cs">
+      <DependentUpon>ReportsWeekly.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\Settings.xaml.cs">
       <DependentUpon>Settings.xaml</DependentUpon>
@@ -273,11 +295,43 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Assets\Themes\my-background.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="MainWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Pages\Content\PreferenceDisplayFormats.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\Content\PrefereneFileLocations.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\Content\ReportLastWeek.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\Content\ReportThisWeek.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Pages\Content\SettingsAppearance.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\Preferences.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\ReportsExport.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\ReportsWeekly.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -305,11 +359,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Assets\MetroUI.Underworld.xaml">
+    <Page Include="Assets\Themes\underworld.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Assets\MetroUI.HelloKitty.xaml">
+    <Page Include="Assets\Themes\hello-kitty.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -372,12 +426,21 @@
     <Resource Include="Resources\settings.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Assets\Images\underworld.png" />
+    <Resource Include="Themes\underworld.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Assets\Images\background.kitty.png" />
+    <Resource Include="Themes\hello-kitty.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Themes\Readme.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Themes\my-background.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

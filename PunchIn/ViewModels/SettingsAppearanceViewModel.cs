@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
+using System.Windows;
+using System.Windows.Markup;
 using System.Windows.Media;
+using System.Windows.Resources;
 using Webdogz.UI.Presentation;
 
 namespace PunchIn.ViewModels
@@ -13,6 +17,7 @@ namespace PunchIn.ViewModels
     public class SettingsAppearanceViewModel
         : ViewModelBase
     {
+        #region Private Fields
         private const string PaletteMetro = "metro";
         private const string PaletteWP = "windows phone";
 
@@ -58,7 +63,8 @@ namespace PunchIn.ViewModels
         private Color selectedAccentColor;
         private LinkCollection themes = new LinkCollection();
         private Link selectedTheme;
-        
+        #endregion
+
         public SettingsAppearanceViewModel()
         {
             // add the default themes
@@ -66,14 +72,51 @@ namespace PunchIn.ViewModels
             this.themes.Add(new Link { DisplayName = "light", Source = AppearanceManager.LightThemeSource });
 
             // add additional themes
-            this.themes.Add(new Link { DisplayName = "underworld", Source = new Uri("/PunchIn;component/Assets/MetroUI.Underworld.xaml", UriKind.Relative) });
-            this.themes.Add(new Link { DisplayName = "hello kitty", Source = new Uri("/PunchIn;component/Assets/MetroUI.HelloKitty.xaml", UriKind.Relative) });
-            
+            this.themes.Add(new Link { DisplayName = "underworld", Source = new Uri("/PunchIn;component/Assets/Themes/underworld.xaml", UriKind.Relative) });
+            this.themes.Add(new Link { DisplayName = "hello-kitty", Source = new Uri("/PunchIn;component/Assets/Themes/hello-kitty.xaml", UriKind.Relative) });
+            this.themes.Add(new Link { DisplayName = "my-background", Source = new Uri("/PunchIn;component/Assets/Themes/my-background.xaml", UriKind.Relative) });
+
+            //GetAvailableUserThemes();
+
             SyncThemeAndColor();
 
             AppearanceManager.Current.PropertyChanged += OnAppearanceManagerPropertyChanged;
         }
 
+        #region Theme Loader Methods
+        private void GetAvailableUserThemes()
+        {
+            var relativePath = "Themes";
+            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relativePath);
+            DirectoryInfo themesDir = new DirectoryInfo(path);
+
+            if (themesDir.Exists)
+            {
+                foreach (FileInfo file in themesDir.GetFiles("*.xaml"))
+                {
+                    this.themes.Add(new Link { DisplayName = file.Name, Source = new Uri(Path.Combine("pack://siteoforigin:,,,/", relativePath, file.Name), UriKind.Absolute) });
+                }
+            }
+        }
+        private void LoadThemeResourceFromFile(Uri resorceUri)
+        {
+            //TODO: Implement external theme loading
+            try
+            {
+                StreamResourceInfo info = Application.GetRemoteStream(resorceUri);
+                System.Windows.Markup.XamlReader reader = new System.Windows.Markup.XamlReader();
+                ResourceDictionary resource = (ResourceDictionary)reader.LoadAsync(info.Stream);
+                AppearanceManager.Current.AddTheme(resource, true);
+            }
+            catch (IOException)
+            {
+                // do something
+            }
+
+        }
+        #endregion
+
+        #region Private Methods
         private void SyncThemeAndColor()
         {
             // synchronizes the selected viewmodel theme with the actual theme used by the appearance manager.
@@ -97,7 +140,9 @@ namespace PunchIn.ViewModels
                 SyncThemeAndColor();
             }
         }
+        #endregion
 
+        #region Properties
         public LinkCollection Themes
         {
             get { return this.themes; }
@@ -155,5 +200,6 @@ namespace PunchIn.ViewModels
                 }
             }
         }
+        #endregion
     }
 }

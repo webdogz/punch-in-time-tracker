@@ -1,4 +1,5 @@
-﻿using PunchIn.Models;
+﻿using PunchIn.Controls;
+using PunchIn.Models;
 using PunchIn.Pages.Content;
 using System;
 using System.Diagnostics;
@@ -9,8 +10,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
-using Webdogz.UI.Controls;
-using Webdogz.UI.Presentation;
 
 namespace PunchIn.ViewModels
 {
@@ -40,9 +39,10 @@ namespace PunchIn.ViewModels
 
         private void SyncThemeSettings()
         {
-            AppearanceManager.Current.SyncFromUserSettings(
-                Properties.Settings.Default.SelectedAccentColor,
-                Properties.Settings.Default.SelectedThemeSource
+            Webdogz.UI.Presentation.AppearanceManager.Current.SyncFromUserSettings
+                (
+                    Properties.Settings.Default.SelectedAccentColor,
+                    Properties.Settings.Default.SelectedThemeSource
                 );
         }
         #region WorkItem Menu build
@@ -288,7 +288,7 @@ namespace PunchIn.ViewModels
                             {
                                 CurrentTimeEntry = new TimeEntryViewModel(ViewModel);
 
-                                var dialog = new ModernDialog
+                                var dialog = new TrayDialog
                                 {
                                     Title = "New Time Entry",
                                     Content = new TimeEntryForm(),
@@ -327,7 +327,7 @@ namespace PunchIn.ViewModels
                     CanExecuteFunc = (o) => ViewModel != null,
                     CommandAction = (o) =>
                     {
-                        var dialog = new ModernDialog
+                        var dialog = new TrayDialog
                         {
                             Title = "New Work Item",
                             Content = new WorkItemForm(),
