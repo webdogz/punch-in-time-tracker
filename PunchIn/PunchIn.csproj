@@ -86,40 +86,32 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Controls\Converters\BooleanToFontWeightConverter.cs" />
-    <Compile Include="Controls\Converters\BooleanToVisibilityConverter.cs" />
-    <Compile Include="Controls\Converters\NullOrEmptyStringToVisibilityConverter.cs" />
-    <Compile Include="Controls\Converters\NullToVisibilityConverter.cs" />
-    <Compile Include="Controls\Converters\StringToResourceConverter.cs" />
-    <Compile Include="Controls\Converters\ToLowerConverter.cs" />
-    <Compile Include="Controls\Converters\ToUpperConverter.cs" />
-    <Compile Include="Controls\Converters\WorkItemToViewModelConverter.cs" />
     <Compile Include="Controls\IconButton.cs" />
-    <Compile Include="Controls\MetroWindow.cs" />
-    <Compile Include="Controls\ModernButton.cs" />
-    <Compile Include="Controls\ModernDialog.cs" />
-    <Compile Include="Controls\ModernWindow.cs" />
-    <Compile Include="Controls\SettingsAppearance.xaml.cs">
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Settings.xaml.cs">
+      <DependentUpon>Settings.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\Converters\WorkItemToViewModelConverter.cs" />
+    <Compile Include="Pages\Content\SettingsAppearance.xaml.cs">
       <DependentUpon>SettingsAppearance.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\SplashUserControl.xaml.cs">
-      <DependentUpon>SplashUserControl.xaml</DependentUpon>
+    <Compile Include="Pages\Splash.xaml.cs">
+      <DependentUpon>Splash.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\TimeEntryUserControl.xaml.cs">
-      <DependentUpon>TimeEntryUserControl.xaml</DependentUpon>
+    <Compile Include="Pages\Content\TimeEntryForm.xaml.cs">
+      <DependentUpon>TimeEntryForm.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\WorkItemManagerUserControl.xaml.cs">
-      <DependentUpon>WorkItemManagerUserControl.xaml</DependentUpon>
+    <Compile Include="Pages\Tracker.xaml.cs">
+      <DependentUpon>Tracker.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\WorkItemUserControl.xaml.cs">
-      <DependentUpon>WorkItemUserControl.xaml</DependentUpon>
+    <Compile Include="Pages\Content\WorkItemForm.xaml.cs">
+      <DependentUpon>WorkItemForm.xaml</DependentUpon>
     </Compile>
     <Compile Include="Models\TimeEntry.cs" />
     <Compile Include="Models\WorkItem.cs" />
     <Compile Include="Services\PunchInService.cs" />
-    <Compile Include="Themes\AppearanceManager.cs" />
-    <Compile Include="Themes\Displayable.cs" />
-    <Compile Include="Themes\Link.cs" />
     <Compile Include="ViewModels\DelegateCommand.cs" />
     <Compile Include="ViewModels\Enums.cs" />
     <Compile Include="ViewModels\IMenuItemViewModel.cs" />
@@ -133,20 +125,8 @@
     <Compile Include="ViewModels\TimeTrackViewModel.cs" />
     <Compile Include="ViewModels\WorkItemManagerViewModel.cs" />
     <Compile Include="ViewModels\WorkItemViewModel.cs" />
-    <Compile Include="Views\CurrentTaskPopup.xaml.cs">
+    <Compile Include="CurrentTaskPopup.xaml.cs">
       <DependentUpon>CurrentTaskPopup.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\TimeEntryDialog.xaml.cs">
-      <DependentUpon>TimeEntryDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\TimeTrackWindow.xaml.cs">
-      <DependentUpon>TimeTrackWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\WorkItemDialog.xaml.cs">
-      <DependentUpon>WorkItemDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\WorkItemsManager.xaml.cs">
-      <DependentUpon>WorkItemsManager.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -203,43 +183,15 @@
       <Project>{7ac63864-7638-41c4-969c-d3197ef2bed9}</Project>
       <Name>NotifyIconWpf</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Webdogz.UI\Webdogz.UI.csproj">
+      <Project>{f4d26b03-4bdd-48b7-9b50-1ab5ee4fc3ce}</Project>
+      <Name>Webdogz.UI</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Assets\Button.xaml">
-      <Generator>MSBuild:Compile</Generator>
+    <Page Include="Assets\PunchUI.xaml">
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Assets\Calendar.xaml">
       <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Assets\CheckBox.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Assets\ComboBox.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Assets\ContextMenu.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Assets\Converters.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Assets\DataGrid.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Assets\DatePicker.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Assets\GridSplitter.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Assets\Icons\add.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -309,38 +261,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Assets\Label.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Assets\ListBox.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Assets\ListView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Assets\MenuItem.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Assets\MetroUI.Dark.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Assets\MetroUI.Light.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Assets\MetroUI.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Assets\PasswordBox.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Assets\Icons\punchin.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -349,105 +269,53 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Assets\RadioButton.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Assets\ScrollBar.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Assets\TextBlock.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Assets\TextBox.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Assets\Icons\timer.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Assets\ToolTip.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Assets\TreeView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\SettingsAppearance.xaml">
+    <Page Include="MainWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\SplashUserControl.xaml">
+    <Page Include="Pages\Content\SettingsAppearance.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\TimeEntryUserControl.xaml">
+    <Page Include="Pages\Splash.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\WorkItemManagerUserControl.xaml">
+    <Page Include="Pages\Content\TimeEntryForm.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\WorkItemUserControl.xaml">
+    <Page Include="Pages\Tracker.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MetroResources.xaml">
+    <Page Include="Pages\Content\WorkItemForm.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="NotifyIconResources.xaml">
+    <Page Include="Assets\NotifyIconResources.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Themes\Generic.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Themes\MetroUI.Underworld.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Themes\ModernButton.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Themes\ModernDialog.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Themes\MetroUI.HelloKitty.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Themes\ModernWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\CurrentTaskPopup.xaml">
+    <Page Include="Pages\Settings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\TimeEntryDialog.xaml">
+    <Page Include="Assets\MetroUI.Underworld.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\TimeTrackWindow.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="Assets\MetroUI.HelloKitty.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\WorkItemDialog.xaml">
+    <Page Include="CurrentTaskPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\WorkItemsManager.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup>
@@ -509,6 +377,7 @@
   <ItemGroup>
     <Resource Include="Assets\Images\background.kitty.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

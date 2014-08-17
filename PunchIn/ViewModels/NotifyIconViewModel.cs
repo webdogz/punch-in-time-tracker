@@ -1,15 +1,16 @@
-﻿using EmitMapper;
-using Hardcodet.Wpf.TaskbarNotification;
-using PunchIn.Models;
-using PunchIn.Views;
+﻿using PunchIn.Models;
+using PunchIn.Pages.Content;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
+using Webdogz.UI.Controls;
+using Webdogz.UI.Presentation;
 
 namespace PunchIn.ViewModels
 {
@@ -32,8 +33,17 @@ namespace PunchIn.ViewModels
                 }
             };
             BuildShortcutMenusAsync();
+            SyncThemeSettings();
             IsTimerActive = false;
             timer = new DispatcherTimer(TimeSpan.FromSeconds(1), DispatcherPriority.Normal, OnTimerTick, Application.Current.Dispatcher);
+        }
+
+        private void SyncThemeSettings()
+        {
+            AppearanceManager.Current.SyncFromUserSettings(
+                Properties.Settings.Default.SelectedAccentColor,
+                Properties.Settings.Default.SelectedThemeSource
+                );
         }
         #region WorkItem Menu build
         private async void BuildWorkItemMenusAsync()
@@ -197,7 +207,7 @@ namespace PunchIn.ViewModels
         }
         private ShortcutMenuItemViewModel GetShortcutMenu(DirectoryInfo root, string name)
         {
-            var menu = new ShortcutMenuItemViewModel() { Text = name ?? root.Name, Icon = "Resources/folder.png" };
+            var menu = new ShortcutMenuItemViewModel() { Text = name ?? root.Name, Icon = "folder" /*"Resources/folder.png"*/ };
             foreach (DirectoryInfo dir in root.GetDirectories())
             {
                 ShortcutMenuItemViewModel item = GetShortcutMenu(dir, dir.Name);
@@ -209,7 +219,7 @@ namespace PunchIn.ViewModels
                 {
                     Text = file.Name.Replace(file.Extension, ""),
                     File = file,
-                    Icon = "Resources/shortcut.png",
+                    Icon = "shortcut" /*"Resources/shortcut.png"*/,
                     Command = ShortcutActionCommand
                 });
             }
@@ -250,7 +260,7 @@ namespace PunchIn.ViewModels
             get 
             {
                 if (CurrentTimeEntry != null && CurrentTimeEntry.CurrentWorkItem != null)
-                    this.currentWorkItem = ObjectMapperManager.DefaultInstance.GetMapper<WorkItem, WorkItemViewModel>().Map(CurrentTimeEntry.CurrentWorkItem);
+                    this.currentWorkItem = WorkItemViewModel.ConvertFrom(CurrentTimeEntry.CurrentWorkItem);
                 return this.currentWorkItem; 
             }
             set
@@ -277,8 +287,18 @@ namespace PunchIn.ViewModels
                             if (CurrentTimeEntry == null)
                             {
                                 CurrentTimeEntry = new TimeEntryViewModel(ViewModel);
-                                TimeEntryDialog dialog = new TimeEntryDialog(CurrentTimeEntry);
+
+                                var dialog = new ModernDialog
+                                {
+                                    Title = "New Time Entry",
+                                    Content = new TimeEntryForm(),
+                                    WindowStartupLocation = WindowStartupLocation.Manual,
+                                    IsTrayWindow = true,
+                                    DataContext = CurrentTimeEntry
+                                };
+                                dialog.Buttons = new Button[] { dialog.OkButton, dialog.CancelButton };
                                 dialog.ShowDialog();
+
                                 if (dialog.DialogResult.HasValue &&
                                     dialog.DialogResult.Value)
                                 {
@@ -307,14 +327,25 @@ namespace PunchIn.ViewModels
                     CanExecuteFunc = (o) => ViewModel != null,
                     CommandAction = (o) =>
                     {
-                        WorkItemDialog dialog = new WorkItemDialog();
+                        var dialog = new ModernDialog
+                        {
+                            Title = "New Work Item",
+                            Content = new WorkItemForm(),
+                            WindowStartupLocation = WindowStartupLocation.Manual,
+                            IsTrayWindow = true,
+                            SizeToContent = System.Windows.SizeToContent.Height,
+                            DataContext = new WorkItemViewModel()
+                        };
+                        dialog.Buttons = new Button[] { dialog.OkButton, dialog.CancelButton };
                         dialog.ShowDialog();
+
                         if (dialog.DialogResult.HasValue &&
                             dialog.DialogResult.Value)
                         {
-                            ViewModel.AddWorkItemCommand.Execute(dialog.Model);
+                            WorkItem model = ((WorkItemViewModel)dialog.DataContext).WorkItem;
+                            ViewModel.AddWorkItemCommand.Execute(model);
                             ViewModel.SaveWorkItemCommand.Execute(null);
-                            WorkItemMenus.Children.Add(NewPunchMenuItem(dialog.Model));
+                            WorkItemMenus.Children.Add(NewPunchMenuItem(model));
                         }
                     }
                 };
@@ -376,23 +407,23 @@ namespace PunchIn.ViewModels
             }
         }
 
-        public ICommand ShowCurrentTaskPopupCommand
-        {
-            get
-            {
-                return new DelegateCommand
-                {
-                    CanExecuteFunc = (o) => true,
-                    CommandAction = (o) =>
-                    {
-                        TaskbarIcon notifyIcon = (TaskbarIcon)Application.Current.FindResource("NotifyIcon");
-                        CurrentTaskPopup balloon = new CurrentTaskPopup { DataContext = notifyIcon.DataContext };
-                        //show balloon and close it after 10 seconds
-                        notifyIcon.ShowCustomBalloon(balloon, System.Windows.Controls.Primitives.PopupAnimation.Slide, 10000);
-                    }
-                };
-            }
-        }
+        //public ICommand ShowCurrentTaskPopupCommand
+        //{
+        //    get
+        //    {
+        //        return new DelegateCommand
+        //        {
+        //            CanExecuteFunc = (o) => true,
+        //            CommandAction = (o) =>
+        //            {
+        //                TaskbarIcon notifyIcon = (TaskbarIcon)Application.Current.FindResource("NotifyIcon");
+        //                CurrentTaskPopup balloon = new CurrentTaskPopup { DataContext = notifyIcon.DataContext };
+        //                //show balloon and close it after 10 seconds
+        //                notifyIcon.ShowCustomBalloon(balloon, System.Windows.Controls.Primitives.PopupAnimation.Slide, 10000);
+        //            }
+        //        };
+        //    }
+        //}
         /// <summary>
         /// Shows a window, if none is already open.
         /// </summary>
@@ -407,7 +438,7 @@ namespace PunchIn.ViewModels
                     CommandAction = (o) =>
                     {
                         //Application.Current.MainWindow = new WorkItemsManager(ViewModel);
-                        Application.Current.MainWindow = new TimeTrackWindow { DataContext = self };
+                        Application.Current.MainWindow = new MainWindow { DataContext = self };
                         Application.Current.MainWindow.Show();
                     }
                 };

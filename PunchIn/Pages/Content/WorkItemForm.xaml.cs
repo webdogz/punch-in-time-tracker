@@ -1,0 +1,19 @@
+﻿using System.Windows.Controls;
+
+namespace PunchIn.Pages.Content
+{
+    /// <summary>
+    /// Interaction logic for WorkItemUserControl.xaml
+    /// </summary>
+    public partial class WorkItemForm : UserControl
+    {
+        public WorkItemForm()
+        {
+            InitializeComponent();
+            this.Loaded += delegate
+            {
+                this.titleTextBox.Focus();
+            };
+        }
+    }
+}

@@ -1,0 +1,56 @@
+﻿<UserControl x:Class="PunchIn.Pages.Content.TimeEntryForm"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             xmlns:ctrl="clr-namespace:PunchIn.Controls"
+             mc:Ignorable="d" 
+             d:DesignWidth="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3*" />
+            <ColumnDefinition Width="7*" />
+        </Grid.ColumnDefinitions>
+
+        <xctk:WatermarkTextBox x:Name="titleTextBox" Text="{Binding Path=CurrentEntry.Description, Mode=TwoWay}" 
+                               IsEnabled="{Binding Path=CanModifyEntry}"
+                               Grid.Column="0" Grid.ColumnSpan="2" Margin="5">
+            <xctk:WatermarkTextBox.Watermark>
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/Resources/clock_select_remain.png" Width="20" Height="20" Stretch="Fill" />
+                    <TextBlock Text="Enter a description" Margin="4,0,0,0" />
+                </StackPanel>
+            </xctk:WatermarkTextBox.Watermark>
+        </xctk:WatermarkTextBox>
+
+        <TextBlock Text="Start:" Margin="5" Grid.Row="1" />
+        <xctk:DateTimePicker x:Name="StartDate" 
+                             Value="{Binding Path=CurrentEntry.StartDate, Mode=TwoWay}"
+                             Format="Custom"
+                             FormatString="yyyy.MM.dd HH:mm"
+                             TimePickerVisibility="Collapsed"
+                             AutoCloseCalendar="True"
+                             Watermark="Start (yyyy.MM.dd HH:mm)"
+                             ShowButtonSpinner="False"
+                             IsEnabled="{Binding Path=CanModifyEntry}"
+                             Grid.Column="1" Grid.Row="1" Margin="5" />
+
+        <TextBlock Text="End:" Margin="5" Grid.Row="2" />
+        <xctk:DateTimePicker Value="{Binding Path=CurrentEntry.EndDate, Mode=TwoWay}"
+                             Format="Custom"
+                             FormatString="yyyy.MM.dd HH:mm"
+                             TimePickerVisibility="Collapsed"
+                             AutoCloseCalendar="True"
+                             Watermark="End (yyyy.MM.dd HH:mm)"
+                             ShowButtonSpinner="False"
+                             IsEnabled="{Binding Path=CanModifyEntry}"
+                             Minimum="{Binding ElementName=StartDate, Path=Value}"
+                             Grid.Column="1" Grid.Row="2" Margin="5" />
+    </Grid>
+</UserControl>

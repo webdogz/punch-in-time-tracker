@@ -1,0 +1,28 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ResourceDictionary.MergedDictionaries>
+        <!-- Notify Icon -->
+        <ResourceDictionary Source="NotifyIconResources.xaml"/>
+        <!-- icons -->
+        <ResourceDictionary Source="Icons/add.xaml" />
+        <ResourceDictionary Source="Icons/backlogitem.xaml" />
+        <ResourceDictionary Source="Icons/bug.xaml" />
+        <ResourceDictionary Source="Icons/cancel.xaml" />
+        <ResourceDictionary Source="Icons/change.xaml" />
+        <ResourceDictionary Source="Icons/datafix.xaml" />
+        <ResourceDictionary Source="Icons/excel.xaml" />
+        <ResourceDictionary Source="Icons/exit.xaml" />
+        <ResourceDictionary Source="Icons/folder.xaml" />
+        <ResourceDictionary Source="Icons/list.xaml" />
+        <ResourceDictionary Source="Icons/punchin.xaml" />
+        <ResourceDictionary Source="Icons/punchout.xaml" />
+        <ResourceDictionary Source="Icons/report.xaml" />
+        <ResourceDictionary Source="Icons/save.xaml" />
+        <ResourceDictionary Source="Icons/servicecall.xaml" />
+        <ResourceDictionary Source="Icons/settings.xaml" />
+        <ResourceDictionary Source="Icons/shortcut.xaml" />
+        <ResourceDictionary Source="Icons/support.xaml" />
+        <ResourceDictionary Source="Icons/task.xaml" />
+        <ResourceDictionary Source="Icons/timer.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+</ResourceDictionary>

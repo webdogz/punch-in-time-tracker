@@ -1,0 +1,262 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:tb="http://www.hardcodet.net/taskbar"
+                    xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+                    xmlns:wui="http://schema.webdogz/wui"
+                    xmlns:app="clr-namespace:PunchIn"
+                    xmlns:ctrl="clr-namespace:PunchIn.Controls"
+                    xmlns:vm="clr-namespace:PunchIn.ViewModels">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/Webdogz.UI;component/Assets/Converters.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+    
+    <Image x:Key="icon" Source="{Binding Icon}" Height="16" Width="16" x:Shared="false" />
+    <Image x:Key="punchIcon" Source="{Binding PunchMenuIcon}" Height="16" Width="16" x:Shared="false" />
+    <ContentControl x:Key="contentIcon" x:Shared="false">
+        <Rectangle Fill="{Binding Icon, Converter={StaticResource stringToResourceConverter}}" Height="16" Width="16" />
+    </ContentControl>
+
+    <ContentControl x:Key="iconPath" x:Shared="false">
+        <Rectangle Fill="{Binding Icon, Converter={StaticResource stringToResourceConverter}}" Height="16" Width="16" />
+    </ContentControl>
+    <ContentControl x:Key="punchMenuIconPath" x:Shared="false">
+        <Rectangle Fill="{Binding PunchMenuIcon, Converter={StaticResource stringToResourceConverter}}" Height="16" Width="16" />
+    </ContentControl>
+    
+    <ControlTemplate x:Key="MenuSeparatorTemplate">
+        <Separator />
+        <!--Style="{StaticResource {x:Static MenuItem.SeparatorStyleKey}}" />-->
+    </ControlTemplate>
+
+    <DataTemplate x:Key="menuHeader">
+        <TextBlock TextTrimming="CharacterEllipsis"
+                   Text="{Binding}" MaxWidth="300" />
+    </DataTemplate>
+
+    <ContextMenu x:Shared="false" x:Key="SysTrayMenu" Placement="Top">
+        <MenuItem Header="{Binding PunchMenuText}" Command="{Binding PunchInCommand}">
+            <MenuItem.Icon>
+                <!--<Path Fill="{Binding PunchMenuIcon, Converter={StaticResource stringToResourceConverter}}" Height="16" Width="16" />-->
+                <Rectangle Fill="{Binding PunchMenuIcon, Converter={StaticResource stringToResourceConverter}}" Height="16" Width="16" />
+            </MenuItem.Icon>
+        </MenuItem>
+        <Separator />
+        <MenuItem DataContext="{Binding Path=WorkItemMenus}" ItemsSource="{Binding Path=Children}">
+            <MenuItem.Resources>
+                <!--<HierarchicalDataTemplate DataType="{x:Type vm:PunchMenuItemViewModel}" ItemsSource="{Binding Path=Children}"/>-->
+                <Style TargetType="{x:Type MenuItem}">
+                    <Setter Property="HeaderTemplate" Value="{StaticResource menuHeader}" />
+                    <Setter Property="Header" Value="{Binding Path=Text}"/>
+                    <Setter Property="ToolTip" Value="{Binding Path=Text}"/>
+                    <Setter Property="Icon" Value="{StaticResource iconPath}"/>
+                    <Setter Property="Command" Value="{Binding Path=Command}" />
+                    <Setter Property="CommandParameter" Value="{Binding Path=Id}" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding}" Value="{x:Null}">
+                            <Setter Property="Template" Value="{StaticResource MenuSeparatorTemplate}" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </MenuItem.Resources>
+        </MenuItem>
+        <MenuItem Header="Options" Command="{Binding ShowWindowCommand}">
+            <MenuItem.Icon>
+                <Rectangle Fill="{DynamicResource ResourceKey=settings}" Height="16" Width="16" />
+            </MenuItem.Icon>
+        </MenuItem>
+        <Separator />
+        <MenuItem Header="{Binding Path=Text}" DataContext="{Binding Path=ShortcutMenus}" ItemsSource="{Binding Path=Children}">
+            <MenuItem.Resources>
+                <HierarchicalDataTemplate DataType="{x:Type vm:ShortcutMenuItemViewModel}" ItemsSource="{Binding Path=Children}" />
+                <Style TargetType="{x:Type MenuItem}">
+                    <Setter Property="Header" Value="{Binding Path=Text}" />
+                    <Setter Property="Command" Value="{Binding Path=Command}" />
+                    <Setter Property="CommandParameter" Value="{Binding Path=File}" />
+                    <Setter Property="Icon" Value="{StaticResource iconPath}"/>
+                </Style>
+            </MenuItem.Resources>
+        </MenuItem>
+        <Separator />
+        <MenuItem Header="Exit" Command="{Binding ExitApplicationCommand}">
+            <MenuItem.Icon>
+                <!--<Path Fill="{DynamicResource ResourceKey=exit}" Height="16" Width="16" />-->
+                <Rectangle Fill="{DynamicResource ResourceKey=exit}" Height="16" Width="16" />
+            </MenuItem.Icon>
+        </MenuItem>
+    </ContextMenu>
+
+
+    <!-- the application's NotifyIcon -->
+    <tb:TaskbarIcon x:Key="NotifyIcon"
+                    IconSource="/Resources/stopwatch.ico"
+                    Visibility="Visible"
+                    VerticalAlignment="Top"
+                    ToolTipText="{Binding Path=ElapsedTime}"
+                    MenuActivation="RightClick"
+                    PopupActivation="LeftClick"
+                    DoubleClickCommand="{Binding ShowWindowCommand}"
+                    ContextMenu="{StaticResource SysTrayMenu}">
+
+        <tb:TaskbarIcon.DataContext>
+            <vm:NotifyIconViewModel />
+        </tb:TaskbarIcon.DataContext>
+        <tb:TaskbarIcon.TrayPopup>
+            <app:CurrentTaskPopup Opacity="0.9" DataContext="{Binding}" />
+        </tb:TaskbarIcon.TrayPopup>
+    </tb:TaskbarIcon>
+
+    <Style x:Key="DateTimePickerStyle" TargetType="{x:Type xctk:DateTimePicker}">
+        <Setter Property="Margin" Value="5"/>
+        <Setter Property="Format" Value="Custom"/>
+        <Setter Property="FormatString" Value="yyyy.MM.dd HH:mm" />
+        <Setter Property="TimePickerVisibility" Value="Collapsed" />
+        <Setter Property="AutoCloseCalendar" Value="True" />
+        <Setter Property="ShowButtonSpinner" Value="False" />
+    </Style>
+
+    <Style TargetType="{x:Type DataGrid}">
+        <Setter Property="Background" Value="#FFF" />
+        <Setter Property="AlternationCount" Value="2" />
+    </Style>
+
+    <Style TargetType="{x:Type DataGridRow}">
+        <Style.Triggers>
+            <Trigger Property="ItemsControl.AlternationIndex" Value="0">
+                <Setter Property="Background" Value="#CCC"></Setter>
+            </Trigger>
+            <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                <Setter Property="Background" Value="#EEE"></Setter>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="gridHeaderTextBlockStyle" TargetType="{x:Type TextBlock}">
+        <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Margin" Value="1" />
+    </Style>
+
+    <Style x:Key="IconButtonStyle" TargetType="{x:Type ctrl:IconButton}">
+        <Setter Property="Margin" Value="5"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"/>
+        <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ctrl:IconButton}">
+                    <Border x:Name="Chrome" BorderThickness="1" 
+                            BorderBrush="{TemplateBinding BorderBrush}" 
+                            Background="{TemplateBinding Background}">
+                        <StackPanel Height="Auto" Orientation="Horizontal">
+                            <Image Source="{TemplateBinding ImageSource}" Margin="5,0,0,0" Width="20" Height="20" Stretch="Fill"/>
+                            <TextBlock x:Name="Content" Text="{TemplateBinding Content}" 
+                                       HorizontalAlignment="Left" Foreground="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" 
+                                       FontWeight="Bold"  Margin="5" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <EventTrigger RoutedEvent="FrameworkElement.Loaded"/>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Chrome" Property="BorderBrush" Value="#FF4788c8" />
+                            <Setter Property="Foreground" Value="#FF4788c8" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"/>
+                            <Setter TargetName="Content" Property="RenderTransform" >
+                                <Setter.Value>
+                                    <TranslateTransform Y="1.0" />
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="Foreground" Value="#666666"/>
+                            <Setter TargetName="Chrome" Property="Opacity" Value="0.8" />
+                        </Trigger>
+                        <Trigger Property="IsDefault" Value="True">
+                            <Setter TargetName="Chrome" Property="BorderBrush" Value="#FF282828" />
+                        </Trigger>
+                        <Trigger Property="IsFocused" Value="True">
+                            <Setter TargetName="Chrome" Property="BorderBrush" Value="#FF282828" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
+
+    <Style x:Key="OldSchoolIconButtonStyle" TargetType="{x:Type ctrl:IconButton}">
+        <Setter Property="Margin" Value="5"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"/>
+        <Setter Property="Background">
+            <Setter.Value>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1" >
+                    <GradientStop Color="#FFEFF0F1" Offset="0.2"/>
+                    <GradientStop Color="#FF9A9A9A" Offset="0.85"/>
+                    <GradientStop Color="#FFD9D9D9" Offset="1"/>
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ctrl:IconButton}">
+                    <Border x:Name="Chrome" CornerRadius="3" BorderThickness="1" 
+                            BorderBrush="{TemplateBinding BorderBrush}" 
+                            Background="{TemplateBinding Background}">
+                        <StackPanel Height="Auto" Orientation="Horizontal">
+                            <Image Source="{TemplateBinding ImageSource}" Margin="5,0,0,0" Width="20" Height="20" Stretch="Fill"/>
+                            <TextBlock x:Name="Content" Text="{TemplateBinding Content}" 
+                                       HorizontalAlignment="Left" Foreground="{DynamicResource TaskButtonTextBrush}" 
+                                       FontWeight="Bold"  Margin="5" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <EventTrigger RoutedEvent="FrameworkElement.Loaded"/>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Chrome" Property="BorderBrush" Value="#FF4788c8" />
+                            <Setter Property="Foreground" Value="#FF4788c8" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Background">
+                                <Setter.Value>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1" >
+                                        <GradientStop Color="#FFD7E4F2" Offset="0.35"/>
+                                        <GradientStop Color="#FF9A9A9A" Offset="0.95"/>
+                                        <GradientStop Color="#FFD9D9D9" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter TargetName="Content" Property="RenderTransform" >
+                                <Setter.Value>
+                                    <TranslateTransform Y="1.0" />
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="Foreground" Value="#666666"/>
+                            <Setter TargetName="Chrome" Property="Opacity" Value="0.8" />
+                        </Trigger>
+                        <Trigger Property="IsDefault" Value="True">
+                            <Setter TargetName="Chrome" Property="BorderBrush" Value="#FF282828" />
+                        </Trigger>
+                        <Trigger Property="IsFocused" Value="True">
+                            <Setter TargetName="Chrome" Property="BorderBrush" Value="#FF282828" />
+                            <!--<Setter TargetName="Chrome" Property="Effect">
+                                <Setter.Value>
+                                    <BlurEffect Radius="2"/>
+                                </Setter.Value>
+                            </Setter>-->
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <LinearGradientBrush x:Key="mainToolBarBrushGradient" EndPoint="0.5,1" StartPoint="0.5,0">
+        <GradientStop Color="#FFDFDCDC" Offset="0.456"/>
+        <GradientStop Color="White"/>
+        <GradientStop Color="#FFC8C6C6" Offset="0.47"/>
+        <GradientStop Color="#FF505050" Offset="0.956"/>
+    </LinearGradientBrush>
+</ResourceDictionary>

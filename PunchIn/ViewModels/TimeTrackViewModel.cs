@@ -51,8 +51,7 @@ namespace PunchIn.ViewModels
                 {
                     this.currentWorkItem = value;
                     OnPropertyChanged("CurrentWorkItem");
-                    
-                    Entries = new BindingList<TimeEntry>(currentWorkItem.Entries);
+
                     if (CurrentWorkItem != null)
                         CurrentEntry = CurrentWorkItem.Entries.LastOrDefault(e => e.EndDate == null);
                     else
@@ -61,23 +60,6 @@ namespace PunchIn.ViewModels
             }
         }
         private WorkItem currentWorkItem;
-
-        public BindingList<TimeEntry> Entries
-        {
-            get 
-            {
-                return this.entries;
-                //if (this.CurrentWorkItem != null)
-                //    return new ObservableCollection<TimeEntry>(this.CurrentWorkItem.Entries);
-                //return null;
-            }
-            set
-            {
-                this.entries = value;
-                OnPropertyChanged("Entries");
-            }
-        }
-        private BindingList<TimeEntry> entries;
 
         public TimeEntry CurrentEntry
         {
@@ -103,7 +85,6 @@ namespace PunchIn.ViewModels
             {
                 isDirty = value;
                 OnPropertyChanged("IsDirty");
-                OnPropertyChanged("Entries");
             }
         }
         private bool isDirty = false;
@@ -185,7 +166,6 @@ namespace PunchIn.ViewModels
                         else
                             this.CurrentEntry = new TimeEntry { StartDate = DateTime.Now };
                         this.CurrentWorkItem.Entries.Add(this.CurrentEntry);
-                        this.Entries = new BindingList<TimeEntry>(this.CurrentWorkItem.Entries);
                     }
                 };
             }

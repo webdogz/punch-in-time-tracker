@@ -54,7 +54,3 @@ using System.Windows.Markup;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
-
-[assembly: XmlnsDefinition("http://schema.webdogz/punchui", "PunchIn.Controls")]
-[assembly: XmlnsDefinition("http://schema.webdogz/punchui", "PunchIn.Assets")]
-[assembly: XmlnsPrefix("http://schema.webdogz/punchui", "pui")]

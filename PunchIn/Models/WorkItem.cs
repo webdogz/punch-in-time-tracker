@@ -14,6 +14,8 @@ namespace PunchIn.Models
         }
         public WorkItem(Guid id)
         {
+            if (id.Equals(Guid.Empty))
+                id = Guid.NewGuid();
             this.Id = id;
         }
         public Guid Id { get; private set; }

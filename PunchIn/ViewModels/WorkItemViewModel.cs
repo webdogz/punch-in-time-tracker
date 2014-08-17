@@ -1,4 +1,6 @@
-﻿using PunchIn.Models;
+﻿using EmitMapper;
+using EmitMapper.MappingConfiguration;
+using PunchIn.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +10,9 @@ namespace PunchIn.ViewModels
     public class WorkItemViewModel : ViewModelBase
     {
         public WorkItemViewModel() { }
+
+        #region Properties
+        public Guid Id { get; set; }
         public int? TfsId
         {
             get { return tfsId; }
@@ -84,7 +89,9 @@ namespace PunchIn.ViewModels
             }
         }
         private WorkTypes workType;
+        #endregion
 
+        #region Enum Lists
         public IEnumerable<States> StatesList
         {
             get { return Enum.GetValues(typeof(States)).Cast<States>(); }
@@ -94,16 +101,31 @@ namespace PunchIn.ViewModels
         {
             get { return Enum.GetValues(typeof(WorkTypes)).Cast<WorkTypes>(); }
         }
+        #endregion
 
-        public bool? DialogResult
+        #region Methods
+        /// <summary>
+        /// New up a WorkItemViewModel based on the workItem
+        /// </summary>
+        /// <param name="workItem"></param>
+        /// <returns>New WorkItemViewModel mapped from WorkItem</returns>
+        public static WorkItemViewModel ConvertFrom(WorkItem workItem)
         {
-            get { return dialogResult; }
-            set
+            return ObjectMapperManager.DefaultInstance.GetMapper<WorkItem, WorkItemViewModel>().Map(workItem);
+        }
+        /// <summary>
+        /// Gets the WorkItem associated with this WorkItemViewModel instance
+        /// </summary>
+        public WorkItem WorkItem
+        {
+            get
             {
-                dialogResult = value;
-                OnPropertyChanged("DialogResult");
+                return ObjectMapperManager.DefaultInstance
+                    .GetMapper<WorkItemViewModel, WorkItem>(
+                        new DefaultMapConfig().ConstructBy<WorkItem>(() => new WorkItem(this.Id))
+                    ).Map(this);
             }
         }
-        private bool? dialogResult;
+        #endregion
     }
 }

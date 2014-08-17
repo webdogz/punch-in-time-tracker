@@ -1,0 +1,149 @@
+﻿<UserControl x:Class="PunchIn.Pages.Tracker"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             xmlns:content="clr-namespace:PunchIn.Pages.Content"
+             xmlns:model="clr-namespace:PunchIn.Models"
+             xmlns:vm="clr-namespace:PunchIn.ViewModels"
+             xmlns:converters="clr-namespace:PunchIn.ViewModels.Converters"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" x:Name="workItemManagerControl"
+             d:DesignHeight="300" d:DesignWidth="500">
+    <UserControl.Resources>
+        <Style x:Key="parentImage" TargetType="{x:Type Rectangle}">
+            <Setter Property="Width" Value="20" />
+            <Setter Property="Height" Value="20" />
+            <Setter Property="Margin" Value="0,0,5,0" />
+        </Style>
+        <Style x:Key="parentText" TargetType="{x:Type TextBlock}">
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="FontWeight" Value="Thin" />
+        </Style>
+        <converters:WorkItemToViewModelConverter x:Key="workItemToViewModelConverter" />
+    </UserControl.Resources>
+    <Grid Style="{StaticResource ContentRoot}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="5"/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        
+        <GridSplitter Width="5" Grid.Column="1" Grid.RowSpan="2"
+                      VerticalAlignment="Stretch"
+                      HorizontalAlignment="Center"
+                      ResizeDirection="Columns"/>
+        
+        <ListView Grid.RowSpan="2" SelectionMode="Single" 
+                  SelectedItem="{Binding Path=ViewModel.CurrentWorkItem}"
+                  ItemsSource="{Binding Path=ViewModel.WorkItems}">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn>
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Rectangle Name="workTypeImage" Fill="{DynamicResource exit}"  Style="{StaticResource parentImage}" />
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding Path=WorkType, UpdateSourceTrigger=PropertyChanged}" 
+                                                 Value="BacklogItem">
+                                        <Setter TargetName="workTypeImage" Property="Fill" 
+                                                Value="{DynamicResource backlogitem}"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Path=WorkType, UpdateSourceTrigger=PropertyChanged}" 
+                                                 Value="Bug">
+                                        <Setter TargetName="workTypeImage" Property="Fill" 
+                                                Value="{DynamicResource bug}"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Path=WorkType, UpdateSourceTrigger=PropertyChanged}" 
+                                                 Value="Change">
+                                        <Setter TargetName="workTypeImage" Property="Fill" 
+                                                Value="{DynamicResource change}"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Path=WorkType, UpdateSourceTrigger=PropertyChanged}" 
+                                                 Value="Datafix">
+                                        <Setter TargetName="workTypeImage" Property="Fill" 
+                                                Value="{DynamicResource datafix}"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Path=WorkType, UpdateSourceTrigger=PropertyChanged}" 
+                                                 Value="ServiceCall">
+                                        <Setter TargetName="workTypeImage" Property="Fill" 
+                                                Value="{DynamicResource servicecall}"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Path=WorkType, UpdateSourceTrigger=PropertyChanged}" 
+                                                 Value="Support">
+                                        <Setter TargetName="workTypeImage" Property="Fill" 
+                                                Value="{DynamicResource support}"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Path=WorkType, UpdateSourceTrigger=PropertyChanged}" 
+                                                 Value="Task">
+                                        <Setter TargetName="workTypeImage" Property="Fill" 
+                                                Value="{DynamicResource task}"/>
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="ID" Width="Auto">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=TfsId}" TextAlignment="Right"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=Title}" Header="Name" Width="100"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=Status}" Header="State" Width="100"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        
+        <content:WorkItemForm Grid.Column="2" Grid.Row="0" DataContext="{Binding Path=ViewModel.CurrentWorkItem, Converter={StaticResource workItemToViewModelConverter}}" />
+
+        <DataGrid Grid.Column="2" Grid.Row="1" Margin="5" AutoGenerateColumns="False"
+                  DataContext="{Binding Path=ViewModel}"
+                  ItemsSource="{Binding Path=CurrentWorkItem.Entries}"
+                  SelectedItem="{Binding Path=CurrentEntry}"
+                  CanUserAddRows="False"
+                  SelectionMode="Extended">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding Path=Description}"
+                                    Header="Description"/>
+                <DataGridTemplateColumn Header="Start Time">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Path=StartDate}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <xctk:DateTimePicker Style="{StaticResource DateTimePickerStyle}" 
+                                                 Value="{Binding Path=StartDate, Mode=TwoWay}"
+                                                 Watermark="Start (yyyy.MM.dd HH:mm)"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="End Time">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Path=StartDate}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <xctk:DateTimePicker Style="{StaticResource DateTimePickerStyle}" 
+                                                 Value="{Binding Path=EndDate, Mode=TwoWay}"
+                                                 Watermark="End (yyyy.MM.dd HH:mm)" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
+                <DataGridComboBoxColumn SelectedItemBinding="{Binding Path=Status, Mode=TwoWay}" ItemsSource="{Binding Path=StatesList}"
+                                        Header="Status" />
+            </DataGrid.Columns>
+        </DataGrid>
+
+    </Grid>
+</UserControl>

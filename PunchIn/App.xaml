@@ -6,10 +6,9 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="NotifyIconResources.xaml" />
-                <!--<ResourceDictionary Source="MetroResources.xaml" />-->
-                <ResourceDictionary Source="/PunchIn;component/Assets/MetroUI.xaml" />
-                <ResourceDictionary Source="/PunchIn;component/Assets/MetroUI.Dark.xaml" />
+                <ResourceDictionary Source="/PunchIn;component/Assets/PunchUI.xaml" />
+                <ResourceDictionary Source="/Webdogz.UI;component/Assets/MetroUI.xaml" />
+                <ResourceDictionary Source="/Webdogz.UI;component/Assets/MetroUI.Dark.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

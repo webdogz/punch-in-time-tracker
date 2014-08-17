@@ -1,9 +1,9 @@
-﻿using PunchIn.Themes;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Media;
+using Webdogz.UI.Presentation;
 
 namespace PunchIn.ViewModels
 {
@@ -56,7 +56,7 @@ namespace PunchIn.ViewModels
         private string selectedPalette = PaletteWP;
 
         private Color selectedAccentColor;
-        private ObservableCollection<Link> themes = new ObservableCollection<Link>();
+        private LinkCollection themes = new LinkCollection();
         private Link selectedTheme;
         
         public SettingsAppearanceViewModel()
@@ -66,8 +66,8 @@ namespace PunchIn.ViewModels
             this.themes.Add(new Link { DisplayName = "light", Source = AppearanceManager.LightThemeSource });
 
             // add additional themes
-            this.themes.Add(new Link { DisplayName = "underworld", Source = new Uri("/PunchIn;component/Themes/MetroUI.Underworld.xaml", UriKind.Relative) });
-            this.themes.Add(new Link { DisplayName = "hello kitty", Source = new Uri("/PunchIn;component/Themes/MetroUI.HelloKitty.xaml", UriKind.Relative) });
+            this.themes.Add(new Link { DisplayName = "underworld", Source = new Uri("/PunchIn;component/Assets/MetroUI.Underworld.xaml", UriKind.Relative) });
+            this.themes.Add(new Link { DisplayName = "hello kitty", Source = new Uri("/PunchIn;component/Assets/MetroUI.HelloKitty.xaml", UriKind.Relative) });
             
             SyncThemeAndColor();
 
@@ -81,6 +81,14 @@ namespace PunchIn.ViewModels
 
             // and make sure accent color is up-to-date
             this.SelectedAccentColor = AppearanceManager.Current.AccentColor;
+
+            if (AppearanceManager.Current.UserSettingsLoaded)
+            {
+                Properties.Settings.Default.SelectedAccentColor = this.SelectedAccentColor;
+                //Properties.Settings.Default.SelectedThemeDisplayName = this.SelectedTheme.DisplayName;
+                Properties.Settings.Default.SelectedThemeSource = this.SelectedTheme.Source;
+                Properties.Settings.Default.Save();
+            }
         }
 
         private void OnAppearanceManagerPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -90,7 +98,7 @@ namespace PunchIn.ViewModels
             }
         }
 
-        public ObservableCollection<Link> Themes
+        public LinkCollection Themes
         {
             get { return this.themes; }
         }
