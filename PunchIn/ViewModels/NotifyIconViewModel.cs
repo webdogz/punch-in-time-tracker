@@ -18,7 +18,8 @@ namespace PunchIn.ViewModels
     /// </summary>
     public class NotifyIconViewModel : ViewModelBase
     {
-        public NotifyIconViewModel()
+        #region Ctor and Instance Accessor
+        private NotifyIconViewModel()
         {
             this.viewModel = new TimeTrackViewModel();
             this.viewModel.PropertyChanged += (s, e) =>
@@ -36,6 +37,15 @@ namespace PunchIn.ViewModels
             IsTimerActive = false;
             timer = new DispatcherTimer(TimeSpan.FromSeconds(1), DispatcherPriority.Normal, OnTimerTick, Application.Current.Dispatcher);
         }
+        private static NotifyIconViewModel current = new NotifyIconViewModel();
+        /// <summary>
+        /// Gets the current <see cref="NotifyIconViewModel"/> instance
+        /// </summary>
+        public static NotifyIconViewModel Current
+        {
+            get { return current; }
+        }
+        #endregion
 
         private void SyncThemeSettings()
         {
@@ -437,8 +447,7 @@ namespace PunchIn.ViewModels
                     CanExecuteFunc = (o) => Application.Current.MainWindow == null,
                     CommandAction = (o) =>
                     {
-                        //Application.Current.MainWindow = new WorkItemsManager(ViewModel);
-                        Application.Current.MainWindow = new MainWindow { DataContext = self };
+                        Application.Current.MainWindow = new MainWindow();
                         Application.Current.MainWindow.Show();
                     }
                 };

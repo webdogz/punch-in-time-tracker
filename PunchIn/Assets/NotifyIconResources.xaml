@@ -98,9 +98,6 @@
                     DoubleClickCommand="{Binding ShowWindowCommand}"
                     ContextMenu="{StaticResource SysTrayMenu}">
 
-        <tb:TaskbarIcon.DataContext>
-            <vm:NotifyIconViewModel />
-        </tb:TaskbarIcon.DataContext>
         <tb:TaskbarIcon.TrayPopup>
             <app:CurrentTaskPopup Opacity="0.9" DataContext="{Binding}" />
         </tb:TaskbarIcon.TrayPopup>

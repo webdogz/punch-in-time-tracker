@@ -1,4 +1,5 @@
 ﻿using Hardcodet.Wpf.TaskbarNotification;
+using PunchIn.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -23,6 +24,7 @@ namespace PunchIn
 
             //create the notifyicon (it's a resource declared in NotifyIconResources.xaml
             notifyIcon = (TaskbarIcon)FindResource("NotifyIcon");
+            notifyIcon.DataContext = NotifyIconViewModel.Current;
         }
 
         protected override void OnExit(ExitEventArgs e)

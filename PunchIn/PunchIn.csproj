@@ -145,7 +145,7 @@
     <Compile Include="ViewModels\NotifyIconViewModel.cs" />
     <Compile Include="ViewModels\TimeEntryViewModel.cs" />
     <Compile Include="ViewModels\TimeTrackViewModel.cs" />
-    <Compile Include="ViewModels\WorkItemManagerViewModel.cs" />
+    <Compile Include="ViewModels\TrackerViewModel.cs" />
     <Compile Include="ViewModels\WorkItemViewModel.cs" />
     <Compile Include="CurrentTaskPopup.xaml.cs">
       <DependentUpon>CurrentTaskPopup.xaml</DependentUpon>
