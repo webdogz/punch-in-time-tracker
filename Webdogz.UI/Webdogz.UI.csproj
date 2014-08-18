@@ -45,25 +45,67 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandDictionary.cs" />
+    <Compile Include="Controls\AutoSelectTextBox\AutoSelectBehavior.cs" />
+    <Compile Include="Controls\AutoSelectTextBox\AutoSelectTextBox.cs" />
+    <Compile Include="Controls\AutoSelectTextBox\QueryMoveFocusEventArgs.cs" />
+    <Compile Include="Controls\Core\Primitives\Chrome\ButtonChrome.cs" />
+    <Compile Include="Controls\Core\Primitives\DateTimeUpDownBase.cs" />
+    <Compile Include="Controls\Core\Primitives\InputBase.cs" />
+    <Compile Include="Controls\Core\Primitives\Input\InputValidationErrorEventArgs.cs" />
+    <Compile Include="Controls\Core\Primitives\Input\IValidateInput.cs" />
+    <Compile Include="Controls\Core\Primitives\MouseWheelActiveTrigger.cs" />
+    <Compile Include="Controls\Core\Primitives\UpDownBase.cs" />
+    <Compile Include="Controls\Core\Utilities\KeyboardUtilities.cs" />
+    <Compile Include="Controls\Core\Utilities\TreeHelper.cs" />
     <Compile Include="Controls\DataGridCheckBoxColumn.cs" />
     <Compile Include="Controls\DataGridComboBoxColumn.cs" />
     <Compile Include="Controls\DataGridTextColumn.cs" />
+    <Compile Include="Controls\DateTimePicker\DateTimePicker.cs" />
+    <Compile Include="Controls\DateTimeUpDown\DateTimeFormat.cs" />
+    <Compile Include="Controls\DateTimeUpDown\DateTimeInfo.cs" />
+    <Compile Include="Controls\DateTimeUpDown\DateTimeParser.cs" />
+    <Compile Include="Controls\DateTimeUpDown\DateTimePart.cs" />
+    <Compile Include="Controls\DateTimeUpDown\DateTimeUpDown.cs" />
     <Compile Include="Controls\IconButton.cs" />
-    <Compile Include="Controls\MetroWindow.cs" />
     <Compile Include="Controls\ModernButton.cs" />
     <Compile Include="Controls\ModernDialog.cs" />
     <Compile Include="Controls\ModernFrame.cs" />
     <Compile Include="Controls\ModernMenu.cs" />
     <Compile Include="Controls\ModernTab.cs" />
     <Compile Include="Controls\ModernWindow.cs" />
+    <Compile Include="Controls\NumericUpDown\AllowedSpecialValuesEnum.cs" />
+    <Compile Include="Controls\NumericUpDown\ByteUpDown.cs" />
+    <Compile Include="Controls\NumericUpDown\CommonNumericUpDown.cs" />
+    <Compile Include="Controls\NumericUpDown\DecimalUpDown.cs" />
+    <Compile Include="Controls\NumericUpDown\DoubleUpDown.cs" />
+    <Compile Include="Controls\NumericUpDown\IntegerUpDown.cs" />
+    <Compile Include="Controls\NumericUpDown\LongUpDown.cs" />
+    <Compile Include="Controls\NumericUpDown\NumericUpDown.cs" />
+    <Compile Include="Controls\NumericUpDown\SByteUpDown.cs" />
+    <Compile Include="Controls\NumericUpDown\ShortUpDown.cs" />
+    <Compile Include="Controls\NumericUpDown\SingleUpDown.cs" />
+    <Compile Include="Controls\NumericUpDown\UIntegerUpDown.cs" />
+    <Compile Include="Controls\NumericUpDown\ULongUpDown.cs" />
+    <Compile Include="Controls\NumericUpDown\UShortUpDown.cs" />
     <Compile Include="Controls\SourceEventArgs.cs" />
+    <Compile Include="Controls\Spinner\ButtonSpinner.cs" />
+    <Compile Include="Controls\Spinner\SpinDirection.cs" />
+    <Compile Include="Controls\Spinner\SpinEventArgs.cs" />
+    <Compile Include="Controls\Spinner\Spinner.cs" />
+    <Compile Include="Controls\Spinner\ValidSpinDirections.cs" />
     <Compile Include="Controls\TabLayout.cs" />
+    <Compile Include="Controls\TimePicker\TimeFormat.cs" />
+    <Compile Include="Controls\TimePicker\TimeItem.cs" />
+    <Compile Include="Controls\TimePicker\TimePicker.cs" />
     <Compile Include="Controls\TransitioningContentControl.cs" />
+    <Compile Include="Controls\WatermarkTextBox\WatermarkTextBox.cs" />
     <Compile Include="Converters\BooleanToFontWeightConverter.cs" />
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
+    <Compile Include="Converters\InverseBoolConverter.cs" />
     <Compile Include="Converters\NullOrEmptyStringToVisibilityConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
     <Compile Include="Converters\StringToResourceConverter.cs" />
+    <Compile Include="Converters\TimeFormatToDateTimeFormatConverter.cs" />
     <Compile Include="Converters\ToLowerConverter.cs" />
     <Compile Include="Converters\ToUpperConverter.cs" />
     <Compile Include="DefaultContentLoader.cs" />
@@ -138,6 +180,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Assets\NumericUpDown.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Assets\GridSplitter.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -203,6 +249,30 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Assets\TreeView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Assets\ButtonChrome.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Assets\DateTimePicker.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Assets\DateTimeUpDown.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Assets\Spinner.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Assets\TimePicker.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Assets\WatermarkTextBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

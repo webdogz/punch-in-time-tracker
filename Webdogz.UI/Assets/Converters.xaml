@@ -4,10 +4,12 @@
 
     <converters:BooleanToFontWeightConverter x:Key="BooleanToFontWeightConverter" />
     <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-    <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+    <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
     <converters:NullOrEmptyStringToVisibilityConverter x:Key="NullOrEmptyStringToVisibilityConverter" />
+    <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+    <converters:StringToResourceConverter x:Key="stringToResourceConverter" />
+    <converters:TimeFormatToDateTimeFormatConverter x:Key="TimeFormatToDateTimeFormatConverter" />
     <converters:ToUpperConverter x:Key="ToUpperConverter" />
     <converters:ToLowerConverter x:Key="ToLowerConverter" />
-    <converters:StringToResourceConverter x:Key="stringToResourceConverter" />
 
 </ResourceDictionary>
