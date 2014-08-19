@@ -11,10 +11,10 @@
    <!-- =============================================================================== -->
 
    <Style x:Key="DateTimeUpDown" TargetType="{x:Type local:DateTimeUpDown}">
-      <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
-      <Setter Property="BorderBrush" Value="{DynamicResource ItemBorder}" />
+      <Setter Property="Background" Value="{DynamicResource InputBackground}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource InputBorder}" />
       <Setter Property="BorderThickness" Value="1" />
-      <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
+      <Setter Property="Foreground" Value="{DynamicResource InputText}" />
       <Setter Property="HorizontalContentAlignment" Value="Right" />
       <Setter Property="TextAlignment" Value="Right" />
       <Setter Property="WatermarkTemplate" Value="{StaticResource DefaultWatermarkTemplate}" />

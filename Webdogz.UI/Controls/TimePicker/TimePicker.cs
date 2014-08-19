@@ -263,7 +263,7 @@ namespace Webdogz.UI.Controls
 
     #region ShowButtonSpinner
 
-    public static readonly DependencyProperty ShowButtonSpinnerProperty = DependencyProperty.Register( "ShowButtonSpinner", typeof( bool ), typeof( TimePicker ), new UIPropertyMetadata( true ) );
+    public static readonly DependencyProperty ShowButtonSpinnerProperty = DependencyProperty.Register( "ShowButtonSpinner", typeof( bool ), typeof( TimePicker ), new UIPropertyMetadata( false ) );
     public bool ShowButtonSpinner
     {
       get

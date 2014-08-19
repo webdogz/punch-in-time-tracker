@@ -3,9 +3,34 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:wui="http://schema.webdogz/wui"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
-        <TextBlock Text="Display Formats" Style="{DynamicResource Heading2}" />
+        <ScrollViewer>
+            <StackPanel x:Name="Panel" MinWidth="150">
+                <TextBlock Text="DISPLAY FORMATS" Style="{DynamicResource Heading2}" />
+                
+                <DatePickerTextBox />
+                
+                <DatePicker />
+                
+                <TabControl>
+                    <TabControl.Items>
+                        <TabItem Header="Tab 1">
+                            <TabPanel>
+                                <StackPanel>
+                                    <TextBlock Text="Hello" Style="{DynamicResource Heading1}" />
+                                    <wui:DateTimePicker />
+                                </StackPanel>
+                                
+                            </TabPanel>
+                        </TabItem>
+                    </TabControl.Items>
+                </TabControl>
+                
+                
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </UserControl>

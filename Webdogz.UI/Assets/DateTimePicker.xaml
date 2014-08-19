@@ -1,10 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
                     xmlns:local="clr-namespace:Webdogz.UI.Controls"
-                    xmlns:chrome="clr-namespace:Webdogz.UI.Controls.Chrome"
-                    xmlns:conv="clr-namespace:Webdogz.UI.Converters">
-
-   <!--<conv:InverseBoolConverter x:Key="InverseBoolConverter" />-->
+                    xmlns:chrome="clr-namespace:Webdogz.UI.Controls.Chrome">
 
    <DataTemplate x:Key="DefaultWatermarkTemplate">
       <ContentControl Content="{Binding}" Foreground="Gray" Focusable="False" Margin="0,0,3,0" />
@@ -35,8 +32,8 @@
                                        CornerRadius="0,2.75,2.75,0"
                                        RenderChecked="{Binding IsOpen, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:DateTimePicker}}"
                                        RenderEnabled="{Binding IsEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:DateTimePicker}}"
-											      RenderMouseOver="{TemplateBinding IsMouseOver}"
-											      RenderPressed="{TemplateBinding IsPressed}">
+                                       RenderMouseOver="{TemplateBinding IsMouseOver}"
+                                       RenderPressed="{TemplateBinding IsPressed}">
 
                      <Grid>
                         <Grid.ColumnDefinitions>
@@ -47,14 +44,15 @@
                         <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
 
                         <Grid x:Name="arrowGlyph" IsHitTestVisible="False" Grid.Column="1" Margin="5">
-                           <Path x:Name="Arrow" Width="7" Height="4" Data="M 0,1 C0,1 0,0 0,0 0,0 3,0 3,0 3,0 3,1 3,1 3,1 4,1 4,1 4,1 4,0 4,0 4,0 7,0 7,0 7,0 7,1 7,1 7,1 6,1 6,1 6,1 6,2 6,2 6,2 5,2 5,2 5,2 5,3 5,3 5,3 4,3 4,3 4,3 4,4 4,4 4,4 3,4 3,4 3,4 3,3 3,3 3,3 2,3 2,3 2,3 2,2 2,2 2,2 1,2 1,2 1,2 1,1 1,1 1,1 0,1 0,1 z" Fill="#FF000000" />
+                           <Path x:Name="Arrow" Width="7" Height="4" Data="M 0,1 C0,1 0,0 0,0 0,0 3,0 3,0 3,0 3,1 3,1 3,1 4,1 4,1 4,1 4,0 4,0 4,0 7,0 7,0 7,0 7,1 7,1 7,1 6,1 6,1 6,1 6,2 6,2 6,2 5,2 5,2 5,2 5,3 5,3 5,3 4,3 4,3 4,3 4,4 4,4 4,4 3,4 3,4 3,4 3,3 3,3 3,3 2,3 2,3 2,3 2,2 2,2 2,2 1,2 1,2 1,2 1,1 1,1 1,1 0,1 0,1 z" 
+                                 Fill="{DynamicResource ButtonText}" />
                         </Grid>
                      </Grid>
                   </chrome:ButtonChrome>
                </Grid>
                 <ControlTemplate.Triggers>
                     <Trigger Property="IsEnabled" Value="False">
-                        <Setter Property="Fill" TargetName="Arrow" Value="#AFAFAF" />
+                        <Setter Property="Fill" TargetName="Arrow" Value="{DynamicResource ButtonTextDisabled}" />
                     </Trigger>
                 </ControlTemplate.Triggers>
             </ControlTemplate>
@@ -66,32 +64,32 @@
    <!-- DateTimePicker                                                                  -->
    <!-- =============================================================================== -->
 
-   <Style TargetType="{x:Type local:DateTimePicker}">
-      <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
-      <Setter Property="BorderThickness" Value="1" />
-      <Setter Property="Focusable" Value="False" />
-      <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
-      <Setter Property="HorizontalContentAlignment" Value="Right" />
-      <Setter Property="TextAlignment" Value="Right" />
-      <Setter Property="TimeWatermarkTemplate" Value="{StaticResource DefaultWatermarkTemplate}" />
-      <Setter Property="WatermarkTemplate" Value="{StaticResource DefaultWatermarkTemplate}" />
-      <Setter Property="Template">
-         <Setter.Value>
-            <ControlTemplate TargetType="{x:Type local:DateTimePicker}">
-               <Border>
-                  <Grid>
-                     <Grid>
-                        <Grid.ColumnDefinitions>
-                           <ColumnDefinition Width="*" />
-                           <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <local:SpinnerButton x:Name="PART_Spinner"
+    <Style TargetType="{x:Type local:DateTimePicker}">
+        <Setter Property="Background" Value="{DynamicResource WindowBackground}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Foreground" Value="{DynamicResource WindowText}" />
+        <Setter Property="HorizontalContentAlignment" Value="Right" />
+        <Setter Property="TextAlignment" Value="Right" />
+        <Setter Property="TimeWatermarkTemplate" Value="{StaticResource DefaultWatermarkTemplate}" />
+        <Setter Property="WatermarkTemplate" Value="{StaticResource DefaultWatermarkTemplate}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type local:DateTimePicker}">
+                    <Border>
+                        <Grid>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <local:SpinnerButton x:Name="PART_Spinner"
                                              IsTabStop="False"
                                              Background="{TemplateBinding Background}"
                                              BorderThickness="{TemplateBinding BorderThickness}"
                                              AllowSpin="{TemplateBinding AllowSpin}"
                                              ShowButtonSpinner="{TemplateBinding ShowButtonSpinner}">
-                           <local:WatermarkTextBox x:Name="PART_TextBox"
+                                    <local:WatermarkTextBox x:Name="PART_TextBox"
                                                    BorderThickness="0" 
                                                    Background="Transparent"
                                                    FontFamily="{TemplateBinding FontFamily}" 
@@ -111,8 +109,8 @@
                                                    TabIndex="{TemplateBinding TabIndex}"
                                                    Watermark="{TemplateBinding Watermark}"
                                                    WatermarkTemplate="{TemplateBinding WatermarkTemplate}" />
-                        </local:SpinnerButton>
-                        <ToggleButton x:Name="_calendarToggleButton"
+                                </local:SpinnerButton>
+                                <ToggleButton x:Name="_calendarToggleButton"
                                       Grid.Column="1"
                                       Background="White"
                                       Focusable="False"
@@ -120,14 +118,13 @@
                                       Style="{StaticResource DateTimePickerToggleButtonStyle}"
                                       IsHitTestVisible="{Binding IsOpen, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource InverseBoolConverter}}"
                                       IsEnabled="{Binding IsReadOnly, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource InverseBoolConverter}}" />
-                     </Grid>
-                     <Popup x:Name="PART_Popup" IsOpen="{Binding IsChecked, ElementName=_calendarToggleButton}" StaysOpen="False">
-                        <Border BorderThickness="1" Background="{StaticResource PopupBackgroundBrush}" BorderBrush="{StaticResource PopupDarkBorderBrush}" Padding="3">
-                           <StackPanel>
-                              <Calendar x:Name="PART_Calendar" BorderThickness="0" />
-                              <local:TimePicker x:Name="PART_TimeUpDown"
-                                                Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
-                                                Foreground="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" 
+                            </Grid>
+                            <Popup x:Name="PART_Popup" IsOpen="{Binding IsChecked, ElementName=_calendarToggleButton}" StaysOpen="False">
+                                <StackPanel>
+                                    <Calendar x:Name="PART_Calendar" BorderThickness="0" />
+                                    <local:TimePicker x:Name="PART_TimeUpDown"
+                                                Background="{DynamicResource InputBackground}"
+                                                Foreground="{DynamicResource InputText}" 
                                                 Format="{TemplateBinding TimeFormat}"
                                                 FormatString="{TemplateBinding TimeFormatString}"
                                                 Value="{Binding Value, RelativeSource={RelativeSource TemplatedParent}}"
@@ -137,14 +134,13 @@
                                                 Watermark="{TemplateBinding TimeWatermark}"
                                                 WatermarkTemplate="{TemplateBinding TimeWatermarkTemplate}"
                                                 Visibility="{TemplateBinding TimePickerVisibility}"/>
-                           </StackPanel>
-                        </Border>
-                     </Popup>
-                  </Grid>
-               </Border>
-            </ControlTemplate>
-         </Setter.Value>
-      </Setter>
-   </Style>
+                                </StackPanel>
+                            </Popup>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
 </ResourceDictionary>

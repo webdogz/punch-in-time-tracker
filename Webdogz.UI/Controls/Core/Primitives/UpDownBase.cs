@@ -307,7 +307,7 @@ namespace Webdogz.UI.Controls.Primitives
 
     #region ShowButtonSpinner
 
-    public static readonly DependencyProperty ShowButtonSpinnerProperty = DependencyProperty.Register( "ShowButtonSpinner", typeof( bool ), typeof( UpDownBase<T> ), new UIPropertyMetadata( true ) );
+    public static readonly DependencyProperty ShowButtonSpinnerProperty = DependencyProperty.Register( "ShowButtonSpinner", typeof( bool ), typeof( UpDownBase<T> ), new UIPropertyMetadata( false ) );
     public bool ShowButtonSpinner
     {
       get
