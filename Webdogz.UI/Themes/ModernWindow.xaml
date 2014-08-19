@@ -82,11 +82,13 @@
                                                     <StackPanel Orientation="Horizontal">
                                                         <Line x:Name="Separator" X1=".5" Y1="3" X2=".5" Y2="12" Margin="5,0" VerticalAlignment="Center" Stroke="{DynamicResource SeparatorBackground}" />
 
-                                                        <Button Content="{Binding DisplayName}"
-                                                                Command="navigation:LinkCommands.NavigateLink"
-                                                                CommandParameter="{Binding Source}"
-                                                                CommandTarget="{Binding ElementName=ContentFrame}"
-                                                                Style="{StaticResource WindowTitleButton}" />
+                                                        <controls:IconButton Content="{Binding DisplayName}"
+                                                                             Command="navigation:LinkCommands.NavigateLink"
+                                                                             CommandParameter="{Binding Source}"
+                                                                             CommandTarget="{Binding ElementName=ContentFrame}"
+                                                                             IconWidth="16" IconHeight="16"
+                                                                             IconData="{Binding IconData}"
+                                                                             ToolTip="{Binding IconToolTip}"/>
                                                     </StackPanel>
                                                     <DataTemplate.Triggers>
                                                         <DataTrigger Binding="{Binding RelativeSource={RelativeSource PreviousData}}" Value="{x:Null}">

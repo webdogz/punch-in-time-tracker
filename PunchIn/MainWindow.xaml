@@ -8,7 +8,8 @@
                   Icon="/PunchIn;component/Resources/stopwatch.ico"
                   ContentSource="/Pages/Tracker.xaml">
     <wui:ModernWindow.TitleLinks>
-        <wui:Link DisplayName="Settings" Source="/Pages/Settings.xaml" />
+        <wui:TitleLink DisplayName="Settings" IconData="{DynamicResource CogGeometry}" Source="/Pages/Settings.xaml" />
+        <wui:TitleLink IconData="{DynamicResource MessageBubbleGeometry}" Source="/Pages/Preferences.xaml" />
     </wui:ModernWindow.TitleLinks>
 
     <wui:ModernWindow.MenuLinkGroups>
@@ -26,7 +27,6 @@
         <wui:LinkGroup DisplayName="Settings" GroupKey="settings">
             <wui:LinkGroup.Links>
                 <wui:Link DisplayName="Theme" Source="/Pages/Settings.xaml" />
-                <wui:Link DisplayName="Preferences" Source="/Pages/Preferences.xaml" />
             </wui:LinkGroup.Links>
         </wui:LinkGroup>
     </wui:ModernWindow.MenuLinkGroups>

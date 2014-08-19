@@ -27,7 +27,7 @@ namespace Webdogz.UI.Controls
         /// <summary>
         /// Identifies the TitleLinks dependency property.
         /// </summary>
-        public static readonly DependencyProperty TitleLinksProperty = DependencyProperty.Register("TitleLinks", typeof(LinkCollection), typeof(ModernWindow));
+        public static readonly DependencyProperty TitleLinksProperty = DependencyProperty.Register("TitleLinks", typeof(TitleLinkCollection), typeof(ModernWindow));
         /// <summary>
         /// Identifies the IsTitleVisible dependency property.
         /// </summary>
@@ -60,7 +60,7 @@ namespace Webdogz.UI.Controls
 
             // create empty collections
             SetCurrentValue(MenuLinkGroupsProperty, new LinkGroupCollection());
-            SetCurrentValue(TitleLinksProperty, new LinkCollection());
+            SetCurrentValue(TitleLinksProperty, new TitleLinkCollection());
 
             // associate window commands with this instance
             this.CommandBindings.Add(new CommandBinding(SystemCommands.CloseWindowCommand, OnCloseWindow));
@@ -203,9 +203,9 @@ namespace Webdogz.UI.Controls
         /// <summary>
         /// Gets or sets the collection of links that appear in the menu in the title area of the window.
         /// </summary>
-        public LinkCollection TitleLinks
+        public TitleLinkCollection TitleLinks
         {
-            get { return (LinkCollection)GetValue(TitleLinksProperty); }
+            get { return (TitleLinkCollection)GetValue(TitleLinksProperty); }
             set { SetValue(TitleLinksProperty, value); }
         }
 

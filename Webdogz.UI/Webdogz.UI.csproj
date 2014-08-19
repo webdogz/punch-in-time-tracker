@@ -126,7 +126,9 @@
     <Compile Include="Presentation\AppearanceManager.cs" />
     <Compile Include="Presentation\CommandBase.cs" />
     <Compile Include="Presentation\Displayable.cs" />
+    <Compile Include="Presentation\TitleLink.cs" />
     <Compile Include="Presentation\Link.cs" />
+    <Compile Include="Presentation\TitleLinkCollection.cs" />
     <Compile Include="Presentation\LinkCollection.cs" />
     <Compile Include="Presentation\LinkGroup.cs" />
     <Compile Include="Presentation\LinkGroupCollection.cs" />
@@ -165,6 +167,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Assets\ContextMenu.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Assets\Glyphs.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -277,6 +283,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Themes\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\IconButton.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

@@ -6,9 +6,10 @@ namespace Webdogz.UI.Controls
 {
     public class IconButton : Button
     {
-        public static readonly DependencyProperty IconBrushProperty =
-            DependencyProperty.Register("IconBrush", typeof(Brush), typeof(IconButton), new UIPropertyMetadata(null));
-
+        /// <summary>
+        /// Identifies the IconToolTip property
+        /// </summary>
+        public static readonly DependencyProperty IconToolTipProperty = DependencyProperty.Register("IconToolTip", typeof(string), typeof(IconButton));
         /// <summary>
         /// Identifies the IconData property.
         /// </summary>
@@ -42,6 +43,18 @@ namespace Webdogz.UI.Controls
         }
 
         /// <summary>
+        /// Gets or sets the tooltip displayed when hovering over the icon.
+        /// </summary>
+        /// <value>
+        /// The icon tooltip.
+        /// </value>
+        public string IconToolTip
+        {
+            get { return (string)GetValue(IconToolTipProperty); }
+            set { SetValue(IconToolTipProperty, value); }
+        }
+
+        /// <summary>
         /// Gets or sets the icon height.
         /// </summary>
         /// <value>
@@ -63,12 +76,6 @@ namespace Webdogz.UI.Controls
         {
             get { return (double)GetValue(IconWidthProperty); }
             set { SetValue(IconWidthProperty, value); }
-        }
-
-        public Brush IconBrush
-        {
-            get { return (Brush)GetValue(IconBrushProperty); }
-            set { SetValue(IconBrushProperty, value); }
         }
     }
 }

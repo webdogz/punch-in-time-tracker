@@ -170,6 +170,7 @@
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="Foreground" Value="{DynamicResource ButtonTextHover}"/>
+                <Setter Property="Background" Value="{DynamicResource ButtonBackgroundHover}"/>
             </Trigger>
             <Trigger Property="IsPressed" Value="True">
                 <Setter Property="Foreground" Value="{DynamicResource ButtonTextPressed}" />

@@ -4,6 +4,7 @@
                     xmlns:shell="http://schemas.microsoft.com/winfx/2006/xaml/presentation/shell">
 
     <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/Webdogz.UI;component/Themes/IconButton.xaml" />
         <ResourceDictionary Source="/Webdogz.UI;component/Themes/ModernButton.xaml" />
         <ResourceDictionary Source="/Webdogz.UI;component/Themes/ModernDialog.xaml" />
         <ResourceDictionary Source="/Webdogz.UI;component/Themes/ModernFrame.xaml" />
