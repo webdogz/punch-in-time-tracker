@@ -8,6 +8,7 @@
         <ResourceDictionary Source="/Webdogz.UI;component/Assets/Button.xaml" />
         <ResourceDictionary Source="/Webdogz.UI;component/Assets/Converters.xaml" />
         <ResourceDictionary Source="/Webdogz.UI;component/Assets/TextBlock.xaml" />
+        <ResourceDictionary Source="/Webdogz.UI;component/Themes/IconButton.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
     <Style TargetType="controls:ModernWindow">
@@ -88,7 +89,8 @@
                                                                              CommandTarget="{Binding ElementName=ContentFrame}"
                                                                              IconWidth="16" IconHeight="16"
                                                                              IconData="{Binding IconData}"
-                                                                             ToolTip="{Binding IconToolTip}"/>
+                                                                             ToolTip="{Binding IconToolTip}"
+                                                                             Style="{StaticResource WindowTitleLinkStyle}"/>
                                                     </StackPanel>
                                                     <DataTemplate.Triggers>
                                                         <DataTrigger Binding="{Binding RelativeSource={RelativeSource PreviousData}}" Value="{x:Null}">
@@ -135,7 +137,7 @@
                                         <!-- back button -->
                                         <controls:ModernButton Margin="8,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"
                                                                EllipseDiameter="24" IconWidth="12" IconHeight="12"
-                                                               IconData="F1 M 33,22L 33,26L 19.75,26L 27,33L 20.5,33L 11,24L 20.5,15L 27,15L 19.75,22L 33,22 Z"
+                                                               IconData="{DynamicResource MenuBackButtonGeometry}"
                                                                Command="NavigationCommands.BrowseBack"
                                                                CommandTarget="{Binding ElementName=ContentFrame}" 
                                                                ToolTip="{x:Static webdogz:Resources.Back}"
@@ -158,7 +160,7 @@
                                               Stroke="{DynamicResource WindowText}"
                                               StrokeThickness="1"
                                               Stretch="None"
-                                              Data="F1 M1,10 L3,10 M5,10 L7,10 M9,10 L11,10 M2,9 L2,11 M6,9 L6,11 M10,9 L10,11 M5,6 L7,6 M9,6 L11,6 M6,5 L6,7 M10,5 L10,7 M9,2 L11,2 M10,1 L10,3" />
+                                              Data="{DynamicResource WindowResizeGripGeometry}" />
                                     </Grid>
                                 </Grid>
                             </AdornerDecorator>

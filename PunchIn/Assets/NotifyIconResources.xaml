@@ -133,13 +133,13 @@
         <Setter Property="Margin" Value="1" />
     </Style>
 
-    <Style x:Key="IconButtonStyle" TargetType="{x:Type ctrl:IconButton}">
+    <Style x:Key="ImageButtonStyle" TargetType="{x:Type ctrl:ImageButton}">
         <Setter Property="Margin" Value="5"/>
         <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"/>
         <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type ctrl:IconButton}">
+                <ControlTemplate TargetType="{x:Type ctrl:ImageButton}">
                     <Border x:Name="Chrome" BorderThickness="1" 
                             BorderBrush="{TemplateBinding BorderBrush}" 
                             Background="{TemplateBinding Background}">
@@ -182,7 +182,7 @@
 
 
 
-    <Style x:Key="OldSchoolIconButtonStyle" TargetType="{x:Type ctrl:IconButton}">
+    <Style x:Key="OldSchoolIconButtonStyle" TargetType="{x:Type ctrl:ImageButton}">
         <Setter Property="Margin" Value="5"/>
         <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"/>
         <Setter Property="Background">
@@ -196,7 +196,7 @@
         </Setter>
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type ctrl:IconButton}">
+                <ControlTemplate TargetType="{x:Type ctrl:ImageButton}">
                     <Border x:Name="Chrome" CornerRadius="3" BorderThickness="1" 
                             BorderBrush="{TemplateBinding BorderBrush}" 
                             Background="{TemplateBinding Background}">

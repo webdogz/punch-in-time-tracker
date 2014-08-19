@@ -52,7 +52,7 @@
                        Text="There is no current time entry so I can't show you any details. Click 'Punch In Now!' button below to start."
                        TextWrapping="Wrap"
                        Visibility="{Binding Path=IsTimerDone, Converter={StaticResource boolToVis}, FallbackValue=Visible}" />
-            <ctrl:IconButton Style="{StaticResource IconButtonStyle}" Grid.Row="3" Grid.ColumnSpan="2"
+            <ctrl:ImageButton Style="{StaticResource ImageButtonStyle}" Grid.Row="3" Grid.ColumnSpan="2"
                              Content="Punch In Now!" ImageSource="/PunchIn;component/Resources/punchin.png"
                              Command="{Binding Path=PunchInCommand}"
                              Visibility="{Binding Path=IsTimerDone, Converter={StaticResource boolToVis}, FallbackValue=Visible}" />

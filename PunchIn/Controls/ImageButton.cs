@@ -9,9 +9,9 @@ using System.Windows.Media;
 
 namespace PunchIn.Controls
 {
-    public class IconButton : Button
+    public class ImageButton : Button
     {
-        static IconButton()
+        static ImageButton()
         {
             //set DefaultStyleKeyProperty
         }
@@ -24,6 +24,6 @@ namespace PunchIn.Controls
 
         // Using a DependencyProperty as the backing store for ImageSource.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty ImageSourceProperty =
-            DependencyProperty.Register("ImageSource", typeof(ImageSource), typeof(IconButton), new UIPropertyMetadata(null));
+            DependencyProperty.Register("ImageSource", typeof(ImageSource), typeof(ImageButton), new UIPropertyMetadata(null));
     }
 }
