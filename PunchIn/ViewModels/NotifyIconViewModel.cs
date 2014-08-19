@@ -28,8 +28,11 @@ namespace PunchIn.ViewModels
                     BuildWorkItemMenusAsync();
                 if (e.PropertyName == "CurrentEntry" && CurrentTimeEntry == null)
                 {
-                    CurrentTimeEntry = new TimeEntryViewModel(this.ViewModel);
-                    IsTimerActive = true;
+                    if (this.viewModel.CurrentEntry != null)
+                    {
+                        CurrentTimeEntry = new TimeEntryViewModel(this.ViewModel);
+                        IsTimerActive = true;
+                    }
                 }
             };
             BuildShortcutMenusAsync();
