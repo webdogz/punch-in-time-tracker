@@ -141,6 +141,24 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="TaskbarNotification\BalloonIcon.cs" />
+    <Compile Include="TaskbarNotification\Interop\BalloonFlags.cs" />
+    <Compile Include="TaskbarNotification\Interop\IconDataMembers.cs" />
+    <Compile Include="TaskbarNotification\Interop\IconState.cs" />
+    <Compile Include="TaskbarNotification\Interop\MouseEvent.cs" />
+    <Compile Include="TaskbarNotification\Interop\NotifyCommand.cs" />
+    <Compile Include="TaskbarNotification\Interop\NotifyIconData.cs" />
+    <Compile Include="TaskbarNotification\Interop\NotifyIconVersion.cs" />
+    <Compile Include="TaskbarNotification\Interop\Point.cs" />
+    <Compile Include="TaskbarNotification\Interop\TrayInfo.cs" />
+    <Compile Include="TaskbarNotification\Interop\WinApi.cs" />
+    <Compile Include="TaskbarNotification\Interop\WindowClass.cs" />
+    <Compile Include="TaskbarNotification\Interop\WindowMessageSink.cs" />
+    <Compile Include="TaskbarNotification\PopupActivationMode.cs" />
+    <Compile Include="TaskbarNotification\RoutedEventHelper.cs" />
+    <Compile Include="TaskbarNotification\TaskbarIcon.cs" />
+    <Compile Include="TaskbarNotification\TaskbarIcon.Declarations.cs" />
+    <Compile Include="TaskbarNotification\Util.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources.resx">
@@ -318,6 +336,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="TaskbarNotification\Diagrams\TaskbarIcon Overview.cd">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

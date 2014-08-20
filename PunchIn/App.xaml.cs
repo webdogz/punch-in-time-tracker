@@ -1,5 +1,4 @@
-﻿using Hardcodet.Wpf.TaskbarNotification;
-using PunchIn.ViewModels;
+﻿using PunchIn.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -8,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using Webdogz.UI.Presentation;
+using Webdogz.UI.TaskbarNotification;
 
 namespace PunchIn
 {

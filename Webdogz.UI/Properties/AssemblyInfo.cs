@@ -22,7 +22,7 @@ using System.Windows.Markup;
 // to COM components.  If you need to access a type in this assembly from 
 // COM, set the ComVisible attribute to true on that type.
 [assembly: ComVisible(false)]
-[assembly: CLSCompliant(true)]
+//[assembly: CLSCompliant(true)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("1e96ef2a-cd85-4d65-8b7c-b2cb93d045f1")]
@@ -45,6 +45,7 @@ using System.Windows.Markup;
 [assembly: XmlnsDefinition("http://schema.webdogz/wui", "Webdogz.UI.Controls")]
 [assembly: XmlnsDefinition("http://schema.webdogz/wui", "Webdogz.UI.Converters")]
 [assembly: XmlnsDefinition("http://schema.webdogz/wui", "Webdogz.UI.Navigation")]
+[assembly: XmlnsDefinition("http://schema.webdogz/wui", "Webdogz.UI.TaskbarNotification")]
 [assembly: XmlnsPrefix("http://schema.webdogz/wui", "wui")]
 
 [assembly: ThemeInfo(
