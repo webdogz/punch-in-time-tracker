@@ -128,15 +128,16 @@
     </Style>
 
     <Style x:Key="gridHeaderTextBlockStyle" TargetType="{x:Type TextBlock}">
-        <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}" />
+        <Setter Property="Background" Value="{DynamicResource ItemBackgroundHover}" />
+        <Setter Property="Foreground" Value="{DynamicResource ItemText}" />
         <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="Margin" Value="1" />
     </Style>
 
     <Style x:Key="ImageButtonStyle" TargetType="{x:Type ctrl:ImageButton}">
         <Setter Property="Margin" Value="5"/>
-        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"/>
-        <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ButtonBorder}"/>
+        <Setter Property="Background" Value="{DynamicResource ButtonBackground}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ctrl:ImageButton}">
@@ -144,35 +145,42 @@
                             BorderBrush="{TemplateBinding BorderBrush}" 
                             Background="{TemplateBinding Background}">
                         <StackPanel Height="Auto" Orientation="Horizontal">
-                            <Image Source="{TemplateBinding ImageSource}" Margin="5,0,0,0" Width="20" Height="20" Stretch="Fill"/>
+                            <Image Source="{TemplateBinding ImageSource}" Margin="5,0,0,0" 
+                                   Width="{TemplateBinding ImageWidth}" Height="{TemplateBinding ImageHeight}" Stretch="Fill"
+                                   Visibility="{TemplateBinding ImageSource, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=inverse}"/>
+                            <Rectangle Fill="{TemplateBinding ImageBrush}" Margin="5,0,0,0" 
+                                       Width="{TemplateBinding ImageWidth}" Height="{TemplateBinding ImageHeight}" Stretch="Uniform"
+                                       Visibility="{TemplateBinding ImageBrush, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=inverse}"/>
                             <TextBlock x:Name="Content" Text="{TemplateBinding Content}" 
-                                       HorizontalAlignment="Left" Foreground="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" 
+                                       HorizontalAlignment="Left" Foreground="{DynamicResource ButtonText}" 
                                        FontWeight="Bold"  Margin="5" VerticalAlignment="Center" />
                         </StackPanel>
                     </Border>
                     <ControlTemplate.Triggers>
                         <EventTrigger RoutedEvent="FrameworkElement.Loaded"/>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Chrome" Property="BorderBrush" Value="#FF4788c8" />
-                            <Setter Property="Foreground" Value="#FF4788c8" />
+                            <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource ButtonBorderHover}" />
+                            <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource ButtonBackgroundHover}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource ButtonTextHover}" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"/>
-                            <Setter TargetName="Content" Property="RenderTransform" >
+                            <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource ButtonBackgroundPressed}"/>
+                            <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource ButtonBorderPressed}"/>
+                            <Setter TargetName="Content" Property="RenderTransform">
                                 <Setter.Value>
                                     <TranslateTransform Y="1.0" />
                                 </Setter.Value>
                             </Setter>
                         </Trigger>
-                        <Trigger Property="IsEnabled" Value="false">
-                            <Setter Property="Foreground" Value="#666666"/>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="{DynamicResource ButtonTextDisabled}"/>
                             <Setter TargetName="Chrome" Property="Opacity" Value="0.8" />
                         </Trigger>
                         <Trigger Property="IsDefault" Value="True">
-                            <Setter TargetName="Chrome" Property="BorderBrush" Value="#FF282828" />
+                            <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource Accent}" />
                         </Trigger>
                         <Trigger Property="IsFocused" Value="True">
-                            <Setter TargetName="Chrome" Property="BorderBrush" Value="#FF282828" />
+                            <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource Accent}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -180,79 +188,4 @@
         </Setter>
     </Style>
 
-
-
-    <Style x:Key="OldSchoolIconButtonStyle" TargetType="{x:Type ctrl:ImageButton}">
-        <Setter Property="Margin" Value="5"/>
-        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"/>
-        <Setter Property="Background">
-            <Setter.Value>
-                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1" >
-                    <GradientStop Color="#FFEFF0F1" Offset="0.2"/>
-                    <GradientStop Color="#FF9A9A9A" Offset="0.85"/>
-                    <GradientStop Color="#FFD9D9D9" Offset="1"/>
-                </LinearGradientBrush>
-            </Setter.Value>
-        </Setter>
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type ctrl:ImageButton}">
-                    <Border x:Name="Chrome" CornerRadius="3" BorderThickness="1" 
-                            BorderBrush="{TemplateBinding BorderBrush}" 
-                            Background="{TemplateBinding Background}">
-                        <StackPanel Height="Auto" Orientation="Horizontal">
-                            <Image Source="{TemplateBinding ImageSource}" Margin="5,0,0,0" Width="20" Height="20" Stretch="Fill"/>
-                            <TextBlock x:Name="Content" Text="{TemplateBinding Content}" 
-                                       HorizontalAlignment="Left" Foreground="{DynamicResource TaskButtonTextBrush}" 
-                                       FontWeight="Bold"  Margin="5" VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <EventTrigger RoutedEvent="FrameworkElement.Loaded"/>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Chrome" Property="BorderBrush" Value="#FF4788c8" />
-                            <Setter Property="Foreground" Value="#FF4788c8" />
-                        </Trigger>
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter Property="Background">
-                                <Setter.Value>
-                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1" >
-                                        <GradientStop Color="#FFD7E4F2" Offset="0.35"/>
-                                        <GradientStop Color="#FF9A9A9A" Offset="0.95"/>
-                                        <GradientStop Color="#FFD9D9D9" Offset="1"/>
-                                    </LinearGradientBrush>
-                                </Setter.Value>
-                            </Setter>
-                            <Setter TargetName="Content" Property="RenderTransform" >
-                                <Setter.Value>
-                                    <TranslateTransform Y="1.0" />
-                                </Setter.Value>
-                            </Setter>
-                        </Trigger>
-                        <Trigger Property="IsEnabled" Value="false">
-                            <Setter Property="Foreground" Value="#666666"/>
-                            <Setter TargetName="Chrome" Property="Opacity" Value="0.8" />
-                        </Trigger>
-                        <Trigger Property="IsDefault" Value="True">
-                            <Setter TargetName="Chrome" Property="BorderBrush" Value="#FF282828" />
-                        </Trigger>
-                        <Trigger Property="IsFocused" Value="True">
-                            <Setter TargetName="Chrome" Property="BorderBrush" Value="#FF282828" />
-                            <!--<Setter TargetName="Chrome" Property="Effect">
-                                <Setter.Value>
-                                    <BlurEffect Radius="2"/>
-                                </Setter.Value>
-                            </Setter>-->
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-    <LinearGradientBrush x:Key="mainToolBarBrushGradient" EndPoint="0.5,1" StartPoint="0.5,0">
-        <GradientStop Color="#FFDFDCDC" Offset="0.456"/>
-        <GradientStop Color="White"/>
-        <GradientStop Color="#FFC8C6C6" Offset="0.47"/>
-        <GradientStop Color="#FF505050" Offset="0.956"/>
-    </LinearGradientBrush>
 </ResourceDictionary>

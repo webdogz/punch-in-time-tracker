@@ -7,44 +7,50 @@
     </ResourceDictionary.MergedDictionaries>
 
     <Style x:Key="IconButtonStyle" TargetType="{x:Type controls:IconButton}">
-        <!--<Setter Property="FocusVisualStyle" Value="{x:Null}"/>-->
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Foreground" Value="{DynamicResource ModernButtonText}" />
-        <Setter Property="Padding" Value="0" />
-        <Setter Property="Margin" Value="0" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type controls:IconButton}">
-                    <Grid x:Name="grid">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
+                    <Border Name="Chrome"
+                            Background="{TemplateBinding Background}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            Padding="{TemplateBinding Padding}"
+                            Margin="{TemplateBinding Margin}"
+                            SnapsToDevicePixels="true">
+                        <Grid x:Name="grid">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
 
-                        <Path x:Name="icon"
-                              Visibility="{TemplateBinding IconData, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=inverse}"
-                              Data="{TemplateBinding IconData}" 
-                              Width="{TemplateBinding IconWidth}"
-                              Height="{TemplateBinding IconHeight}"
-                              Fill="{TemplateBinding Foreground}"
-                              Stretch="Uniform" HorizontalAlignment="Center"
-                              VerticalAlignment="Center"
-                              ToolTip="{TemplateBinding IconToolTip}"/>
-                        <TextBlock Grid.Column="1" DataContext="{TemplateBinding Content}"
-                                   Visibility="{Binding Converter={StaticResource NullOrEmptyStringToVisibilityConverter}, ConverterParameter=inverse}"
-                                   Text="{Binding Converter={StaticResource ToLowerConverter}}"
-                                   TextTrimming="CharacterEllipsis"
-                                   Foreground="{TemplateBinding Foreground}"
-                                   Margin="4,-1,0,0"
-                                   VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                    </Grid>
+                            <Path x:Name="icon"
+                                  Visibility="{TemplateBinding IconData, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=inverse}"
+                                  Data="{TemplateBinding IconData}" 
+                                  Width="{TemplateBinding IconWidth}"
+                                  Height="{TemplateBinding IconHeight}"
+                                  Fill="{TemplateBinding Foreground}"
+                                  Stretch="Uniform" HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"
+                                  ToolTip="{TemplateBinding IconToolTip}"/>
+                            <TextBlock Grid.Column="1" DataContext="{TemplateBinding Content}"
+                                       Visibility="{Binding Converter={StaticResource NullOrEmptyStringToVisibilityConverter}, ConverterParameter=inverse}"
+                                       Text="{Binding Converter={StaticResource ToLowerConverter}}"
+                                       TextTrimming="CharacterEllipsis"
+                                       Foreground="{TemplateBinding Foreground}"
+                                       Margin="4,-1,0,0"
+                                       VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Grid>
+                    </Border>
                     <ControlTemplate.Triggers>
-                        <Trigger Property="IsEnabled" Value="false">
+                        <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Foreground" Value="{DynamicResource ButtonTextDisabled}"/>
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="{DynamicResource ButtonBackgroundHover}" />
+                            <Setter Property="Background" Value="{DynamicResource ButtonBackground}" />
                             <Setter Property="BorderBrush" Value="{DynamicResource ButtonBorderHover}"/>
                             <Setter Property="Foreground" Value="{DynamicResource ButtonTextHover}"/>
                             <Setter TargetName="icon" Property="Fill" Value="{DynamicResource ModernButtonBorderHover}" />
@@ -61,66 +67,9 @@
         </Setter>
     </Style>
 
-    <!--<Style x:Key="IconButtonStyle" TargetType="{x:Type controls:IconButton}">
-        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-        <Setter Property="HorizontalContentAlignment" Value="Center" />
-        <Setter Property="VerticalContentAlignment" Value="Center" />
-        <Setter Property="Foreground" Value="{DynamicResource ModernButtonText}" />
-        <Setter Property="Padding" Value="1" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type controls:IconButton}">
-                    <Grid x:Name="grid" Margin="{TemplateBinding Padding}" >
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-
-                        <Grid Width="{TemplateBinding Width}"
-                              Height="{TemplateBinding Height}">
-                            <Path x:Name="icon"
-                                  Visibility="{TemplateBinding IconData, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=inverse}"
-                                  Data="{TemplateBinding IconData}" 
-                                  Width="{TemplateBinding IconWidth}"
-                                  Height="{TemplateBinding IconHeight}"
-                                  Fill="{TemplateBinding Foreground}"
-                                  Stretch="Uniform" HorizontalAlignment="Center"
-                                  VerticalAlignment="Center"
-                                  ToolTip="{TemplateBinding IconToolTip}"/>
-                        </Grid>
-                        <Grid Grid.Column="1" >
-                            <TextBlock DataContext="{TemplateBinding Content}"
-                                       Visibility="{Binding Converter={StaticResource NullOrEmptyStringToVisibilityConverter}, ConverterParameter=inverse}"
-                                       Text="{Binding Converter={StaticResource ToLowerConverter}}"
-                                       TextTrimming="CharacterEllipsis"
-                                       Foreground="{TemplateBinding Foreground}"
-                                       Margin="4,-1,0,0"
-                                       VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                        </Grid>
-                    </Grid>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsEnabled" Value="false">
-                            <Setter Property="Foreground" Value="{DynamicResource ButtonTextDisabled}"/>
-                        </Trigger>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="{DynamicResource ButtonBackgroundHover}" />
-                            <Setter Property="BorderBrush" Value="{DynamicResource ButtonBorderHover}"/>
-                            <Setter Property="Foreground" Value="{DynamicResource ButtonTextHover}"/>
-                            <Setter TargetName="icon" Property="Fill" Value="{DynamicResource ModernButtonBorderHover}" />
-                        </Trigger>
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter Property="Background" Value="{DynamicResource ButtonBackgroundPressed}" />
-                            <Setter Property="BorderBrush" Value="{DynamicResource ButtonBorderPressed}"/>
-                            <Setter Property="Foreground" Value="{DynamicResource ButtonTextPressed}"/>
-                            <Setter TargetName="icon" Property="Fill" Value="{DynamicResource ModernButtonIconForegroundPressed}" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>-->
     <Style x:Key="WindowTitleLinkStyle" BasedOn="{StaticResource IconButtonStyle}" TargetType="{x:Type controls:IconButton}">
-        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Margin" Value="0"/>
+        <Setter Property="Padding" Value="5,2"/>
         <Setter Property="Height" Value="24"/>
     </Style>
 </ResourceDictionary>
