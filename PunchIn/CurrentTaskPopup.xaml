@@ -5,15 +5,29 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:wui="http://schema.webdogz/wui"
              xmlns:ctrl="clr-namespace:PunchIn.Controls"
-             mc:Ignorable="d" d:DesignWidth="400" Height="180" Width="400" Margin="0,0,0,20" >
+             mc:Ignorable="d" d:DesignWidth="400" Height="180" Width="400" Margin="0,0,0,20" 
+             Foreground="{DynamicResource WindowText}">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="boolToVis"/>
-        <LinearGradientBrush x:Key="BackgroundGradient" EndPoint="0.5,1" StartPoint="0.5,0">
-            <GradientStop Color="#FFA5A5A5"
+        <LinearGradientBrush x:Key="BackgroundGradient" EndPoint="0,1" StartPoint="0,0">
+            <GradientStop Color="{DynamicResource AccentColor}"
                           Offset="0" />
-            <GradientStop Color="White"
+            <GradientStop Offset=".25" 
+                          Color="{DynamicResource WindowBackgroundColor}" />
+            <GradientStop Color="{DynamicResource WindowBackgroundColor}"
                           Offset="1" />
         </LinearGradientBrush>
+        <LinearGradientBrush x:Key="BackgroundInverseGradient" EndPoint="0.5,1" StartPoint="0.5,0">
+            <GradientStop Color="{DynamicResource WindowBackgroundColor}"
+                          Offset="0" />
+            <GradientStop Color="{DynamicResource AccentColor}"
+                          Offset="1" />
+        </LinearGradientBrush>
+        <RadialGradientBrush x:Key="BackgroundRadialGradient" Center="0.5,1" GradientOrigin="0,1" 
+                             Opacity="0.3" RadiusX="0.8" RadiusY="0.8">
+            <GradientStop Offset="1" Color="{DynamicResource WindowBackgroundColor}" />
+            <GradientStop Offset="1" Color="{DynamicResource AccentColor}" />
+        </RadialGradientBrush>
     </UserControl.Resources>
     <Grid>
         <Border CornerRadius="5,5,0,0"
@@ -26,7 +40,9 @@
             <Border.Effect>
                 <DropShadowEffect BlurRadius="5" Opacity="0.7" Direction="0"/>
             </Border.Effect>
+            <Border Background="{StaticResource BackgroundRadialGradient}" />
         </Border>
+        
         <Grid Margin="20" Name="contentGrid">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
@@ -78,13 +94,14 @@
             </Grid>
             <Border BorderBrush="Black" BorderThickness="1" CornerRadius="5"
                     Grid.Row="3" Grid.ColumnSpan="2" Margin="0,5"
-                    Visibility="{Binding Path=IsTimerActive, Converter={StaticResource boolToVis}, FallbackValue=Hidden}">
-                <Border.Background>
+                    Visibility="{Binding Path=IsTimerActive, Converter={StaticResource boolToVis}, FallbackValue=Hidden}"
+                    Background="{StaticResource BackgroundInverseGradient}">
+                <!--<Border.Background>
                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                        <GradientStop Color="WhiteSmoke" Offset="0"/>
+                        <GradientStop Color="{DynamicResource WindowBackgroundColor}" Offset="0"/>
                         <GradientStop Color="#FFA5A5A5" Offset="1"/>
                     </LinearGradientBrush>
-                </Border.Background>
+                </Border.Background>-->
                 <Grid>
                     <TextBlock Margin="5"
                                Text="{Binding Path=ElapsedTime}"
