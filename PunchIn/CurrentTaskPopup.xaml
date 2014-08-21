@@ -8,6 +8,12 @@
              mc:Ignorable="d" d:DesignWidth="400" Height="180" Width="400" Margin="0,0,0,20" >
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="boolToVis"/>
+        <LinearGradientBrush x:Key="BackgroundGradient" EndPoint="0.5,1" StartPoint="0.5,0">
+            <GradientStop Color="#FFA5A5A5"
+                          Offset="0" />
+            <GradientStop Color="White"
+                          Offset="1" />
+        </LinearGradientBrush>
     </UserControl.Resources>
     <Grid>
         <Border CornerRadius="5,5,0,0"
@@ -15,16 +21,8 @@
                 Width="Auto"
                 Height="Auto"
                 HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch">
-            <Border.Background>
-                <LinearGradientBrush EndPoint="0.5,1"
-                                     StartPoint="0.5,0">
-                    <GradientStop Color="#FFA5A5A5"
-                                  Offset="0" />
-                    <GradientStop Color="White"
-                                  Offset="1" />
-                </LinearGradientBrush>
-            </Border.Background>
+                VerticalAlignment="Stretch"
+                Background="{StaticResource BackgroundGradient}">
             <Border.Effect>
                 <DropShadowEffect BlurRadius="5" Opacity="0.7" Direction="0"/>
             </Border.Effect>
