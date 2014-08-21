@@ -87,9 +87,11 @@
                         <GradientStop Color="#FFA5A5A5" Offset="1"/>
                     </LinearGradientBrush>
                 </Border.Background>
-                <TextBlock Margin="5"
-                           Text="{Binding Path=ElapsedTime}"
-                           FontSize="23" FontWeight="Bold" HorizontalAlignment="Center" />
+                <Grid>
+                    <TextBlock Margin="5"
+                               Text="{Binding Path=ElapsedTime}"
+                               FontSize="23" FontWeight="Bold" HorizontalAlignment="Center" />
+                </Grid>
             </Border>
         </Grid>
         <!-- // contentGrid -->
