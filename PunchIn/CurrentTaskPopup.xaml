@@ -5,29 +5,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:wui="http://schema.webdogz/wui"
              xmlns:ctrl="clr-namespace:PunchIn.Controls"
-             mc:Ignorable="d" d:DesignWidth="400" Height="180" Width="400" Margin="0,0,0,20" 
+             mc:Ignorable="d" d:DesignWidth="400" Height="180" Width="400" Margin="0,0,0,20"
              Foreground="{DynamicResource WindowText}">
     <UserControl.Resources>
-        <BooleanToVisibilityConverter x:Key="boolToVis"/>
-        <LinearGradientBrush x:Key="BackgroundGradient" EndPoint="0,1" StartPoint="0,0">
-            <GradientStop Color="{DynamicResource AccentColor}"
-                          Offset="0" />
-            <GradientStop Offset=".25" 
-                          Color="{DynamicResource WindowBackgroundColor}" />
-            <GradientStop Color="{DynamicResource WindowBackgroundColor}"
-                          Offset="1" />
-        </LinearGradientBrush>
-        <LinearGradientBrush x:Key="BackgroundInverseGradient" EndPoint="0.5,1" StartPoint="0.5,0">
-            <GradientStop Color="{DynamicResource WindowBackgroundColor}"
-                          Offset="0" />
-            <GradientStop Color="{DynamicResource AccentColor}"
-                          Offset="1" />
-        </LinearGradientBrush>
-        <RadialGradientBrush x:Key="BackgroundRadialGradient" Center="0.5,1" GradientOrigin="0,1" 
-                             Opacity="0.3" RadiusX="0.8" RadiusY="0.8">
-            <GradientStop Offset="1" Color="{DynamicResource WindowBackgroundColor}" />
-            <GradientStop Offset="1" Color="{DynamicResource AccentColor}" />
-        </RadialGradientBrush>
+        <wui:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
     </UserControl.Resources>
     <Grid>
         <Border CornerRadius="5,5,0,0"
@@ -36,11 +17,11 @@
                 Height="Auto"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch"
-                Background="{StaticResource BackgroundGradient}">
+                Background="{DynamicResource BackgroundGradient}">
             <Border.Effect>
                 <DropShadowEffect BlurRadius="5" Opacity="0.7" Direction="0"/>
             </Border.Effect>
-            <Border Background="{StaticResource BackgroundRadialGradient}" />
+            <Border Background="{DynamicResource BackgroundRadialGradient}" />
         </Border>
         
         <Grid Margin="20" Name="contentGrid">
@@ -66,13 +47,14 @@
             <TextBlock Grid.Row="2" Grid.ColumnSpan="2"
                        Text="There is no current time entry so I can't show you any details. Click 'Punch In Now!' button below to start."
                        TextWrapping="Wrap"
-                       Visibility="{Binding Path=IsTimerDone, Converter={StaticResource boolToVis}, FallbackValue=Visible}" />
+                       Visibility="{Binding Path=IsTimerActive, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=inverse, FallbackValue=Visible}" />
             <ctrl:ImageButton Style="{StaticResource ImageButtonStyle}" Grid.Row="3" Grid.ColumnSpan="2"
                               Content="Punch In Now!" ImageBrush="{DynamicResource punchin}"
+                              ImageHeight="32" ImageWidth="32" FontSize="18" CornerRadius="10" BorderBrush="{DynamicResource Accent}"
                               Command="{Binding Path=PunchInCommand}"
-                              Visibility="{Binding Path=IsTimerDone, Converter={StaticResource boolToVis}, FallbackValue=Visible}" />
+                              Visibility="{Binding Path=IsTimerActive, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=inverse, FallbackValue=Visible}" />
             <Grid x:Name="propsTable" Grid.Row="2" Grid.ColumnSpan="2" 
-                  Visibility="{Binding Path=IsTimerActive, Converter={StaticResource boolToVis}, FallbackValue=Hidden}">
+                  Visibility="{Binding Path=IsTimerActive, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Hidden}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="2*"/>
                     <ColumnDefinition Width="2*"/>
@@ -92,22 +74,12 @@
                 <TextBlock Text="{Binding Path=CurrentTimeEntry.CurrentWorkItem.Change}" Grid.Row="1" Grid.Column="2" />
                 <TextBlock Text="{Binding Path=CurrentTimeEntry.CurrentEntry.Status}" Grid.Row="1" Grid.Column="3" />
             </Grid>
-            <Border BorderBrush="Black" BorderThickness="1" CornerRadius="5"
-                    Grid.Row="3" Grid.ColumnSpan="2" Margin="0,5"
-                    Visibility="{Binding Path=IsTimerActive, Converter={StaticResource boolToVis}, FallbackValue=Hidden}"
-                    Background="{StaticResource BackgroundInverseGradient}">
-                <!--<Border.Background>
-                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                        <GradientStop Color="{DynamicResource WindowBackgroundColor}" Offset="0"/>
-                        <GradientStop Color="#FFA5A5A5" Offset="1"/>
-                    </LinearGradientBrush>
-                </Border.Background>-->
-                <Grid>
-                    <TextBlock Margin="5"
-                               Text="{Binding Path=ElapsedTime}"
-                               FontSize="23" FontWeight="Bold" HorizontalAlignment="Center" />
-                </Grid>
-            </Border>
+            <ctrl:ImageButton Style="{StaticResource ImageButtonStyle}" Grid.Row="3" Grid.ColumnSpan="2"
+                              ToolTip="Punch Out Now!" ImageBrush="{DynamicResource punchout}"
+                              Content="{Binding Path=ElapsedTime, FallbackValue=00.00:00:00}"
+                              ImageHeight="32" ImageWidth="32" FontSize="18" CornerRadius="10" BorderBrush="{DynamicResource Accent}"
+                              Command="{Binding Path=PunchInCommand}"
+                              Visibility="{Binding Path=IsTimerActive, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Hidden}" />
         </Grid>
         <!-- // contentGrid -->
     </Grid>

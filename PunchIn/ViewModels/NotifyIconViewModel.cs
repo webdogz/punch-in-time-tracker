@@ -171,24 +171,9 @@ namespace PunchIn.ViewModels
                     PunchMenuIcon = "punchin";
                     PunchMenuText = "Punch In...";
                 }
-                IsTimerDone = !IsTimerActive;
             }
         }
         private bool isTimerActive;
-
-        public bool IsTimerDone
-        {
-            get { return isTimeDone; }
-            set
-            {
-                if (this.isTimeDone != value)
-                {
-                    this.isTimeDone = value;
-                    OnPropertyChanged("IsTimerDone");
-                }
-            }
-        }
-        private bool isTimeDone;
 
         public string ElapsedTime
         {

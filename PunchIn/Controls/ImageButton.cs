@@ -19,10 +19,20 @@ namespace PunchIn.Controls
             DependencyProperty.Register("ImageWidth", typeof(double), typeof(ImageButton), new UIPropertyMetadata(20D));
         public static readonly DependencyProperty ImageHeightProperty =
             DependencyProperty.Register("ImageHeight", typeof(double), typeof(ImageButton), new UIPropertyMetadata(20D));
-        
+        public static readonly DependencyProperty CornerRadiusProperty =
+            DependencyProperty.Register("CornerRadius", typeof(CornerRadius), typeof(ImageButton), new UIPropertyMetadata(new CornerRadius(0)));
+
         public ImageButton()
         {
             this.DefaultStyleKey = typeof(ImageButton);
+        }
+        /// <summary>
+        /// Gets or sets the CornerRadius of the image border
+        /// </summary>
+        public CornerRadius CornerRadius
+        {
+            get { return (CornerRadius)GetValue(CornerRadiusProperty); }
+            set { SetValue(CornerRadiusProperty, value); }
         }
         /// <summary>
         /// Gets or sets the Image
