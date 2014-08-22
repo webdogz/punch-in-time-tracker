@@ -88,11 +88,11 @@
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Content\PreferenceDisplayFormats.xaml.cs">
-      <DependentUpon>PreferenceDisplayFormats.xaml</DependentUpon>
+    <Compile Include="Pages\Content\SettingsDisplayFormats.xaml.cs">
+      <DependentUpon>SettingsDisplayFormats.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Content\PrefereneFileLocations.xaml.cs">
-      <DependentUpon>PrefereneFileLocations.xaml</DependentUpon>
+    <Compile Include="Pages\Content\SettingsFileLocations.xaml.cs">
+      <DependentUpon>SettingsFileLocations.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\Content\ReportLastWeek.xaml.cs">
       <DependentUpon>ReportLastWeek.xaml</DependentUpon>
@@ -296,11 +296,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\Content\PreferenceDisplayFormats.xaml">
+    <Page Include="Pages\Content\SettingsDisplayFormats.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\Content\PrefereneFileLocations.xaml">
+    <Page Include="Pages\Content\SettingsFileLocations.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

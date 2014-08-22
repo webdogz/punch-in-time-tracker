@@ -10,8 +10,8 @@
         <wui:ModernTab SelectedSource="/Pages/Content/SettingsAppearance.xaml" Layout="List">
             <wui:ModernTab.Links>
                 <wui:Link DisplayName="Appearance" Source="/Pages/Content/SettingsAppearance.xaml" />
-                <wui:Link DisplayName="File Locations" Source="/Pages/Content/PrefereneFileLocations.xaml" />
-                <wui:Link DisplayName="Display Formats" Source="/Pages/Content/PreferenceDisplayFormats.xaml" />
+                <wui:Link DisplayName="File Locations" Source="/Pages/Content/SettingsFileLocations.xaml" />
+                <wui:Link DisplayName="Display Formats" Source="/Pages/Content/SettingsDisplayFormats.xaml" />
             </wui:ModernTab.Links>
         </wui:ModernTab>
     </Grid>

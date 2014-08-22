@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace PunchIn.Pages.Content
 {
     /// <summary>
-    /// Interaction logic for PreferenceDisplayFormats.xaml
+    /// Interaction logic for SettingsFileLocations.xaml
     /// </summary>
-    public partial class PreferenceDisplayFormats : UserControl
+    public partial class SettingsFileLocations : UserControl
     {
-        public PreferenceDisplayFormats()
+        public SettingsFileLocations()
         {
             InitializeComponent();
         }
