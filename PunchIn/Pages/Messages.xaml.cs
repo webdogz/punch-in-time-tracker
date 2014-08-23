@@ -18,9 +18,9 @@ namespace PunchIn.Pages
     /// <summary>
     /// Interaction logic for Preferences.xaml
     /// </summary>
-    public partial class Preferences : UserControl
+    public partial class Messages : UserControl
     {
-        public Preferences()
+        public Messages()
         {
             InitializeComponent();
         }

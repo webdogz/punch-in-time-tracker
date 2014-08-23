@@ -9,7 +9,7 @@
                   ContentSource="/Pages/Tracker.xaml">
     <wui:ModernWindow.TitleLinks>
         <wui:TitleLink DisplayName="Settings" IconData="{DynamicResource CogGeometry}" Source="/Pages/Settings.xaml" />
-        <wui:TitleLink IconToolTip="Messages" IconData="{DynamicResource MessageBubbleGeometry}" Source="/Pages/Preferences.xaml" />
+        <wui:TitleLink IconToolTip="Messages" IconData="{DynamicResource MessageBubbleGeometry}" Source="/Pages/Messages.xaml" />
     </wui:ModernWindow.TitleLinks>
 
     <wui:ModernWindow.MenuLinkGroups>

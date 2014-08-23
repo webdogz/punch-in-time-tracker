@@ -10,7 +10,9 @@ namespace PunchIn.ViewModels
     {
         string[] updatablePropertyNames = new string[] { 
             "SharePointListName", "SharePointSiteUri",
-            "DefaultDatePickerFormatString", "DefaultDateTimePickerFormatString"
+            "DefaultDatePickerFormatString", "DefaultDateTimePickerFormatString",
+            "SharePointSiteUri","SharePointListName",
+            "DefaultUserShortcutFolder"
         };
         public SettingsViewModel()
         {
@@ -18,6 +20,7 @@ namespace PunchIn.ViewModels
             this.sharePointListName = Properties.Settings.Default.SharePointListName;
             this.defaultDatePickerFormatString = Properties.Settings.Default.DefaultDatePickerFormatString;
             this.defaultDateTimePickerFormatString = Properties.Settings.Default.DefaultDateTimePickerFormatString;
+            this.defaultUserShortcutFolder = Properties.Settings.Default.DefaultUserShortcutFolderLocation;
             this.PropertyChanged += SettingsViewModel_PropertyChanged;
         }
 

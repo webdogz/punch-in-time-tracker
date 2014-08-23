@@ -100,8 +100,8 @@
     <Compile Include="Pages\Content\ReportThisWeek.xaml.cs">
       <DependentUpon>ReportThisWeek.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Preferences.xaml.cs">
-      <DependentUpon>Preferences.xaml</DependentUpon>
+    <Compile Include="Pages\Messages.xaml.cs">
+      <DependentUpon>Messages.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\ReportsExport.xaml.cs">
       <DependentUpon>ReportsExport.xaml</DependentUpon>
@@ -319,7 +319,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\Preferences.xaml">
+    <Page Include="Pages\Messages.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
