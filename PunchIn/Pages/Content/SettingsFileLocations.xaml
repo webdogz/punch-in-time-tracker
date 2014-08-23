@@ -5,6 +5,30 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <Thickness x:Key="stackMargin">0,4,0,6</Thickness>
+        <Thickness x:Key="stackLabelMargin">0,4,0,0</Thickness>
+        <Style TargetType="{x:Type Expander}">
+            <Setter Property="Padding" Value="8" />
+            <Setter Property="Foreground" Value="{DynamicResource WindowText}"/>
+            <Setter Property="HeaderTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <ContentControl Content="{Binding}"
+                                        Margin="0,0,3,0" FontSize="18" />
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="{x:Type TextBlock}">
+            <Setter Property="Margin" Value="{StaticResource stackMargin}"/>
+            <Setter Property="Padding" Value="4" />
+        </Style>
+        <Style TargetType="{x:Type Label}">
+            <Setter Property="Margin" Value="{StaticResource stackLabelMargin}"/>
+            <Setter Property="Foreground" Value="{DynamicResource WindowText}"/>
+        </Style>
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -13,7 +37,22 @@
         <TextBlock Text="FILE LOCATIONS" Style="{DynamicResource Heading2}" />
         <ScrollViewer Grid.Row="1">
             <StackPanel x:Name="Panel" MinWidth="150">
-                <TextBlock Text="Set the location of your Shortcuts folder" Padding="4" Margin="0,10" />
+                <Expander Header="SharePoint Settings" IsExpanded="True">
+                    <StackPanel>
+                        <Label>SharePoint Site Uri</Label>
+                        <TextBox Text="{Binding Path=SharePointSiteUri}" />
+                        <Label>SharePoint List Name</Label>
+                        <TextBox Text="{Binding Path=SharePointListName}" />
+                    </StackPanel>
+                </Expander>
+                <Expander Header="Shortcut Folder" IsExpanded="True">
+                    <StackPanel>
+                        <TextBlock Text="Set the location of your Shortcuts folder" Padding="4" Margin="0,10" />
+                        <Label>Shortcut folder location</Label>
+                        <TextBox Text="{Binding Path=DefaultUserShortcutFolder}" />
+                    </StackPanel>
+                </Expander>
+
             </StackPanel>
         </ScrollViewer>
     </Grid>

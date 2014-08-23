@@ -120,7 +120,8 @@ namespace PunchIn.ViewModels
         private void SyncThemeAndColor()
         {
             // synchronizes the selected viewmodel theme with the actual theme used by the appearance manager.
-            this.SelectedTheme = this.themes.FirstOrDefault(l => l.Source.Equals(AppearanceManager.Current.ThemeSource));
+            Uri currentTheme = AppearanceManager.Current.ThemeSource;
+            this.SelectedTheme = this.themes.FirstOrDefault(l => l.Source.Equals(currentTheme));
 
             // and make sure accent color is up-to-date
             this.SelectedAccentColor = AppearanceManager.Current.AccentColor;
@@ -128,7 +129,6 @@ namespace PunchIn.ViewModels
             if (AppearanceManager.Current.UserSettingsLoaded)
             {
                 Properties.Settings.Default.SelectedAccentColor = this.SelectedAccentColor;
-                //Properties.Settings.Default.SelectedThemeDisplayName = this.SelectedTheme.DisplayName;
                 Properties.Settings.Default.SelectedThemeSource = this.SelectedTheme.Source;
                 Properties.Settings.Default.Save();
             }

@@ -193,19 +193,30 @@ namespace PunchIn.ViewModels
         #endregion
 
         #region Shortcut Menu build
+        private string GetDefaultUserShortcutsFolder()
+        {
+            string folder = Properties.Settings.Default.DefaultUserShortcutFolderLocation;
+            if (string.IsNullOrWhiteSpace(folder))
+            {
+                folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Favorites), "HIN");
+                Properties.Settings.Default.DefaultUserShortcutFolderLocation = folder;
+                Properties.Settings.Default.Save();
+            }
+            return folder;
+        }
         private async void BuildShortcutMenusAsync()
         {
             await Task.Run(() => 
             {
                 // TODO: Should this be a User Setting?
-                DirectoryInfo rootPath = new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Favorites), "HIN"));
+                DirectoryInfo rootPath = new DirectoryInfo(GetDefaultUserShortcutsFolder());
                 if (!rootPath.Exists) rootPath.Create();
                 ShortcutMenus = GetShortcutMenu(rootPath, "Shortcuts");
             });
         }
         private ShortcutMenuItemViewModel GetShortcutMenu(DirectoryInfo root, string name)
         {
-            var menu = new ShortcutMenuItemViewModel() { Text = name ?? root.Name, Icon = "folder" /*"Resources/folder.png"*/ };
+            var menu = new ShortcutMenuItemViewModel() { Text = name ?? root.Name, Icon = "folder" };
             foreach (DirectoryInfo dir in root.GetDirectories())
             {
                 ShortcutMenuItemViewModel item = GetShortcutMenu(dir, dir.Name);
@@ -217,7 +228,7 @@ namespace PunchIn.ViewModels
                 {
                     Text = file.Name.Replace(file.Extension, ""),
                     File = file,
-                    Icon = "shortcut" /*"Resources/shortcut.png"*/,
+                    Icon = "shortcut",
                     Command = ShortcutActionCommand
                 });
             }

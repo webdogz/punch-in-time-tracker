@@ -11,5 +11,20 @@
     <Setting Name="MainWindowLocation" Type="System.Windows.Rect" Scope="User">
       <Value Profile="(Default)">0,0,720,600</Value>
     </Setting>
+    <Setting Name="SharePointSiteUri" Type="System.Uri" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="SharePointListName" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="DefaultDateTimePickerFormatString" Type="System.String" Scope="User">
+      <Value Profile="(Default)">yyyy.MM.dd hh:mm</Value>
+    </Setting>
+    <Setting Name="DefaultDatePickerFormatString" Type="System.String" Scope="User">
+      <Value Profile="(Default)">dd/MM/yyyy</Value>
+    </Setting>
+    <Setting Name="DefaultUserShortcutFolderLocation" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

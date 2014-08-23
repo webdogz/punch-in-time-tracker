@@ -24,8 +24,6 @@ namespace PunchIn.Pages.Content
         public SettingsAppearance()
         {
             InitializeComponent();
-
-            this.DataContext = new SettingsAppearanceViewModel();
         }
     }
 }

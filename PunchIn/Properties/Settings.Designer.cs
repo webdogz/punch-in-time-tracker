@@ -58,5 +58,64 @@ namespace PunchIn.Properties {
                 this["MainWindowLocation"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Uri SharePointSiteUri {
+            get {
+                return ((global::System.Uri)(this["SharePointSiteUri"]));
+            }
+            set {
+                this["SharePointSiteUri"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string SharePointListName {
+            get {
+                return ((string)(this["SharePointListName"]));
+            }
+            set {
+                this["SharePointListName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("yyyy.MM.dd hh:mm")]
+        public string DefaultDateTimePickerFormatString {
+            get {
+                return ((string)(this["DefaultDateTimePickerFormatString"]));
+            }
+            set {
+                this["DefaultDateTimePickerFormatString"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("dd/MM/yyyy")]
+        public string DefaultDatePickerFormatString {
+            get {
+                return ((string)(this["DefaultDatePickerFormatString"]));
+            }
+            set {
+                this["DefaultDatePickerFormatString"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string DefaultUserShortcutFolderLocation {
+            get {
+                return ((string)(this["DefaultUserShortcutFolderLocation"]));
+            }
+            set {
+                this["DefaultUserShortcutFolderLocation"] = value;
+            }
+        }
     }
 }

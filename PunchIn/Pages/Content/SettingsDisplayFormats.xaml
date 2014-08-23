@@ -43,11 +43,11 @@
                             </Style>
                         </StackPanel.Resources>
                         <Label>Date</Label>
-                        <TextBox Name="DateFormatString" Text="dd/MM/yyyy" />
-                        <TextBlock Text="31/12/2014" />
+                        <TextBox Name="DateFormatString" Text="{Binding Path=DefaultDatePickerFormatString}" />
+                        <TextBlock Text="{Binding Path=PreviewDefaultDateFormat}" />
                         <Label>DateTime</Label>
-                        <TextBox Name="DateTimeFormatString" Text="yyyy.MM.dd HH:mm" />
-                        <TextBlock Text="2014.12.31 12:00" />
+                        <TextBox Name="DateTimeFormatString" Text="{Binding Path=DefaultDateTimePickerFormatString}" />
+                        <TextBlock Text="{Binding Path=PreviewDefaultDateTimeFormat}" />
                     </StackPanel>
                 </Expander>
                 
