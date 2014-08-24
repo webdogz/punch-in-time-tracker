@@ -10,6 +10,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "License", "License", "{8BEDD186-376B-469D-81ED-C44121239EAF}"
 	ProjectSection(SolutionItems) = preProject
 		License.ModernUI.txt = License.ModernUI.txt
+		License.wpftoolkit.txt = License.wpftoolkit.txt
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Webdogz.UI", "Webdogz.UI\Webdogz.UI.csproj", "{F4D26B03-4BDD-48B7-9B50-1AB5EE4FC3CE}"
