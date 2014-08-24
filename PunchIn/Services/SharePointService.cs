@@ -9,7 +9,7 @@ using SPProfile = Microsoft.SharePoint.Client.UserProfiles;
 
 namespace PunchIn.Services
 {
-    public class SharePointService
+    internal class SharePointService
     {
         #region Fields
         Uri siteUri;

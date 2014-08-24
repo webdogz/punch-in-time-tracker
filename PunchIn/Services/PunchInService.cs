@@ -11,7 +11,7 @@ using EmitMapper.MappingConfiguration;
 
 namespace PunchIn.Services
 {
-    public class PunchInService
+    internal class PunchInService
     {
         private readonly ConcurrentDictionary<string, string> _dbNamesCache = new ConcurrentDictionary<string, string>();
 
