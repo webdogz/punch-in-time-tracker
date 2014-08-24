@@ -55,6 +55,26 @@
     <Reference Include="EmitMapper">
       <HintPath>..\packages\EmitMapper.1.0.0\lib\EmitMapper.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Lync.Controls, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Assemblies\Microsoft.Lync.Controls.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Lync.Model, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Assemblies\Microsoft.Lync.Model.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SharePoint.Client, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Assemblies\Microsoft.SharePoint.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SharePoint.Client.Runtime, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Assemblies\Microsoft.SharePoint.Client.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SharePoint.Client.UserProfiles, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Assemblies\Microsoft.SharePoint.Client.UserProfiles.dll</HintPath>
+    </Reference>
     <Reference Include="NDatabase3">
       <HintPath>..\packages\NDatabase.3.8.0\lib\net45\NDatabase3.dll</HintPath>
     </Reference>
@@ -88,6 +108,7 @@
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Models\SPExportItem.cs" />
     <Compile Include="Pages\Content\SettingsDisplayFormats.xaml.cs">
       <DependentUpon>SettingsDisplayFormats.xaml</DependentUpon>
     </Compile>
@@ -112,6 +133,7 @@
     <Compile Include="Pages\Settings.xaml.cs">
       <DependentUpon>Settings.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Services\SharePointService.cs" />
     <Compile Include="ViewModels\Converters\WorkItemToViewModelConverter.cs" />
     <Compile Include="Pages\Content\SettingsAppearance.xaml.cs">
       <DependentUpon>SettingsAppearance.xaml</DependentUpon>
@@ -134,10 +156,12 @@
     <Compile Include="ViewModels\DelegateCommand.cs" />
     <Compile Include="ViewModels\Enums.cs" />
     <Compile Include="ViewModels\IMenuItemViewModel.cs" />
+    <Compile Include="ViewModels\MessagesViewModel.cs" />
     <Compile Include="ViewModels\MenuItemViewModel.cs" />
     <Compile Include="ViewModels\PunchMenuItemViewModel.cs" />
     <Compile Include="ViewModels\SettingsAppearanceViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
+    <Compile Include="ViewModels\SharePointExportViewModel.cs" />
     <Compile Include="ViewModels\ShortcutMenuItemViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="ViewModels\NotifyIconViewModel.cs" />

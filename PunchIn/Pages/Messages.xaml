@@ -3,10 +3,28 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:wui="http://schema.webdogz/wui"
+             xmlns:vm="clr-namespace:PunchIn.ViewModels"
+             xmlns:controls="clr-namespace:Microsoft.Lync.Controls;assembly=Microsoft.Lync.Controls" 
              x:Class="PunchIn.Pages.Messages"
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="400">
-
+    <UserControl.DataContext>
+        <vm:MessagesViewModel />
+    </UserControl.DataContext>
+    <UserControl.Resources>
+        <DataTemplate x:Key="GroupInfoTemplate" DataType="AddCustomGroup.GroupInfo">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="{Binding Path=GroupName}" Margin="3" Width="160"/>
+                <TextBlock Grid.Column="1" Text="{Binding Path=Type}" Margin="3" Width="100"/>
+                <TextBlock Grid.Column="2" Text="{Binding Path=ContactNumber}" Margin="3" Width="40"/>
+            </Grid>
+        </DataTemplate>
+    </UserControl.Resources>
     <Grid Style="{StaticResource ContentRoot}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -26,6 +44,10 @@
                     <controls:ContactListGroupItem/>
                 </StackPanel>
                 <controls:ContactSearchInputBox/>-->
+                <ListBox Grid.Row="3" x:Name="groupListBox" Margin="4" ItemsSource="{Binding Path=Groups}" 
+                         ItemTemplate="{StaticResource GroupInfoTemplate}"
+                         VerticalAlignment="Stretch" 
+                         SelectedItem="{Binding Path=SelectedGroupInfo}" />
             </StackPanel>
         </ScrollViewer>
     </Grid>

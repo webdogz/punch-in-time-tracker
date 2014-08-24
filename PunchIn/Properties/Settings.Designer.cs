@@ -61,6 +61,7 @@ namespace PunchIn.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://hin-tfsportal/my/personal/he62276/")]
         public global::System.Uri SharePointSiteUri {
             get {
                 return ((global::System.Uri)(this["SharePointSiteUri"]));
@@ -72,7 +73,7 @@ namespace PunchIn.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Micro Management")]
         public string SharePointListName {
             get {
                 return ((string)(this["SharePointListName"]));
