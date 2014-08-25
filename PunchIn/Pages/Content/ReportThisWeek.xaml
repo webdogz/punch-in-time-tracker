@@ -3,43 +3,43 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:vm="clr-namespace:PunchIn.ViewModels"
+             xmlns:models="clr-namespace:PunchIn.Models"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.DataContext>
+        <vm:ReportsWeeklyViewModel />
+    </UserControl.DataContext>
+    <UserControl.Resources>
+        <DataTemplate x:Key="ReportGridTemplate" DataType="{x:Type models:ReportExportItem}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Column="0" Text="{Binding Path=Title}" Margin="3"/>
+                <TextBlock Grid.Column="1" Text="{Binding Path=HoursCompleted}" Margin="3" Width="40"/>
+                <TextBlock Grid.Column="2" Text="{Binding Path=HoursRemaining}" Margin="3" Width="40"/>
+                <StackPanel Orientation="Horizontal" Grid.Row="1">
+                    <TextBlock Text="{Binding Path=TfsId}" Margin="3"/>
+                    <TextBlock Text="{Binding Path=ServiceCall}" Margin="3"/>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+    </UserControl.Resources>
     <Grid>
-        <ScrollViewer>
-            <StackPanel x:Name="Panel" MinWidth="150">
-                <TextBlock Text="THIS WEEKS TIMES" Style="{StaticResource Heading2}" Margin="0,0,0,8" />
-
-                <ListBox ItemsSource="{Binding AccentColors}"
-                         SelectedItem="{Binding SelectedAccentColor, Mode=TwoWay}"
-                         Margin="0,0,0,16">
-                    <ListBox.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel MaxWidth="{Binding ActualWidth, ElementName=Panel}" />
-                        </ItemsPanelTemplate>
-                    </ListBox.ItemsPanel>
-                    <ListBox.Items>
-                        <ListBoxItem>
-                            <Rectangle Width="40" Height="40" Margin="2" Fill="{DynamicResource backlogitem}"/>
-                        </ListBoxItem>
-                        <ListBoxItem>
-                            <Rectangle Width="40" Height="40" Margin="2" Fill="{DynamicResource bug}"/>
-                        </ListBoxItem>
-                        <ListBoxItem>
-                            <Rectangle Width="40" Height="40" Margin="2" Fill="{DynamicResource change}"/>
-                        </ListBoxItem>
-                        <ListBoxItem>
-                            <Rectangle Width="40" Height="40" Margin="2" Fill="{DynamicResource datafix}"/>
-                        </ListBoxItem>
-                        <ListBoxItem>
-                            <Rectangle Width="40" Height="40" Margin="2" Fill="{DynamicResource excel}"/>
-                        </ListBoxItem>
-                        <ListBoxItem>
-                            <Rectangle Width="40" Height="40" Margin="2" Fill="{DynamicResource report}"/>
-                        </ListBoxItem>
-                    </ListBox.Items>
-                </ListBox>
-            </StackPanel>
-        </ScrollViewer>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <TextBlock Text="THIS WEEKS TIMES" Style="{StaticResource Heading2}" Margin="0,0,0,8" />
+        <ListView Grid.Row="1" ItemsSource="{Binding Path=ReportItems}"
+                  ItemTemplate="{StaticResource ReportGridTemplate}"
+                  SelectedItem="{Binding Path=SelectedItem}"/>
     </Grid>
 </UserControl>

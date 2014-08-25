@@ -15,7 +15,17 @@ namespace UnitTestPunchIn
     public class TimeTrackQueriesUnitTest
     {
         private readonly ConcurrentDictionary<string, string> _dbNamesCache = new ConcurrentDictionary<string, string>();
-        
+        private readonly System.Globalization.CultureInfo cultureInfo;
+        private System.Globalization.Calendar calendar;
+        public TimeTrackQueriesUnitTest()
+        {
+            cultureInfo = new System.Globalization.CultureInfo("en-AU");
+            calendar = cultureInfo.Calendar;
+        }
+        private int GetWeekOfYear(DateTime date)
+        {
+            return calendar.GetWeekOfYear(date, System.Globalization.CalendarWeekRule.FirstDay, DayOfWeek.Monday);
+        }
         [TestMethod]
         public void WeeklyReportQuery()
         {
@@ -69,9 +79,147 @@ namespace UnitTestPunchIn
             public DateTime MaxDate { get; set; }
             public int Count { get; set; }
         }
+        [TestMethod]
+        public void ReportAllItemsGroupedByWeekFragmented()
+        {
+            using (var db = OdbFactory.Open(GetDbName()))
+            {
+                var items = db.AsQueryable<WorkItem>();
+
+                var reportItems = new List<ReportByWeekItem>();
+                foreach (var item in items)
+                {
+                    reportItems.AddRange(item.Entries.Select(e => new ReportByWeekItem
+                    {
+                        ItemGuid = item.Id,
+                        TfsId = item.TfsId,
+                        ServiceCall = item.ServiceCall,
+                        Change = item.Change,
+                        Title = item.Title,
+                        Description = e.Description,
+                        Effort = item.Effort,
+                        StartDate = e.StartDate,
+                        EndDate = e.EndDate,
+                        State = item.Status,
+                        Status = e.Status,
+                        WorkType = item.WorkType
+                    }).ToList());
+                }
+
+                var reportResults = reportItems.GroupBy(r => new { WeekOfYear = GetWeekOfYear(r.StartDate), Title = r.Title}).Select(g => new ReportByWeekGroup
+                {
+                    WeekOfYear = g.Key.WeekOfYear,
+                    Title = g.Key.Title,
+                    MinDate = g.Min(e => e.StartDate),
+                    MaxDate = g.Max(e => e.EndDate ?? DateTime.Now),
+                    ReportItems = g.Select(e => e).ToList()
+
+                });
+                foreach (var ritem in reportResults.OrderBy(r => r.WeekOfYear).ThenBy(r => r.Title))
+                {
+                    Debug.WriteLine("===========");
+                    Debug.WriteLine("Week:{0}\t{1}", ritem.WeekOfYear, ritem.Title);
+                    Debug.WriteLine("\tRange: {0} - {1}", ritem.MinDate, ritem.MaxDate);
+                    Debug.WriteLine("\tCount: {0}", ritem.ReportItems.Count);
+                    foreach (var time in ritem.ReportItems.OrderBy(t => t.StartDate))
+                    {
+                        Debug.WriteLine("\t\t{0}\t{1}\tHours:{2}\tDesc:{3}:{4}",
+                            time.StartDate.ToString("ddd, MM/dd"),
+                            (time.EndDate ?? DateTime.Now).ToString("ddd, MM/dd"),
+                            ((time.EndDate ?? DateTime.Now) - time.StartDate).TotalHours,
+                            time.TfsId,
+                            time.Description);
+                    }
+                }
+            }
+        }
 
         [TestMethod]
         public void ReportAllItemsGroupedByWeek()
+        {
+            using (var db = OdbFactory.Open(GetDbName()))
+            {
+                var reportItems = db.AsQueryable<WorkItem>().SelectMany(item => item.Entries.Select(e => new ReportByWeekItem
+                {
+                    ItemGuid = item.Id,
+                    TfsId = item.TfsId,
+                    ServiceCall = item.ServiceCall,
+                    Change = item.Change,
+                    Title = item.Title,
+                    Description = e.Description,
+                    Effort = item.Effort,
+                    StartDate = e.StartDate,
+                    EndDate = e.EndDate,
+                    State = item.Status,
+                    Status = e.Status,
+                    WorkType = item.WorkType
+                })).GroupBy(r => new
+                {
+                    WeekOfYear = GetWeekOfYear(r.StartDate),
+                    Title = r.Title,
+                    Effort = r.Effort
+                }).Select(g => new ReportByWeekGroup
+                {
+                    WeekOfYear = g.Key.WeekOfYear,
+                    Title = g.Key.Title,
+                    Effort = g.Key.Effort,
+                    MinDate = g.Min(e => e.StartDate),
+                    MaxDate = g.Max(e => e.EndDate ?? DateTime.Now),
+                    ReportItems = g.Select(e => e).ToList()
+                }).OrderBy(r => r.WeekOfYear).ThenBy(r => r.Title);
+                var exportItems = new List<ReportExportItem>();
+                foreach (var item in reportItems)
+                {
+                    Debug.WriteLine("===========");
+                    Debug.WriteLine("Week:{0}\t{1}", item.WeekOfYear, item.Title);
+                    Debug.WriteLine("\tRange: {0} - {1}", item.MinDate, item.MaxDate);
+                    Debug.WriteLine("\tCount: {0}", item.ReportItems.Count);
+                    double effort = item.Effort * 8;
+                    foreach (var time in item.ReportItems.OrderBy(t => t.StartDate))
+                    {
+                        TimeSpan completed = ((time.EndDate ?? DateTime.Now) - time.StartDate);
+                        double hoursRemain = effort -= completed.TotalHours;
+                        exportItems.Add(new ReportExportItem
+                        {
+                            ItemGuid = time.ItemGuid,
+                            TfsId = time.TfsId,
+                            ServiceCall = time.ServiceCall,
+                            Change = time.Change,
+                            Title = item.Title,
+                            Description = time.Description,
+                            HoursCompleted = completed.TotalHours,
+                            HoursRemaining = (hoursRemain > 0 ? hoursRemain : 0),
+                            StartDate = time.StartDate,
+                            EndDate = time.EndDate,
+                            State = time.State,
+                            Status = time.Status,
+                            WorkType = time.WorkType,
+                            WeekOfYear = item.WeekOfYear
+                        });
+
+                        Debug.WriteLine("\t\t{0}\t{1}\tHours:{2}\tDesc:{3}:{4}",
+                            time.StartDate.ToString("ddd, MM/dd"),
+                            (time.EndDate ?? DateTime.Now).ToString("ddd, MM/dd"),
+                            completed.TotalHours,
+                            time.TfsId,
+                            time.Description);
+                    }
+                }
+                Debug.WriteLine("********************");
+                Debug.WriteLine("*** Export Items ***");
+                Debug.WriteLine("********************");
+                foreach (var exportItem in exportItems)
+                {
+                    Debug.WriteLine("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}",
+                        exportItem.TfsId, exportItem.ServiceCall, exportItem.Change,
+                        exportItem.Title, exportItem.HoursCompleted, exportItem.HoursRemaining,
+                        exportItem.State, exportItem.Status, exportItem.WorkType, exportItem.WeekOfYear);
+                }
+            }
+        }
+
+        [TestMethod]
+        public void ReportAllItemsGroupedByMonth()
         {
             using (var db = OdbFactory.Open(GetDbName()))
             {
@@ -92,7 +240,7 @@ namespace UnitTestPunchIn
                         WorkType = item.WorkType
                     }).ToList());
                 }
-                var reportResults = reportItems.GroupBy(r => new { r.StartDate.Month, r.StartDate.Year }).Select(g => new ReportGroup
+                var reportResults = reportItems.GroupBy(r => new { r.StartDate.Month, r.StartDate.Year }).Select(g => new ReportByMonthGroup
                 {
                     Month = g.Key.Month,
                     Year = g.Key.Year,
@@ -109,6 +257,19 @@ namespace UnitTestPunchIn
                     Debug.WriteLine("\tCount: {0}", ritem.ReportItems.Count);
                 }
             }
+        }
+
+        public class ReportByMonthGroup
+        {
+            public ReportByMonthGroup()
+            {
+                this.ReportItems = new List<ReportItem>();
+            }
+            public int Month { get; set; }
+            public int Year { get; set; }
+            public DateTime MinDate { get; set; }
+            public DateTime MaxDate { get; set; }
+            public List<ReportItem> ReportItems { get; set; }
         }
 
         [TestMethod]
@@ -168,18 +329,7 @@ namespace UnitTestPunchIn
 
             }
         }
-        public class ReportGroup
-        {
-            public ReportGroup()
-            {
-                this.ReportItems = new List<ReportItem>();
-            }
-            public int Month { get; set; }
-            public int Year { get; set; }
-            public DateTime MinDate { get; set; }
-            public DateTime MaxDate { get; set; }
-            public List<ReportItem> ReportItems { get; set; }
-        }
+        
         public class ReportItem : TimeEntry
         {
             public Guid WorkItemId { get; set; }

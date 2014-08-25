@@ -81,7 +81,7 @@ namespace PunchIn.Services
                     //guidField.SetShowInDisplayForm(false);
                     //guidField.SetShowInEditForm(false);
                     //guidField.SetShowInNewForm(false);
-                    SP.FieldNumber idField = clientContext.CastTo<SP.FieldNumber>(list.Fields.Add(SP.FieldType.Integer, "WorkItemId", true));
+                    SP.FieldNumber idField = clientContext.CastTo<SP.FieldNumber>(list.Fields.Add(SP.FieldType.Integer, "TfsId", true));
                     idField.Description = "TFS WorkItem Id";
                     idField.Update();
                     SP.FieldNumber scField = clientContext.CastTo<SP.FieldNumber>(list.Fields.Add(SP.FieldType.Integer, "ServiceCall", true));
@@ -112,10 +112,13 @@ namespace PunchIn.Services
                     SP.FieldText wtField = clientContext.CastTo<SP.FieldText>(list.Fields.Add(SP.FieldType.Text, "WorkType", true));
                     wtField.Description = "The type work being done for the current task";
                     wtField.Update();
-                    SP.FieldDateTime weekEndingField = clientContext.CastTo<SP.FieldDateTime>(list.Fields.Add(SP.FieldType.DateTime, "WeekEnding", true));
-                    weekEndingField.Description = "Date of the Friday or last day of the working week";
-                    weekEndingField.DisplayFormat = SP.DateTimeFieldFormatType.DateOnly;
-                    weekEndingField.Update();
+                    //SP.FieldDateTime weekEndingField = clientContext.CastTo<SP.FieldDateTime>(list.Fields.Add(SP.FieldType.DateTime, "WeekEnding", true));
+                    //weekEndingField.Description = "Date of the Friday or last day of the working week";
+                    //weekEndingField.DisplayFormat = SP.DateTimeFieldFormatType.DateOnly;
+                    //weekEndingField.Update();
+                    SP.FieldNumber woyField = clientContext.CastTo<SP.FieldNumber>(list.Fields.Add(SP.FieldType.Integer, "WeekOfYear", true));
+                    woyField.Description = "Week of year";
+                    woyField.Update();
                     // tell the server and cross our fingers
                     clientContext.ExecuteQuery();
                 }
@@ -131,27 +134,44 @@ namespace PunchIn.Services
 
         }
 
-        public IEnumerable<SPExportItem> GetListItems()
+        public async Task<IEnumerable<SPExportItem>> GetListItems()
         {
-            SP.List trackInfo = clientContext.Web.Lists.GetByTitle(listTitle);
-            SP.CamlQuery query = new SP.CamlQuery();
-            SP.ListItemCollection listData = trackInfo.GetItems(query);
-            var queryResults = clientContext.LoadQuery(listData);
-            clientContext.ExecuteQuery();
+            IEnumerable<SPExportItem> list = new List<SPExportItem>();
 
-            return queryResults.Select(f => new SPExportItem
+            await Task.Run(() =>
+            {
+                try
                 {
-                    ItemGuid = Guid.Parse(f.FieldValues["ItemGuid"].ToString()),
-                    WorkItemId = (int)f.FieldValues["WorkItemId"],
-                    ServiceCall = (int)f.FieldValues["ServiceCall"],
-                    Change = (int)f.FieldValues["Change"],
-                    Title = f.FieldValues["Title"].ToString(),
-                    HoursCompleted = (double)f.FieldValues["HoursCompleted"],
-                    HoursRemaining = (double)f.FieldValues["HoursRemaining"],
-                    State = f.FieldValues["State"].ToString(),
-                    Status = f.FieldValues["Status"].ToString(),
-                    WorkType = f.FieldValues["WorkType"].ToString()
-                });
+                    SP.List trackInfo = clientContext.Web.Lists.GetByTitle(listTitle);
+                    SP.CamlQuery query = new SP.CamlQuery();
+                    SP.ListItemCollection listData = trackInfo.GetItems(query);
+                    var queryResults = clientContext.LoadQuery(listData);
+                    clientContext.ExecuteQuery();
+                    list = queryResults.Select(f => new SPExportItem
+                    {
+                        ItemGuid = Guid.Parse(f.FieldValues["ItemGuid"].ToString()),
+                        WorkItemId = (int)f.FieldValues["WorkItemId"],
+                        ServiceCall = (int)f.FieldValues["ServiceCall"],
+                        Change = (int)f.FieldValues["Change"],
+                        Title = f.FieldValues["Title"].ToString(),
+                        HoursCompleted = (double)f.FieldValues["HoursCompleted"],
+                        HoursRemaining = (double)f.FieldValues["HoursRemaining"],
+                        State = f.FieldValues["State"].ToString(),
+                        Status = f.FieldValues["Status"].ToString(),
+                        WorkType = f.FieldValues["WorkType"].ToString()
+                    });
+                }
+                catch (System.Net.WebException webEx)
+                {
+                    SetErrorsMessage(webEx);
+                }
+                catch (Exception ex)
+                {
+                    SetErrorsMessage(ex);
+                }
+            });
+
+            return list;
         }
 
         private void AddItemToList()

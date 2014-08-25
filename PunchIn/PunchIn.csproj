@@ -108,6 +108,7 @@
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Models\ReportByWeek.cs" />
     <Compile Include="Models\SPExportItem.cs" />
     <Compile Include="Pages\Content\SettingsDisplayFormats.xaml.cs">
       <DependentUpon>SettingsDisplayFormats.xaml</DependentUpon>
@@ -160,6 +161,7 @@
     <Compile Include="ViewModels\MessagesViewModel.cs" />
     <Compile Include="ViewModels\MenuItemViewModel.cs" />
     <Compile Include="ViewModels\PunchMenuItemViewModel.cs" />
+    <Compile Include="ViewModels\ReportsWeeklyViewModel.cs" />
     <Compile Include="ViewModels\SettingsAppearanceViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\SharePointExportViewModel.cs" />

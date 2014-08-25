@@ -9,10 +9,35 @@ namespace PunchIn.ViewModels
         private readonly SharePointService service;
         public SharePointExportViewModel()
         {
-            service = new SharePointService();
-            SharePointList = new ObservableCollection<SPExportItem>(service.GetListItems());
+            this.service = new SharePointService();
+            this.service.PropertyChanged += (s, e) =>
+            {
+                if(e.PropertyName == "Errors")
+                {
+                    Errors = ((SharePointService)s).Errors;
+                }
+            };
+            LoadItems();
         }
-
+        private async void LoadItems()
+        {
+            var listItems = await this.service.GetListItems();
+            SharePointList = new ObservableCollection<SPExportItem>(listItems);
+        }
+        
+        private string errors;
+        public string Errors
+        {
+            get { return this.errors; }
+            set
+            {
+                if (this.errors != value)
+                {
+                    this.errors = value;
+                    OnPropertyChanged("Errors");
+                }
+            }
+        }
         private ObservableCollection<SPExportItem> sharePointList;
         public ObservableCollection<SPExportItem> SharePointList
         {

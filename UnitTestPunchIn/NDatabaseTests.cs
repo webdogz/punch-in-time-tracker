@@ -16,9 +16,14 @@ namespace UnitTestPunchIn
     public class NDatabaseTests
     {
         private readonly ConcurrentDictionary<string, string> _dbNamesCache = new ConcurrentDictionary<string, string>();
+        const int MaxWorkItemsToCreate = 20; // number of workitems to create
+        const int MaxWorkItemHoursPerDayRange = 8; // max hours per time entry
+        const int MaxWorkItemDaysRange = 14; // 2 weeks worth of workitems
+
         [TestMethod]
         public void CreateWorkItemAndTimeEntries()
         {
+            DateTime StartPointDate = DateTime.Now.AddDays(-MaxWorkItemDaysRange); // starting point
             string dbPath = GetDbName();
             if (File.Exists(dbPath))
                 File.Delete(dbPath);
@@ -26,20 +31,22 @@ namespace UnitTestPunchIn
             using (var db = OdbFactory.Open(GetDbName()))
             {
                 var rnd = new Random();
-                for(int i = 0; i < 5; i++)
+                for (int i = 0; i < MaxWorkItemsToCreate; i++)
                 {
                     WorkItem item = new WorkItem()
                     {
                         TfsId = i + 1,
                         ServiceCall = (i + 1) * 100,
-                        Effort = 2,
+                        Effort = rnd.NextDouble() * 3,
                         Title = string.Format("Work item #{0}", (i + 1)),
                         WorkType = WorkTypes.BacklogItem,
                         Status = States.Analysis
                     };
                     foreach (var name in new string[] { "First entry", "Second entry", "Third entry" })
                     {
-                        DateTime startDate = DateTime.Now.AddHours(rnd.NextDouble() * 8);
+                        DateTime startDate = StartPointDate
+                            .AddDays(rnd.NextDouble() * MaxWorkItemDaysRange)
+                            .AddHours(rnd.NextDouble() * MaxWorkItemHoursPerDayRange);
                         TimeEntry entry = new TimeEntry()
                         {
                             Description = name,
@@ -52,7 +59,7 @@ namespace UnitTestPunchIn
                     }
                 }
                 int cnt = db.QueryAndExecute<WorkItem>().Count;
-                Assert.AreEqual(5, cnt);
+                Assert.AreEqual(MaxWorkItemsToCreate, cnt);
             }
         }
 
@@ -104,7 +111,7 @@ namespace UnitTestPunchIn
             using (var db = OdbFactory.Open(GetDbName()))
             {
                 items = db.QueryAndExecute<WorkItem>().ToList();
-                Assert.AreEqual(5, items.Count());
+                Assert.AreEqual(MaxWorkItemsToCreate, items.Count());
                 WorkItem item = items.FirstOrDefault();
                 Assert.AreEqual("Work item #1", item.Title);
                 Assert.AreEqual(3, item.Entries.Count);

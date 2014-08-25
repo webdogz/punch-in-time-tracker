@@ -14,7 +14,18 @@ namespace PunchIn.Services
     internal class PunchInService
     {
         private readonly ConcurrentDictionary<string, string> _dbNamesCache = new ConcurrentDictionary<string, string>();
-
+        private readonly System.Globalization.CultureInfo _cultureInfo;
+        private System.Globalization.Calendar _calendar;
+        public PunchInService()
+        {
+            this._cultureInfo = new System.Globalization.CultureInfo("en-AU");
+            this._calendar = this._cultureInfo.Calendar;
+        }
+        public int GetWeekOfYear(DateTime date)
+        {
+            return this._calendar.GetWeekOfYear(date, System.Globalization.CalendarWeekRule.FirstDay, DayOfWeek.Monday);
+        }
+        
         /// <summary>
         /// Retrieve all WorkItems from the database
         /// </summary>
@@ -68,6 +79,107 @@ namespace PunchIn.Services
                 db.Delete<WorkItem>(item);
             }
         }
+        #region Reporting
+        public IOrderedQueryable<ReportByWeekGroup> GetItemsGroupedByWeek(NDatabase.Api.IOdb db)
+        {
+            var reportItems = db.AsQueryable<WorkItem>().SelectMany(item => item.Entries.Select(e => new ReportByWeekItem
+                {
+                    ItemGuid = item.Id,
+                    TfsId = item.TfsId,
+                    ServiceCall = item.ServiceCall,
+                    Change = item.Change,
+                    Title = item.Title,
+                    Description = e.Description,
+                    Effort = item.Effort,
+                    StartDate = e.StartDate,
+                    EndDate = e.EndDate,
+                    State = item.Status,
+                    Status = e.Status,
+                    WorkType = item.WorkType
+                })).GroupBy(r => new
+                {
+                    WeekOfYear = GetWeekOfYear(r.StartDate),
+                    Title = r.Title,
+                    Effort = r.Effort
+                }).Select(g => new ReportByWeekGroup
+                {
+                    WeekOfYear = g.Key.WeekOfYear,
+                    Title = g.Key.Title,
+                    Effort = g.Key.Effort,
+                    MinDate = g.Min(e => e.StartDate),
+                    MaxDate = g.Max(e => e.EndDate ?? DateTime.Now),
+                    ReportItems = g.Select(e => e).ToList()
+                }).OrderBy(r => r.WeekOfYear).ThenBy(r => r.Title);
+            return reportItems;
+        }
+        /// <summary>
+        /// Gets a list of all <see cref="ReportExportItem"/>
+        /// </summary>
+        /// <returns>List of <see cref="ReportExportItem"/></returns>
+        public List<ReportExportItem> GetReportExportItems()
+        {
+            return GetReportExportItems(new Predicate<ReportByWeekGroup>(g => true));
+        }
+        /// <summary>
+        /// Gets a list of <see cref="ReportExportItem"/> for a given WeekOfYear
+        /// </summary>
+        /// <param name="weekOfYear">Week of year</param>
+        /// <returns>List of <see cref="ReportExportItem"/></returns>
+        public List<ReportExportItem> GetReportExportItems(int weekOfYear)
+        {
+            return GetReportExportItems(new Predicate<ReportByWeekGroup>(g => g.WeekOfYear == weekOfYear));
+        }
+        /// <summary>
+        /// Gets a list of <see cref="ReportExportItem"/> within a week of year range
+        /// </summary>
+        /// <param name="fromWeekOfYear">Beginning of range</param>
+        /// <param name="toWeekOfYear">End of range</param>
+        /// <returns>List of <see cref="ReportExportItem"/></returns>
+        public List<ReportExportItem> GetReportExportItems(int fromWeekOfYear, int toWeekOfYear)
+        {
+            if (fromWeekOfYear > toWeekOfYear) throw new ArgumentOutOfRangeException();
+            return GetReportExportItems(new Predicate<ReportByWeekGroup>(g => g.WeekOfYear >= fromWeekOfYear && g.WeekOfYear <= toWeekOfYear));
+        }
+        /// <summary>
+        /// Gets a list of <see cref="ReportExportItem"/> filtered by <see cref="Predicate<WorkByWeekGroup>"/>
+        /// </summary>
+        /// <param name="predicate"><see cref="WorkByWeekGroup"/> predicate</param>
+        /// <returns>List of <see cref="ReportExportItem"/></returns>
+        public List<ReportExportItem> GetReportExportItems(Predicate<ReportByWeekGroup> predicate)
+        {
+            using (var db = OdbFactory.Open(this.DbName))
+            {
+                var exportItems = new List<ReportExportItem>();
+                foreach (var item in GetItemsGroupedByWeek(db).Where(g => predicate(g)))
+                {
+                    double effort = item.Effort * 8;
+                    foreach (var time in item.ReportItems.OrderBy(t => t.StartDate))
+                    {
+                        TimeSpan completed = ((time.EndDate ?? DateTime.Now) - time.StartDate);
+                        double hoursRemain = effort -= completed.TotalHours;
+                        exportItems.Add(new ReportExportItem
+                        {
+                            ItemGuid = time.ItemGuid,
+                            TfsId = time.TfsId,
+                            ServiceCall = time.ServiceCall,
+                            Change = time.Change,
+                            Title = item.Title,
+                            Description = time.Description,
+                            HoursCompleted = completed.TotalHours,
+                            HoursRemaining = (hoursRemain > 0 ? hoursRemain : 0),
+                            StartDate = time.StartDate,
+                            EndDate = time.EndDate,
+                            State = time.State,
+                            Status = time.Status,
+                            WorkType = time.WorkType,
+                            WeekOfYear = item.WeekOfYear
+                        });
+                    }
+                }
+                return exportItems;
+            }
+        }
+        #endregion
 
         #region Async ops
         public async Task<List<WorkItem>> GetWorkItemsAsync()
