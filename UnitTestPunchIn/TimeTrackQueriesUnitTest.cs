@@ -71,6 +71,47 @@ namespace UnitTestPunchIn
         }
 
         [TestMethod]
+        public void ReportAllItemsGroupedByWeek()
+        {
+            using (var db = OdbFactory.Open(GetDbName()))
+            {
+                var items = db.AsQueryable<WorkItem>();
+
+                var reportItems = new List<ReportItem>();
+                foreach (var item in items)
+                {
+                    reportItems.AddRange(item.Entries.Select(e => new ReportItem
+                    {
+                        WorkItemId = item.Id,
+                        Title = item.Title,
+                        Description = e.Description,
+                        StartDate = e.StartDate,
+                        EndDate = e.EndDate,
+                        State = item.Status,
+                        Status = e.Status,
+                        WorkType = item.WorkType
+                    }).ToList());
+                }
+                var reportResults = reportItems.GroupBy(r => new { r.StartDate.Month, r.StartDate.Year }).Select(g => new ReportGroup
+                {
+                    Month = g.Key.Month,
+                    Year = g.Key.Year,
+                    MinDate = g.Min(e => e.StartDate),
+                    MaxDate = g.Max(e => e.EndDate ?? DateTime.Now),
+                    ReportItems = g.Select(e => e).ToList()
+
+                });
+                foreach (var ritem in reportResults)
+                {
+                    Debug.WriteLine("===========");
+                    Debug.WriteLine("WorkItem.Group {0}/{1}", ritem.Year, ritem.Month);
+                    Debug.WriteLine("\tRange: {0} - {1}", ritem.MinDate, ritem.MaxDate);
+                    Debug.WriteLine("\tCount: {0}", ritem.ReportItems.Count);
+                }
+            }
+        }
+
+        [TestMethod]
         public void GroupByMonthAndYear()
         {
             var today = DateTime.Now;
@@ -127,7 +168,18 @@ namespace UnitTestPunchIn
 
             }
         }
-        
+        public class ReportGroup
+        {
+            public ReportGroup()
+            {
+                this.ReportItems = new List<ReportItem>();
+            }
+            public int Month { get; set; }
+            public int Year { get; set; }
+            public DateTime MinDate { get; set; }
+            public DateTime MaxDate { get; set; }
+            public List<ReportItem> ReportItems { get; set; }
+        }
         public class ReportItem : TimeEntry
         {
             public Guid WorkItemId { get; set; }

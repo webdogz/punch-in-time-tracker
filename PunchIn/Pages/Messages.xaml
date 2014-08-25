@@ -12,7 +12,7 @@
         <vm:MessagesViewModel />
     </UserControl.DataContext>
     <UserControl.Resources>
-        <DataTemplate x:Key="GroupInfoTemplate" DataType="AddCustomGroup.GroupInfo">
+        <DataTemplate x:Key="GroupInfoTemplate" DataType="{x:Type vm:GroupInfo}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -21,7 +21,7 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Text="{Binding Path=GroupName}" Margin="3" Width="160"/>
                 <TextBlock Grid.Column="1" Text="{Binding Path=Type}" Margin="3" Width="100"/>
-                <TextBlock Grid.Column="2" Text="{Binding Path=ContactNumber}" Margin="3" Width="40"/>
+                <TextBlock Grid.Column="2" Text="{Binding Path=ContactCount}" Margin="3" Width="40"/>
             </Grid>
         </DataTemplate>
     </UserControl.Resources>

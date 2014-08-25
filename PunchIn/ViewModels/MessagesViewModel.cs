@@ -70,7 +70,7 @@ namespace PunchIn.ViewModels
     public class GroupInfo
     {
         public string GroupName { get; set; }
-        public int ContactNumber { get; set; }
+        public int ContactCount { get; set; }
         public GroupType Type { get; set; }
         public bool CanRemove { get; set; }
 
@@ -80,7 +80,7 @@ namespace PunchIn.ViewModels
         {
             this.Group = group;
             this.GroupName = group.Name;
-            this.ContactNumber = group.Count;
+            this.ContactCount = group.Count;
             this.Type = group.Type;
             if (group.Type == GroupType.DistributionGroup ||
                 (group.Type == GroupType.CustomGroup && group.Name != "Other Contacts"))
