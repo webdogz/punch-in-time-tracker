@@ -5,11 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SP = Microsoft.SharePoint.Client;
-using SPProfile = Microsoft.SharePoint.Client.UserProfiles;
 
 namespace PunchIn.Services
 {
-    internal class SharePointService
+    internal class SharePointService : ViewModels.ViewModelBase
     {
         #region Fields
         Uri siteUri;
@@ -20,12 +19,40 @@ namespace PunchIn.Services
         #endregion
         public SharePointService()
         {
-            // the actual url: http://hin-tfsportal/my/personal/he62276/Lists/Micro%20Management/Weekly.aspx
+            // the actual url: http://hin-tfsportal/my/personal/{USERNAME}/Lists/{LIST_NAME}/AllItems.aspx
             siteUri = Properties.Settings.Default.SharePointSiteUri;
             listTitle = Properties.Settings.Default.SharePointListName;
             clientContext = new SP.ClientContext(siteUri.AbsoluteUri);
+            
             clientWeb = clientContext.Web;
-            //SPProfile.UserProfilePropertiesForUser userSettings = new SPProfile.UserProfilePropertiesForUser()
+            // TODO: Add reference to Microsoft.Office.Server.UserProfile and get users personal site programmatically
+            //var profileManager = new UserProfileManager(ServerContext.GetContext(SP.SPContext.Current.Site));
+            //var profile = profileManager.GetUserProfile(string.Format("{0}\\{1}", Environment.UserDomainName, Environment.UserName));
+            //using (SP.SPSite personalSite = profile.PersonalSite)
+            //{
+            //    var personalSiteUrl = personalSite.PersonalUrl;
+            //}
+            
+        }
+
+        // for viewmodels using this service. 
+        // TODO: Subscribe to notify changed or should we be good little proggers and throw our exceptions
+        private string errors;
+        public string Errors
+        {
+            get { return this.errors; }
+            set
+            {
+                if (this.errors != value)
+                {
+                    this.errors = value;
+                    OnPropertyChanged("Errors");
+                }
+            }
+        }
+        void SetErrorsMessage(Exception e)
+        {
+            Errors = e.Message;
         }
 
         /// <summary>
@@ -33,46 +60,70 @@ namespace PunchIn.Services
         /// </summary>
         private void AddTimeTrackList()
         {
-            clientContext.Load(clientWeb, w => w.Title);
+            clientContext.Load(clientWeb, w => w.Title, w => w.Lists);
             clientContext.ExecuteQuery();
-            SP.ListCreationInformation listInfo = new SP.ListCreationInformation();
-            listInfo.Title = Properties.Settings.Default.SharePointListName;
-            listInfo.Description = "PunchIn Time Tracker used to track my time";
-            //SP.ListTemplateType.IssueTracking
-            SP.List list = clientWeb.Lists.Add(listInfo);
+            SP.List list = clientWeb.Lists.FirstOrDefault(l => l.Title == listTitle);
 
-            SP.FieldGuid guidField = clientContext.CastTo<SP.FieldGuid>(list.Fields.Add(SP.FieldType.Guid, "ItemGuid", false));
-            guidField.Indexed = true;
-            guidField.Required = true;
-            guidField.SetShowInDisplayForm(false);
-            guidField.SetShowInEditForm(false);
-            guidField.SetShowInNewForm(false);
-            SP.FieldNumber idField = clientContext.CastTo<SP.FieldNumber>(list.Fields.Add(SP.FieldType.Integer, "WorkItemId", true));
-            idField.Description = "TFS WorkItem Id";
-            SP.FieldNumber scField = clientContext.CastTo<SP.FieldNumber>(list.Fields.Add(SP.FieldType.Integer, "ServiceCall", true));
-            scField.Description = "HPOV Service Call Number";
-            scField.MinimumValue = 0;
-            SP.FieldNumber chField = clientContext.CastTo<SP.FieldNumber>(list.Fields.Add(SP.FieldType.Integer, "Change", true));
-            chField.Description = "HPOV Change Number";
-            chField.MinimumValue = 0;
+            if (list == null)
+            {
+                try
+                {
+                    SP.ListCreationInformation listInfo = new SP.ListCreationInformation();
+                    listInfo.Title = listTitle;
+                    listInfo.Description = "PunchIn Time Tracker used to track my time";
+                    listInfo.TemplateType = (int)SP.ListTemplateType.GenericList;
+                    list = clientWeb.Lists.Add(listInfo);
 
-            SP.FieldText titleField = clientContext.CastTo<SP.FieldText>(list.Fields.Add(SP.FieldType.Text, "Title", true));
-            titleField.Description = "The work items title";
-
-            SP.FieldNumber hrsDoneField = clientContext.CastTo<SP.FieldNumber>(list.Fields.Add(SP.FieldType.Number, "HoursCompleted", true));
-            hrsDoneField.Description = "Hours done on this task";
-            hrsDoneField.MinimumValue = 0;
-            SP.FieldNumber hrsRemainField = clientContext.CastTo<SP.FieldNumber>(list.Fields.Add(SP.FieldType.Number, "HoursRemaining", true));
-            hrsRemainField.Description = "Hours remaining on the work item";
-            hrsRemainField.MinimumValue = 0;
-            SP.FieldText stateField = clientContext.CastTo<SP.FieldText>(list.Fields.Add(SP.FieldType.Text, "State", true));
-            stateField.Description = "The current state of the work item";
-            SP.FieldText statusField = clientContext.CastTo<SP.FieldText>(list.Fields.Add(SP.FieldType.Text, "Status", true));
-            statusField.Description = "The current status of the work item";
-            SP.FieldText wtField = clientContext.CastTo<SP.FieldText>(list.Fields.Add(SP.FieldType.Text, "WorkType", true));
-            wtField.Description = "The type work being done for the current task";
-
-            clientContext.ExecuteQuery();
+                    //TODO: Don't think we care about this...
+                    //SP.FieldGuid guidField = clientContext.CastTo<SP.FieldGuid>(list.Fields.Add(SP.FieldType.Guid, "ItemGuid", false));
+                    //guidField.Indexed = true;
+                    //guidField.Required = true;
+                    //guidField.SetShowInDisplayForm(false);
+                    //guidField.SetShowInEditForm(false);
+                    //guidField.SetShowInNewForm(false);
+                    SP.FieldNumber idField = clientContext.CastTo<SP.FieldNumber>(list.Fields.Add(SP.FieldType.Integer, "WorkItemId", true));
+                    idField.Description = "TFS WorkItem Id";
+                    idField.Update();
+                    SP.FieldNumber scField = clientContext.CastTo<SP.FieldNumber>(list.Fields.Add(SP.FieldType.Integer, "ServiceCall", true));
+                    scField.Description = "HPOV Service Call Number";
+                    scField.MinimumValue = 0;
+                    scField.Update();
+                    SP.FieldNumber chField = clientContext.CastTo<SP.FieldNumber>(list.Fields.Add(SP.FieldType.Integer, "Change", true));
+                    chField.Description = "HPOV Change Number";
+                    chField.MinimumValue = 0;
+                    chField.Update();
+                    SP.FieldText titleField = clientContext.CastTo<SP.FieldText>(list.Fields.Add(SP.FieldType.Text, "Title", true));
+                    titleField.Description = "The work items title";
+                    titleField.Update();
+                    SP.FieldNumber hrsDoneField = clientContext.CastTo<SP.FieldNumber>(list.Fields.Add(SP.FieldType.Number, "HoursCompleted", true));
+                    hrsDoneField.Description = "Hours done on this task";
+                    hrsDoneField.MinimumValue = 0;
+                    hrsDoneField.Update();
+                    SP.FieldNumber hrsRemainField = clientContext.CastTo<SP.FieldNumber>(list.Fields.Add(SP.FieldType.Number, "HoursRemaining", true));
+                    hrsRemainField.Description = "Hours remaining on the work item";
+                    hrsRemainField.MinimumValue = 0;
+                    hrsRemainField.Update();
+                    SP.FieldText stateField = clientContext.CastTo<SP.FieldText>(list.Fields.Add(SP.FieldType.Text, "State", true));
+                    stateField.Description = "The current state of the work item";
+                    stateField.Update();
+                    SP.FieldText statusField = clientContext.CastTo<SP.FieldText>(list.Fields.Add(SP.FieldType.Text, "Status", true));
+                    statusField.Description = "The current status of the work item";
+                    stateField.Update();
+                    SP.FieldText wtField = clientContext.CastTo<SP.FieldText>(list.Fields.Add(SP.FieldType.Text, "WorkType", true));
+                    wtField.Description = "The type work being done for the current task";
+                    wtField.Update();
+                    SP.FieldDateTime weekEndingField = clientContext.CastTo<SP.FieldDateTime>(list.Fields.Add(SP.FieldType.DateTime, "WeekEnding", true));
+                    weekEndingField.Description = "Date of the Friday or last day of the working week";
+                    weekEndingField.DisplayFormat = SP.DateTimeFieldFormatType.DateOnly;
+                    weekEndingField.Update();
+                    // tell the server and cross our fingers
+                    clientContext.ExecuteQuery();
+                }
+                catch(Exception ex)
+                {
+                    SetErrorsMessage(ex);
+                }
+            }
         }
 
         private void ExportAndSyncTimes()
