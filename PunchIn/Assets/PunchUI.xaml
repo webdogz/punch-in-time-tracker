@@ -25,4 +25,20 @@
         <ResourceDictionary Source="Icons/task.xaml" />
         <ResourceDictionary Source="Icons/timer.xaml" />
     </ResourceDictionary.MergedDictionaries>
+
+    <ControlTemplate x:Key="ErrorsBlock" TargetType="ContentControl">
+        <Border BorderBrush="Red" Background="#FFFFFFAA" BorderThickness="1">
+            <Grid Background="{DynamicResource BackgroundErrorRadialGradient}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Rectangle Width="24" Height="24" Fill="{DynamicResource exit}" Margin="4" VerticalAlignment="Top"/>
+                <StackPanel Grid.Column="1" Orientation="Vertical" Margin="10,0">
+                    <TextBlock Text="There was a boo boo" Style="{DynamicResource Heading2}"/>
+                    <ContentPresenter Margin="0,0,0,8" />
+                </StackPanel>
+            </Grid>
+        </Border>
+    </ControlTemplate>
 </ResourceDictionary>

@@ -7,15 +7,18 @@ namespace PunchIn.Models
     /// </summary>
     public class SPExportItem
     {
-        public Guid ItemGuid { get; set; }
-        public int WorkItemId { get; set; }
+        public Guid TimeEntryGuid { get; set; }
+        public int TfsId { get; set; }
         public int ServiceCall { get; set; }
         public int Change { get; set; }
         public string Title { get; set; }
+        public string Description { get; set; }
         public Double HoursCompleted { get; set; }
         public Double HoursRemaining { get; set; }
         public string State { get; set; }
         public string Status { get; set; }
         public string WorkType { get; set; }
+        public DateTime WeekStarting { get; set; }
+        public int WeekOfYear { get; set; }
     }
 }

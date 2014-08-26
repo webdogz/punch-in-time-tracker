@@ -24,11 +24,16 @@
                           Offset="1" />
     </LinearGradientBrush>
     <RadialGradientBrush x:Key="BackgroundRadialGradient" Center="0.5,1" GradientOrigin="0,1" 
-                             Opacity="0.3" RadiusX="0.8" RadiusY="0.8">
+                         Opacity="0.3" RadiusX="0.8" RadiusY="0.8">
         <GradientStop Offset="1" Color="{DynamicResource WindowBackgroundColor}" />
         <GradientStop Offset="1" Color="{DynamicResource AccentColor}" />
     </RadialGradientBrush>
-
+    <RadialGradientBrush x:Key="BackgroundErrorRadialGradient" Center="0.5,1" GradientOrigin="0,1" 
+                         Opacity="0.3" RadiusX="0.8" RadiusY="0.8">
+        <GradientStop Offset="1" Color="#FFFFFFA0" />
+        <GradientStop Offset="1" Color="Coral" />
+    </RadialGradientBrush>
+    
     <Image x:Key="icon" Source="{Binding Icon}" Height="16" Width="16" x:Shared="false" />
     <Image x:Key="punchIcon" Source="{Binding PunchMenuIcon}" Height="16" Width="16" x:Shared="false" />
     <ContentControl x:Key="contentIcon" x:Shared="false">

@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
              xmlns:vm="clr-namespace:PunchIn.ViewModels"
              xmlns:models="clr-namespace:PunchIn.Models"
              mc:Ignorable="d" 
@@ -11,9 +12,11 @@
         <vm:ReportsWeeklyViewModel />
     </UserControl.DataContext>
     <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <DataTemplate x:Key="ReportGridTemplate" DataType="{x:Type models:ReportExportItem}">
             <Grid>
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
@@ -22,24 +25,146 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <TextBlock Grid.Column="0" Text="{Binding Path=Title}" Margin="3"/>
-                <TextBlock Grid.Column="1" Text="{Binding Path=HoursCompleted}" Margin="3" Width="40"/>
-                <TextBlock Grid.Column="2" Text="{Binding Path=HoursRemaining}" Margin="3" Width="40"/>
-                <StackPanel Orientation="Horizontal" Grid.Row="1">
-                    <TextBlock Text="{Binding Path=TfsId}" Margin="3"/>
-                    <TextBlock Text="{Binding Path=ServiceCall}" Margin="3"/>
+                <Rectangle Grid.Column="0" Grid.RowSpan="2"  Width="24" Height="24" Fill="{DynamicResource task}"
+                           VerticalAlignment="Top"/>
+                <TextBlock Grid.Column="1" Text="{Binding Path=Title}" Margin="3"/>
+                <TextBlock Grid.Column="2" Text="{Binding Path=HoursCompleted, StringFormat=\{0:#.##\}}" Margin="3" Width="40"/>
+                <TextBlock Grid.Column="3" Text="{Binding Path=HoursRemaining, StringFormat=\{0:#.##\}}" Margin="3" Width="40"/>
+                <StackPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3">
+                    <TextBlock Text="{Binding Path=Description, StringFormat=Comment: {0}}" Margin="3"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="TFS:" Margin="3"/>
+                        <TextBlock Text="{Binding Path=TfsId}" Margin="3"/>
+                        <TextBlock Text="SC:" Margin="3"/>
+                        <TextBlock Text="{Binding Path=ServiceCall}" Margin="3"/>
+                        <TextBlock Text="CH:" Margin="3"/>
+                        <TextBlock Text="{Binding Path=Change}" Margin="3"/>
+                        <TextBlock Text="Effort:" Margin="3"/>
+                        <TextBlock Text="{Binding Path=Effort}" Margin="3"/>
+                    </StackPanel>
                 </StackPanel>
             </Grid>
         </DataTemplate>
+        <CollectionViewSource Source="{Binding Path=ReportItems}" x:Key="cvs">
+            <CollectionViewSource.SortDescriptions>
+                <scm:SortDescription PropertyName="StartDate" />
+                <scm:SortDescription PropertyName="EndDate" />
+            </CollectionViewSource.SortDescriptions>
+            <CollectionViewSource.GroupDescriptions>
+                <PropertyGroupDescription PropertyName="WeekStarting" />
+                <!--<PropertyGroupDescription PropertyName="WorkType" />-->
+            </CollectionViewSource.GroupDescriptions>
+        </CollectionViewSource>
+        <Style TargetType="{x:Type ToggleButton}">
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Padding" Value="1" />
+            <Setter Property="Height" Value="12" />
+            <Setter Property="Width" Value="12" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+                        <Image x:Name="img" Source="/Resources/exit.png" />
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="False">
+                                <Setter TargetName="img" Property="Source" Value="/Resources/add.png" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <ControlTemplate x:Key="ExpanderToggleButton" TargetType="{x:Type ToggleButton}">
+            <Border Name="Border" CornerRadius="4" Background="Transparent" BorderBrush="{StaticResource Accent}" BorderThickness="0">
+                <Path  Name="Arrow" Fill="{StaticResource Accent}" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center"  
+                       Data="F1 M 4.36359,3.54547L 16.3636,10.3636L 4.36358,17.1818L 4.36359,3.54547 Z"/>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="ToggleButton.IsMouseOver" Value="True">
+                    <Setter TargetName="Arrow" Property="Fill" Value="{StaticResource ButtonTextHover}" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter TargetName="Arrow" Property="Fill" Value="{StaticResource ButtonTextPressed}" />
+                </Trigger>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter TargetName="Arrow" Property="Path.RenderTransform">
+                        <Setter.Value>
+                            <RotateTransform Angle="45" CenterY="10" CenterX="10"/>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <TextBlock Text="THIS WEEKS TIMES" Style="{StaticResource Heading2}" Margin="0,0,0,8" />
-        <ListView Grid.Row="1" ItemsSource="{Binding Path=ReportItems}"
-                  ItemTemplate="{StaticResource ReportGridTemplate}"
-                  SelectedItem="{Binding Path=SelectedItem}"/>
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+            <Rectangle Fill="{DynamicResource report}" Width="32" Height="32" Stretch="Uniform" Margin="4,0,10,0"/>
+            <TextBlock Text="THIS WEEKS TIMES" Style="{StaticResource Heading2}" VerticalAlignment="Center" />
+        </StackPanel>
+        
+        <ListBox Grid.Row="1" 
+                 ItemsSource="{Binding Source={StaticResource cvs}}"
+                 ItemTemplate="{StaticResource ReportGridTemplate}"
+                 SelectedItem="{Binding Path=SelectedItem}">
+            <ListBox.GroupStyle>
+                <GroupStyle>
+                    <GroupStyle.ContainerStyle>
+                        <Style TargetType="{x:Type GroupItem}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type GroupItem}">
+                                        <ControlTemplate.Triggers>
+                                            <DataTrigger Binding="{Binding Path=IsBottomLevel}" Value="True">
+                                                <Setter TargetName="gridTemplate" Property="Grid.Background" 
+                                                        Value="{StaticResource DataGridHeaderBackgroundHover}" />
+                                            </DataTrigger>
+                                        </ControlTemplate.Triggers>
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition />
+                                                <RowDefinition />
+                                            </Grid.RowDefinitions>
+                                            <Grid x:Name="gridTemplate" Height="26" VerticalAlignment="Center"
+                                                  Background="{StaticResource DataGridHeaderBackground}">
+                                                <Grid.Resources>
+                                                    <Style TargetType="{x:Type TextBlock}">
+                                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                                        <Setter Property="FontSize" Value="15"/>
+                                                        <Setter Property="Foreground" Value="{DynamicResource DataGridHeaderForeground}"/>
+                                                        <Setter Property="VerticalAlignment" Value="Center" />
+                                                    </Style>
+                                                </Grid.Resources>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="40" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <ToggleButton x:Name="btnShowHide" IsChecked="True" Margin="3.5"
+                                                              Template="{StaticResource ExpanderToggleButton}"/>
+
+                                                <TextBlock Grid.Column="1" Text="{Binding Path=Name}" Margin="3.5,0" />
+                                                <TextBlock Grid.Column="2" Text="Count:" />
+                                                <TextBlock Grid.Column="3" Text="{Binding Path=ItemCount}" TextAlignment="Right" Margin="0,0,4,0" />
+                                                
+                                            </Grid>
+
+                                            <ItemsPresenter Grid.Row="1" Margin="8,0,0,4" 
+                                                            Visibility="{Binding ElementName=btnShowHide, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                                        </Grid>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </GroupStyle.ContainerStyle>
+                </GroupStyle>
+            </ListBox.GroupStyle>
+        </ListBox>
     </Grid>
 </UserControl>

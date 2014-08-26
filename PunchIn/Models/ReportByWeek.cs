@@ -32,5 +32,6 @@ namespace PunchIn.Models
         public double HoursCompleted { get; set; }
         public double HoursRemaining { get; set; }
         public int WeekOfYear { get; set; }
+        public DateTime WeekStarting { get; set; }
     }
 }

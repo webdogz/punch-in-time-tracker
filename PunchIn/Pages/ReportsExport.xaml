@@ -7,6 +7,9 @@
              xmlns:vm="clr-namespace:PunchIn.ViewModels"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </UserControl.Resources>
     <UserControl.DataContext>
         <vm:SharePointExportViewModel/>
     </UserControl.DataContext>
@@ -16,6 +19,10 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <StackPanel>
+            <ContentControl Template="{DynamicResource ErrorsBlock}" Margin="0"
+                            Visibility="{Binding Path=HasError, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=inverse}">
+                <TextBlock Text="{Binding Path=Errors}" TextWrapping="Wrap"/>
+            </ContentControl>
             <StackPanel Orientation="Horizontal">
                 <Rectangle Fill="{DynamicResource excel}" Margin="10" Width="20" Height="20" />
                 <TextBlock Text="EXPORT REPORT TO EXCEL" 
@@ -23,7 +30,6 @@
                            Style="{StaticResource Heading2}" Margin="0,10" />
             </StackPanel>
             <Button Content="Export to SharePoint List" />
-            <TextBlock Text="{Binding Path=Errors}"/>
         </StackPanel>
         <ListView Grid.Row="1" ItemsSource="{Binding Path=SharePointList}" />
     </Grid>

@@ -1,46 +1,20 @@
-﻿using NDatabase;
+﻿using EmitMapper;
+using EmitMapper.MappingConfiguration;
+using NDatabase;
+using PunchIn.Extensions;
+using PunchIn.Models;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using PunchIn.Models;
-using EmitMapper;
-using EmitMapper.MappingConfiguration;
 
 namespace PunchIn.Services
 {
     internal class PunchInService
     {
         private readonly ConcurrentDictionary<string, string> _dbNamesCache = new ConcurrentDictionary<string, string>();
-        private readonly System.Globalization.CultureInfo _cultureInfo;
-        private System.Globalization.Calendar _calendar;
-        public PunchInService()
-        {
-            this._cultureInfo = new System.Globalization.CultureInfo("en-AU");
-            this._calendar = this._cultureInfo.Calendar;
-        }
-        public int GetWeekOfYear(DateTime date)
-        {
-            return this._calendar.GetWeekOfYear(date, System.Globalization.CalendarWeekRule.FirstDay, DayOfWeek.Monday);
-        }
-        public DateTime GetDateFromWeekOfYear(int year, int weekOfYear)
-        {
-            DateTime jan1 = new DateTime(year, 1, 1);
-            int daysOffset = DayOfWeek.Thursday - jan1.DayOfWeek;
-
-            DateTime firstThursday = jan1.AddDays(daysOffset);
-            int firstWeek = GetWeekOfYear(firstThursday);
-
-            var weekNum = weekOfYear;
-            if (firstWeek <= 1)
-            {
-                weekNum -= 1;
-            }
-            var result = firstThursday.AddDays(weekNum * 7);
-            return result.AddDays(-3);
-        }
         
         /// <summary>
         /// Retrieve all WorkItems from the database
@@ -114,7 +88,7 @@ namespace PunchIn.Services
                     WorkType = item.WorkType
                 })).GroupBy(r => new
                 {
-                    WeekOfYear = GetWeekOfYear(r.StartDate),
+                    WeekOfYear = r.StartDate.GetWeekOfYear(),
                     Title = r.Title,
                     Effort = r.Effort
                 }).Select(g => new ReportByWeekGroup
@@ -181,6 +155,7 @@ namespace PunchIn.Services
                             Change = time.Change,
                             Title = item.Title,
                             Description = time.Description,
+                            Effort = item.Effort,
                             HoursCompleted = completed.TotalHours,
                             HoursRemaining = (hoursRemain > 0 ? hoursRemain : 0),
                             StartDate = time.StartDate,
@@ -188,7 +163,8 @@ namespace PunchIn.Services
                             State = time.State,
                             Status = time.Status,
                             WorkType = time.WorkType,
-                            WeekOfYear = item.WeekOfYear
+                            WeekOfYear = item.WeekOfYear,
+                            WeekStarting = item.WeekOfYear.GetWeekOfYearDate()
                         });
                     }
                 }

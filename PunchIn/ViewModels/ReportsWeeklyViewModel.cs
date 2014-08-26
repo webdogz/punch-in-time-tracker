@@ -2,6 +2,7 @@
 using PunchIn.Services;
 using System;
 using System.Collections.ObjectModel;
+using PunchIn.Extensions;
 
 namespace PunchIn.ViewModels
 {
@@ -11,7 +12,7 @@ namespace PunchIn.ViewModels
         public ReportsWeeklyViewModel()
         {
             this.service = new PunchInService();
-            int thisWeek = this.service.GetWeekOfYear(DateTime.Now);
+            int thisWeek = DateTime.Now.GetWeekOfYear();
             ReportItems = new ObservableCollection<ReportExportItem>(this.service.GetReportExportItems());
         }
         

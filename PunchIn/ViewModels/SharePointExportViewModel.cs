@@ -25,6 +25,19 @@ namespace PunchIn.ViewModels
             SharePointList = new ObservableCollection<SPExportItem>(listItems);
         }
         
+        private bool hasError;
+        public bool HasError
+        {
+            get { return this.hasError; }
+            set
+            {
+                if (this.hasError != value)
+                {
+                    this.hasError = value;
+                    OnPropertyChanged("HasError");
+                }
+            }
+        }
         private string errors;
         public string Errors
         {
@@ -35,6 +48,7 @@ namespace PunchIn.ViewModels
                 {
                     this.errors = value;
                     OnPropertyChanged("Errors");
+                    HasError = !string.IsNullOrWhiteSpace(this.errors);
                 }
             }
         }

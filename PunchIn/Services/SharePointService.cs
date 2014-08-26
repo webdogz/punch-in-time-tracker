@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SP = Microsoft.SharePoint.Client;
+using PunchIn.Extensions;
 
 namespace PunchIn.Services
 {
@@ -75,12 +76,14 @@ namespace PunchIn.Services
                     list = clientWeb.Lists.Add(listInfo);
 
                     //TODO: Don't think we care about this...
-                    //SP.FieldGuid guidField = clientContext.CastTo<SP.FieldGuid>(list.Fields.Add(SP.FieldType.Guid, "ItemGuid", false));
-                    //guidField.Indexed = true;
-                    //guidField.Required = true;
-                    //guidField.SetShowInDisplayForm(false);
-                    //guidField.SetShowInEditForm(false);
-                    //guidField.SetShowInNewForm(false);
+                    SP.FieldGuid guidField = clientContext.CastTo<SP.FieldGuid>(list.Fields.Add(SP.FieldType.Guid, "TimeEntryGuid", false));
+                    guidField.Description = "Guid of the TimeEntry item used for syncing purposes";
+                    guidField.Indexed = true;
+                    guidField.Required = true;
+                    guidField.SetShowInDisplayForm(false);
+                    guidField.SetShowInEditForm(false);
+                    guidField.SetShowInNewForm(false);
+                    guidField.Update();
                     SP.FieldNumber idField = clientContext.CastTo<SP.FieldNumber>(list.Fields.Add(SP.FieldType.Integer, "TfsId", true));
                     idField.Description = "TFS WorkItem Id";
                     idField.Update();
@@ -95,6 +98,9 @@ namespace PunchIn.Services
                     SP.FieldText titleField = clientContext.CastTo<SP.FieldText>(list.Fields.Add(SP.FieldType.Text, "Title", true));
                     titleField.Description = "The work items title";
                     titleField.Update();
+                    SP.FieldText commentField = clientContext.CastTo<SP.FieldText>(list.Fields.Add(SP.FieldType.Text, "Description", true));
+                    commentField.Description = "The time entry's description";
+                    commentField.Update();
                     SP.FieldNumber hrsDoneField = clientContext.CastTo<SP.FieldNumber>(list.Fields.Add(SP.FieldType.Number, "HoursCompleted", true));
                     hrsDoneField.Description = "Hours done on this task";
                     hrsDoneField.MinimumValue = 0;
@@ -112,10 +118,10 @@ namespace PunchIn.Services
                     SP.FieldText wtField = clientContext.CastTo<SP.FieldText>(list.Fields.Add(SP.FieldType.Text, "WorkType", true));
                     wtField.Description = "The type work being done for the current task";
                     wtField.Update();
-                    //SP.FieldDateTime weekEndingField = clientContext.CastTo<SP.FieldDateTime>(list.Fields.Add(SP.FieldType.DateTime, "WeekEnding", true));
-                    //weekEndingField.Description = "Date of the Friday or last day of the working week";
-                    //weekEndingField.DisplayFormat = SP.DateTimeFieldFormatType.DateOnly;
-                    //weekEndingField.Update();
+                    SP.FieldDateTime weekStartingField = clientContext.CastTo<SP.FieldDateTime>(list.Fields.Add(SP.FieldType.DateTime, "WeekStarting", true));
+                    weekStartingField.Description = "Date of the Monday or first day of the working week";
+                    weekStartingField.DisplayFormat = SP.DateTimeFieldFormatType.DateOnly;
+                    weekStartingField.Update();
                     SP.FieldNumber woyField = clientContext.CastTo<SP.FieldNumber>(list.Fields.Add(SP.FieldType.Integer, "WeekOfYear", true));
                     woyField.Description = "Week of year";
                     woyField.Update();
@@ -149,16 +155,19 @@ namespace PunchIn.Services
                     clientContext.ExecuteQuery();
                     list = queryResults.Select(f => new SPExportItem
                     {
-                        ItemGuid = Guid.Parse(f.FieldValues["ItemGuid"].ToString()),
-                        WorkItemId = (int)f.FieldValues["WorkItemId"],
+                        TimeEntryGuid = Guid.Parse(f.FieldValues["TimeEntryGuid"].ToString()),
+                        TfsId = (int)f.FieldValues["TfsId"],
                         ServiceCall = (int)f.FieldValues["ServiceCall"],
                         Change = (int)f.FieldValues["Change"],
                         Title = f.FieldValues["Title"].ToString(),
+                        Description = f.FieldValues["Description"].ToString(),
                         HoursCompleted = (double)f.FieldValues["HoursCompleted"],
                         HoursRemaining = (double)f.FieldValues["HoursRemaining"],
                         State = f.FieldValues["State"].ToString(),
                         Status = f.FieldValues["Status"].ToString(),
-                        WorkType = f.FieldValues["WorkType"].ToString()
+                        WorkType = f.FieldValues["WorkType"].ToString(),
+                        WeekStarting = (DateTime)f.FieldValues["WeekStarting"],
+                        WeekOfYear = (int)f.FieldValues["WeekOfYear"]
                     });
                 }
                 catch (System.Net.WebException webEx)
@@ -181,6 +190,8 @@ namespace PunchIn.Services
             clientContext.Load(listInfo);
             clientContext.ExecuteQuery();
 
+
+
             SP.ListItemCreationInformation createInfo = new SP.ListItemCreationInformation();
             SP.ListItem newItem = listInfo.AddItem(createInfo);
             newItem["Title"] = "My new item created from client";
@@ -189,26 +200,6 @@ namespace PunchIn.Services
             newItem.Update();
             clientContext.ExecuteQuery();
             Console.WriteLine("Added new item: {0}", newItem);
-        }
-    }
-    /// <summary>
-    /// Extension class for creating sharepoint fields. Helps with the creation of SPFields when creating a new SPList
-    /// </summary>
-    public static class Extensions
-    {
-        public static SP.Field Add(this SP.FieldCollection fields, SP.FieldType fieldType, String displayName, bool addToDefaultView)
-        {
-            return fields.AddFieldAsXml(String.Format("<Field DisplayName='{0}' Type='{1}' />", displayName, fieldType), addToDefaultView, SP.AddFieldOptions.DefaultValue);
-        }
-
-        public static SP.Field Add(this SP.FieldCollection fields, SP.FieldType fieldType, String displayName, String[] choices, bool addToDefaultView)
-        {
-            return fields.AddFieldAsXml(
-                String.Format("<Field DisplayName='{0}' Type='{1}'><CHOICES>{2}</CHOICES></Field>",
-                    displayName,
-                    fieldType,
-                    String.Concat(Array.ConvertAll<String, String>(choices, choice => String.Format("<CHOICE>{0}</CHOICE>", choice)))),
-                addToDefaultView, SP.AddFieldOptions.DefaultValue);
         }
     }
 }
