@@ -7,7 +7,7 @@
              xmlns:controls="clr-namespace:Microsoft.Lync.Controls;assembly=Microsoft.Lync.Controls" 
              x:Class="PunchIn.Pages.Messages"
              mc:Ignorable="d" 
-             d:DesignHeight="600" d:DesignWidth="400">
+             d:DesignHeight="400" d:DesignWidth="400">
     <UserControl.DataContext>
         <vm:MessagesViewModel />
     </UserControl.DataContext>
@@ -25,30 +25,50 @@
             </Grid>
         </DataTemplate>
     </UserControl.Resources>
-    <Grid Style="{StaticResource ContentRoot}">
+    <Grid Style="{StaticResource ContentRoot}" x:Name="MainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="5*"/>
+            <RowDefinition Height="5*"/>
         </Grid.RowDefinitions>
         <TextBlock Text="Lync Contacts are comming soon!" Style="{DynamicResource Heading1}"/>
-        <ScrollViewer Grid.Row="1">
-            <StackPanel>
-                <!--<controls:ContactCard />
-                <controls:ContactItem Background="{DynamicResource WindowBackground}" Foreground="{DynamicResource WindowText}"/>
-                <controls:CustomContactListItem/>
-                <StackPanel Orientation="Horizontal">
-                    <controls:StartInstantMessagingButton/>
-                    <controls:SendFileButton/>
-                    <controls:SendEmailButton/>
-                    <controls:ScheduleMeetingButton/>
-                    <controls:ContactListGroupItem/>
-                </StackPanel>
-                <controls:ContactSearchInputBox/>-->
-                <ListBox Grid.Row="3" x:Name="groupListBox" Margin="4" ItemsSource="{Binding Path=Groups}" 
-                         ItemTemplate="{StaticResource GroupInfoTemplate}"
-                         VerticalAlignment="Stretch" 
-                         SelectedItem="{Binding Path=SelectedGroupInfo}" />
+        <ListBox Grid.Row="1" x:Name="groupListBox" Margin="4" ItemsSource="{Binding Path=Groups}" 
+                 ItemTemplate="{StaticResource GroupInfoTemplate}"
+                 VerticalAlignment="Stretch" 
+                 SelectedItem="{Binding Path=SelectedGroupInfo}" />
+        <ListBox Grid.Row="3" 
+                 ItemsSource="{Binding Path=SelectedGroupInfo.ContactUris}">
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel MaxWidth="{Binding ActualWidth, ElementName=MainGrid}" />
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Border BorderBrush="{DynamicResource Accent}" BorderThickness="1" Margin="3" MinWidth="150" MaxWidth="200">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <controls:PresenceIndicator x:Name="presenceIndicator"
+                                                        Grid.RowSpan="2"
+                                                        Source="{Binding}"
+                                                        PhotoDisplayMode="Small"/>
+                            <TextBlock Grid.Column="1" Margin="5,0" Text="{Binding Path=DisplayName, ElementName=presenceIndicator}"
+                                       Style="{DynamicResource Heading2}"/>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <!--<ScrollViewer Grid.Row="2">
+            <StackPanel Orientation="Horizontal">
+                <controls:PresenceIndicator x:Name="presenceIndicator"
+                                            Source="hdwa\he62276"
+                                            PhotoDisplayMode="Large"/>
+                <TextBlock Text="{Binding DisplayName, ElementName=presenceIndicator}" Style="{DynamicResource Heading2}" />
             </StackPanel>
-        </ScrollViewer>
+        </ScrollViewer>-->
     </Grid>
 </UserControl>

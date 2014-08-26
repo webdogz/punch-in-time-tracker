@@ -25,6 +25,22 @@ namespace PunchIn.Services
         {
             return this._calendar.GetWeekOfYear(date, System.Globalization.CalendarWeekRule.FirstDay, DayOfWeek.Monday);
         }
+        public DateTime GetDateFromWeekOfYear(int year, int weekOfYear)
+        {
+            DateTime jan1 = new DateTime(year, 1, 1);
+            int daysOffset = DayOfWeek.Thursday - jan1.DayOfWeek;
+
+            DateTime firstThursday = jan1.AddDays(daysOffset);
+            int firstWeek = GetWeekOfYear(firstThursday);
+
+            var weekNum = weekOfYear;
+            if (firstWeek <= 1)
+            {
+                weekNum -= 1;
+            }
+            var result = firstThursday.AddDays(weekNum * 7);
+            return result.AddDays(-3);
+        }
         
         /// <summary>
         /// Retrieve all WorkItems from the database

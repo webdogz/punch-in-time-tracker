@@ -1,6 +1,7 @@
 ﻿using Microsoft.Lync.Model.Group;
 using PunchIn.Services;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace PunchIn.ViewModels
@@ -75,6 +76,7 @@ namespace PunchIn.ViewModels
         public bool CanRemove { get; set; }
 
         public Group Group { get; set; }
+        public List<string> ContactUris { get; set; }
 
         public GroupInfo(Group group)
         {
@@ -90,6 +92,11 @@ namespace PunchIn.ViewModels
             else
             {
                 this.CanRemove = false;
+            }
+            this.ContactUris = new List<string>();
+            foreach(var contact in (ContactCollection)group)
+            {
+                this.ContactUris.Add(contact.Uri);
             }
         }
     }
