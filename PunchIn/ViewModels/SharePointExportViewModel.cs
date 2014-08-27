@@ -1,6 +1,7 @@
 ﻿using PunchIn.Models;
 using PunchIn.Services;
 using System.Collections.ObjectModel;
+using System.Windows.Input;
 
 namespace PunchIn.ViewModels
 {
@@ -12,9 +13,13 @@ namespace PunchIn.ViewModels
             this.service = new SharePointService();
             this.service.PropertyChanged += (s, e) =>
             {
-                if(e.PropertyName == "Errors")
+                if (e.PropertyName == "Errors")
                 {
                     Errors = ((SharePointService)s).Errors;
+                }
+                if (e.PropertyName == "HasSharePointList")
+                {
+                    HasSharePointList = ((SharePointService)s).HasSharePointList;
                 }
             };
             LoadItems();
@@ -52,6 +57,19 @@ namespace PunchIn.ViewModels
                 }
             }
         }
+        private bool hasSharePointList = true;
+        public bool HasSharePointList
+        {
+            get { return this.hasSharePointList; }
+            set
+            {
+                if (this.hasSharePointList != value)
+                {
+                    this.hasSharePointList = value;
+                    OnPropertyChanged("HasSharePointList");
+                }
+            }
+        }
         private ObservableCollection<SPExportItem> sharePointList;
         public ObservableCollection<SPExportItem> SharePointList
         {
@@ -63,6 +81,21 @@ namespace PunchIn.ViewModels
                     this.sharePointList = value;
                     OnPropertyChanged("SharePointList");
                 }
+            }
+        }
+
+        public ICommand AddListCommand
+        {
+            get
+            {
+                return new DelegateCommand
+                {
+                    CanExecuteFunc = (o) => !HasSharePointList,
+                    CommandAction = (o) =>
+                    {
+                        this.service.AddTimeTrackList();
+                    }
+                };
             }
         }
     }

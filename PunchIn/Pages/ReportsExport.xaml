@@ -21,7 +21,10 @@
         <StackPanel>
             <ContentControl Template="{DynamicResource ErrorsBlock}" Margin="0"
                             Visibility="{Binding Path=HasError, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=inverse}">
-                <TextBlock Text="{Binding Path=Errors}" TextWrapping="Wrap"/>
+                <StackPanel>
+                    <TextBlock Text="{Binding Path=Errors}" TextWrapping="Wrap"/>
+                    <Button Command="{Binding Path=AddListCommand}">Add SharePoint List</Button>
+                </StackPanel>
             </ContentControl>
             <StackPanel Orientation="Horizontal">
                 <Rectangle Fill="{DynamicResource excel}" Margin="10" Width="20" Height="20" />

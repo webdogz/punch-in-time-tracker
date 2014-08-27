@@ -7,15 +7,15 @@
 
     public class BindableStaticResource : StaticResourceExtension
     {
-        private static readonly DependencyProperty DummyProperty;
+        private static readonly DependencyProperty MyDummyProperty = 
+            DependencyProperty.Register("MyDummy",
+                                                typeof(Object),
+                                                typeof(DependencyObject),
+                                                new UIPropertyMetadata(null));
 
-        static BindableStaticResource()
-        {
-            DummyProperty = DependencyProperty.RegisterAttached("Dummy",
-                                                                typeof(Object),
-                                                                typeof(DependencyObject),
-                                                                new UIPropertyMetadata(null));
-        }
+        //static BindableStaticResource()
+        //{
+        //}
 
         public Binding MyBinding { get; set; }
 
@@ -35,9 +35,9 @@
 
             MyBinding.Source = targetObject.DataContext;
             var DummyDO = new DependencyObject();
-            BindingOperations.SetBinding(DummyDO, DummyProperty, MyBinding);
+            BindingOperations.SetBinding(DummyDO, MyDummyProperty, MyBinding);
 
-            ResourceKey = DummyDO.GetValue(DummyProperty);
+            ResourceKey = DummyDO.GetValue(MyDummyProperty);
 
             return base.ProvideValue(serviceProvider);
         }

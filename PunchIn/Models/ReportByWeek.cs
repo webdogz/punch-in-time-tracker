@@ -37,8 +37,6 @@ namespace PunchIn.Models
         {
             get
             {
-                if (this.WorkType == null)
-                    return "task";
                 return this.WorkType.ToString().ToLower();
             }
         }
