@@ -15,7 +15,7 @@ namespace PunchIn.ViewModels
             int thisWeek = DateTime.Now.GetWeekOfYear();
             ReportItems = new ObservableCollection<ReportExportItem>(this.service.GetReportExportItems());
         }
-        
+        public string MyIcon { get { return "backlogitem";} }
         private int weekOfYear;
         public int WeekOfYear
         {

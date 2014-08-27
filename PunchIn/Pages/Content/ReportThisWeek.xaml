@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+             xmlns:ext="clr-namespace:PunchIn.Extensions"
              xmlns:vm="clr-namespace:PunchIn.ViewModels"
              xmlns:models="clr-namespace:PunchIn.Models"
              mc:Ignorable="d" 
@@ -25,7 +26,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <Rectangle Grid.Column="0" Grid.RowSpan="2"  Width="24" Height="24" Fill="{DynamicResource task}"
+                <Rectangle Grid.Column="0" Grid.RowSpan="2"  Width="24" Height="24" Fill="{ext:BindableStaticResource {Binding Path=Icon}}"
                            VerticalAlignment="Top"/>
                 <TextBlock Grid.Column="1" Text="{Binding Path=Title}" Margin="3"/>
                 <TextBlock Grid.Column="2" Text="{Binding Path=HoursCompleted, StringFormat=\{0:#.##\}}" Margin="3" Width="40"/>
