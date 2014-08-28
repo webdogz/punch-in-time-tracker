@@ -4,7 +4,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
-             xmlns:ext="clr-namespace:PunchIn.Extensions"
              xmlns:vm="clr-namespace:PunchIn.ViewModels"
              xmlns:models="clr-namespace:PunchIn.Models"
              mc:Ignorable="d" 
@@ -15,7 +14,35 @@
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <DataTemplate x:Key="ReportGridTemplate" DataType="{x:Type models:ReportExportItem}">
-            <Grid>
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Rectangle Grid.Column="0" Grid.RowSpan="2" Width="24" Height="24" Fill="{Binding Icon, Converter={StaticResource stringToResourceConverter}}"
+                           VerticalAlignment="Top"/>
+                <TextBlock Grid.Column="1" Text="{Binding Path=Title, FallbackValue=Title goes here}" Margin="3"/>
+                <StackPanel Grid.Row="1" Grid.Column="1">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Grid.Column="2" Text="{Binding Path=HoursCompleted, StringFormat=\{0:#.##\} Hrs - , FallbackValue=2.5 Hrs - }" Margin="3" MinWidth="40"/>
+                        <TextBlock Text="{Binding Path=Description, FallbackValue=Description goes here}" Margin="3"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="TFS:" FontWeight="SemiBold" Margin="3"/>
+                        <TextBlock Text="{Binding Path=TfsId, FallbackValue=12345}" Margin="3"/>
+                        <TextBlock Text="SC:" FontWeight="SemiBold" Margin="3"/>
+                        <TextBlock Text="{Binding Path=ServiceCall, FallbackValue=9876543}" Margin="3"/>
+                        <TextBlock Text="CH:" FontWeight="SemiBold" Margin="3"/>
+                        <TextBlock Text="{Binding Path=Change, FallbackValue=5678912}" Margin="3"/>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+            <!--<Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
@@ -26,11 +53,11 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <Rectangle Grid.Column="0" Grid.RowSpan="2"  Width="24" Height="24" Fill="{ext:BindableStaticResource {Binding Path=Icon}}"
+                <Rectangle Grid.Column="0" Grid.RowSpan="2" Width="24" Height="24" Fill="{ext:BindableStaticResource {Binding Path=Icon}}"
                            VerticalAlignment="Top"/>
                 <TextBlock Grid.Column="1" Text="{Binding Path=Title}" Margin="3"/>
-                <TextBlock Grid.Column="2" Text="{Binding Path=HoursCompleted, StringFormat=\{0:#.##\}}" Margin="3" Width="40"/>
-                <TextBlock Grid.Column="3" Text="{Binding Path=HoursRemaining, StringFormat=\{0:#.##\}}" Margin="3" Width="40"/>
+                <TextBlock Grid.Column="2" Text="{Binding Path=HoursCompleted, StringFormat=\{0:#.##\}}" Margin="3" MinWidth="40"/>
+                <TextBlock Grid.Column="3" Text="{Binding Path=HoursRemaining, StringFormat=\{0:#.##\}}" Margin="3" MinWidth="40"/>
                 <StackPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3">
                     <TextBlock Text="{Binding Path=Description, StringFormat=Comment: {0}}" Margin="3"/>
                     <StackPanel Orientation="Horizontal">
@@ -44,7 +71,7 @@
                         <TextBlock Text="{Binding Path=Effort}" Margin="3"/>
                     </StackPanel>
                 </StackPanel>
-            </Grid>
+            </Grid>-->
         </DataTemplate>
         <CollectionViewSource Source="{Binding Path=ReportItems}" x:Key="cvs">
             <CollectionViewSource.SortDescriptions>
@@ -53,28 +80,9 @@
             </CollectionViewSource.SortDescriptions>
             <CollectionViewSource.GroupDescriptions>
                 <PropertyGroupDescription PropertyName="WeekStarting" />
-                <!--<PropertyGroupDescription PropertyName="WorkType" />-->
             </CollectionViewSource.GroupDescriptions>
         </CollectionViewSource>
-        <Style TargetType="{x:Type ToggleButton}">
-            <Setter Property="HorizontalContentAlignment" Value="Center" />
-            <Setter Property="VerticalContentAlignment" Value="Center" />
-            <Setter Property="Padding" Value="1" />
-            <Setter Property="Height" Value="12" />
-            <Setter Property="Width" Value="12" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type ToggleButton}">
-                        <Image x:Name="img" Source="/Resources/exit.png" />
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsChecked" Value="False">
-                                <Setter TargetName="img" Property="Source" Value="/Resources/add.png" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+        
         <ControlTemplate x:Key="ExpanderToggleButton" TargetType="{x:Type ToggleButton}">
             <Border Name="Border" CornerRadius="4" Background="Transparent" BorderBrush="{StaticResource Accent}" BorderThickness="0">
                 <Path  Name="Arrow" Fill="{StaticResource Accent}" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center"  
@@ -110,7 +118,8 @@
         <ListBox Grid.Row="1" 
                  ItemsSource="{Binding Source={StaticResource cvs}}"
                  ItemTemplate="{StaticResource ReportGridTemplate}"
-                 SelectedItem="{Binding Path=SelectedItem}">
+                 SelectedItem="{Binding Path=SelectedItem}"
+                 ScrollViewer.CanContentScroll="False">
             <ListBox.GroupStyle>
                 <GroupStyle>
                     <GroupStyle.ContainerStyle>

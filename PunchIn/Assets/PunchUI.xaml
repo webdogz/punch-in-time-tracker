@@ -27,7 +27,7 @@
     </ResourceDictionary.MergedDictionaries>
 
     <ControlTemplate x:Key="ErrorsBlock" TargetType="ContentControl">
-        <Border BorderBrush="Red" Background="#FFFFFFAA" BorderThickness="1">
+        <Border BorderBrush="Red" Background="#FFFEFCC8" BorderThickness="1">
             <Grid Background="{DynamicResource BackgroundErrorRadialGradient}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -35,7 +35,14 @@
                 </Grid.ColumnDefinitions>
                 <Rectangle Width="24" Height="24" Fill="{DynamicResource exit}" Margin="4" VerticalAlignment="Top"/>
                 <StackPanel Grid.Column="1" Orientation="Vertical" Margin="10,0">
-                    <TextBlock Text="There was a boo boo" Style="{DynamicResource Heading2}"/>
+                    <StackPanel.Resources>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="FontFamily" Value="Segoe UI" />
+                            <Setter Property="Foreground" Value="#333" />
+                            <Setter Property="TextOptions.TextFormattingMode" Value="Display" />
+                        </Style>
+                    </StackPanel.Resources>
+                    <TextBlock Text="There was a boo boo" FontSize="15" FontWeight="SemiBold"/>
                     <ContentPresenter Margin="0,0,0,8" />
                 </StackPanel>
             </Grid>

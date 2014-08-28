@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid Style="{StaticResource ContentRoot}">
-        <wui:ModernTab SelectedSource="/Pages/Content/ReportThisWeek.xaml" Layout="List">
+        <wui:ModernTab SelectedSource="/Pages/Content/ReportThisWeek.xaml" Layout="Tab">
             <wui:ModernTab.Links>
                 <wui:Link DisplayName="This Week" Source="/Pages/Content/ReportThisWeek.xaml" />
                 <wui:Link DisplayName="Last Week" Source="/Pages/Content/ReportLastWeek.xaml" />

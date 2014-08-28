@@ -13,6 +13,34 @@
         <TextBlock Text="Splash User Control" Padding="5"
                    Background="{DynamicResource Accent}" Foreground="{DynamicResource WindowText}" FontWeight="Bold" />
         <Image Source="/PunchIn;component/Resources/stopwatch.ico" Stretch="None" Grid.Row="1" />
+        <!--<Grid Grid.Row="1" Background="AliceBlue">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Rectangle Grid.Column="0" Grid.RowSpan="2" Width="24" Height="24" Fill="{StaticResource backlogitem}"
+                           VerticalAlignment="Top"/>
+            <TextBlock Grid.Column="1" Text="{Binding Path=Title, FallbackValue=Title goes here}" Margin="3"/>
+            <StackPanel Grid.Row="1" Grid.Column="1">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Grid.Column="2" Text="{Binding Path=HoursCompleted, StringFormat=\{0:#.##\} Hrs - , FallbackValue=2.5 Hrs - }" Margin="3" MinWidth="40"/>
+                    <TextBlock Text="{Binding Path=Description, FallbackValue=Description goes here}" Margin="3"/>
+                </StackPanel>
+                
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="TFS:" FontWeight="SemiBold" Margin="3"/>
+                    <TextBlock Text="{Binding Path=TfsId, FallbackValue=12345}" Margin="3"/>
+                    <TextBlock Text="SC:" FontWeight="SemiBold" Margin="3"/>
+                    <TextBlock Text="{Binding Path=ServiceCall, FallbackValue=9876543}" Margin="3"/>
+                    <TextBlock Text="CH:" FontWeight="SemiBold" Margin="3"/>
+                    <TextBlock Text="{Binding Path=Change, FallbackValue=5678912}" Margin="3"/>
+                </StackPanel>
+            </StackPanel>
+        </Grid>-->
 
     </Grid>
 </UserControl>

@@ -30,8 +30,8 @@
     </RadialGradientBrush>
     <RadialGradientBrush x:Key="BackgroundErrorRadialGradient" Center="0.5,1" GradientOrigin="0,1" 
                          Opacity="0.3" RadiusX="0.8" RadiusY="0.8">
-        <GradientStop Offset="1" Color="#FFFFFFA0" />
-        <GradientStop Offset="1" Color="Coral" />
+        <GradientStop Offset="1" Color="#FFFEFCC8" />
+        <GradientStop Offset="1" Color="#FFFF9100" />
     </RadialGradientBrush>
     
     <Image x:Key="icon" Source="{Binding Icon}" Height="16" Width="16" x:Shared="false" />
