@@ -212,7 +212,8 @@ namespace PunchIn.Services
         {
             var dbName = string.Format("{0}_punchin.ndb", login);
 
-            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "My Time");
+            var path = Properties.Settings.Default.DefaultUserDatabaseFolderLocation;
+            if (string.IsNullOrWhiteSpace(path)) path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "My Time");
 
             return Path.Combine(path, dbName);
         }

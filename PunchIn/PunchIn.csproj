@@ -137,6 +137,9 @@
     <Compile Include="Pages\Settings.xaml.cs">
       <DependentUpon>Settings.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Services\CsvExporter.cs" />
+    <Compile Include="Services\CsvExportService.cs" />
+    <Compile Include="Services\IExporter.cs" />
     <Compile Include="Services\LyncService.cs" />
     <Compile Include="Services\SharePointService.cs" />
     <Compile Include="ViewModels\Converters\WorkItemToViewModelConverter.cs" />

@@ -35,8 +35,8 @@
                            Style="{StaticResource Heading2}" Margin="0,10" />
             </StackPanel>
             <StackPanel Orientation="Horizontal">
-                <Button Margin="0,0,4,0" Content="Export to SharePoint List" />
-                <Button Margin="0,0,4,0" Content="Export to Excel" />
+                <Button Margin="0,0,4,0" Content="Export to SharePoint List" Command="{Binding Path=ExportToSharePointListCommand}" />
+                <Button Margin="0,0,4,0" Content="Export to Excel" Command="{Binding Path=ExportToExcelCommand}" />
             </StackPanel>
         </StackPanel>
         <ListView Grid.Row="1" ItemsSource="{Binding Path=SharePointList}" />

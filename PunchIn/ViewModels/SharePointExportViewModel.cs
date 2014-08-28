@@ -1,5 +1,6 @@
 ﻿using PunchIn.Models;
 using PunchIn.Services;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 
@@ -20,6 +21,10 @@ namespace PunchIn.ViewModels
                 if (e.PropertyName == "HasSharePointList")
                 {
                     HasSharePointList = ((SharePointService)s).HasSharePointList;
+                }
+                if (e.PropertyName == "IsBusy")
+                {
+                    IsBusy = ((SharePointService)s).IsBusy;
                 }
             };
             LoadItems();
@@ -57,6 +62,19 @@ namespace PunchIn.ViewModels
                 }
             }
         }
+        private bool isBusy = false;
+        public bool IsBusy
+        {
+            get { return this.isBusy; }
+            set
+            {
+                if (this.isBusy != value)
+                {
+                    this.isBusy = value;
+                    OnPropertyChanged("IsBusy");
+                }
+            }
+        }
         private bool hasSharePointList = true;
         public bool HasSharePointList
         {
@@ -90,10 +108,74 @@ namespace PunchIn.ViewModels
             {
                 return new DelegateCommand
                 {
-                    CanExecuteFunc = (o) => !HasSharePointList,
+                    CanExecuteFunc = (o) => !HasSharePointList && !IsBusy,
                     CommandAction = (o) =>
                     {
                         this.service.AddTimeTrackList();
+                    }
+                };
+            }
+        }
+
+        public ICommand ExportToSharePointListCommand
+        {
+            get
+            {
+                return new DelegateCommand
+                {
+                    CanExecuteFunc = (o) => HasSharePointList && !IsBusy,
+                    CommandAction = (o) =>
+                    {
+                        IsBusy = true;
+                        PunchInService dbService = new PunchInService();
+
+                        List<SPExportItem> exportList = new List<SPExportItem>();
+                        foreach(ReportExportItem item in dbService.GetReportExportItems())
+                        {
+                            exportList.Add(new SPExportItem
+                                {
+                                    TimeEntryGuid = item.Id,
+                                    TfsId = item.TfsId ?? 0,
+                                    ServiceCall = item.ServiceCall ?? 0,
+                                    Change = item.Change ?? 0,
+                                    Title = item.Title,
+                                    Description = item.Description,
+                                    HoursCompleted = item.HoursCompleted,
+                                    HoursRemaining = item.HoursRemaining,
+                                    State = item.State.ToString(),
+                                    Status = item.Status.ToString(),
+                                    WorkType = item.WorkType.ToString(),
+                                    WeekStarting = item.WeekStarting,
+                                    WeekOfYear = item.WeekOfYear
+                                });
+                        }
+
+                        this.service.ExportCollectionToSharePointList(exportList);
+
+                        IsBusy = false;
+                    }
+                };
+            }
+        }
+
+        public ICommand ExportToExcelCommand
+        {
+            get
+            {
+                return new DelegateCommand
+                {
+                    CanExecuteFunc = (o) => !IsBusy,
+                    CommandAction = (o) =>
+                    {
+                        IsBusy = true;
+                        string exportFilename = string.Format("{0}-{1}-{2}.csv", "times", System.Environment.UserName, System.DateTime.Now);
+                        string exportPath = System.IO.Path.Combine(Properties.Settings.Default.DefaultUserDatabaseFolderLocation, exportFilename);
+                        PunchInService dbService = new PunchInService();
+                        CsvExportService csv = new CsvExportService();
+                        csv.ExportCollection(dbService.GetReportExportItems(), 
+                            new string[] { "TfsId", "ServiceCall", "Change", "Title", "HoursCompleted", "HoursRemaining", "Description", "State", "Status", "WorkType" }, 
+                            true,  exportPath);
+                        IsBusy = false;
                     }
                 };
             }

@@ -21,6 +21,7 @@ namespace PunchIn.ViewModels
         #region Ctor and Instance Accessor
         private NotifyIconViewModel()
         {
+            SyncUserSettings();
             this.viewModel = new TimeTrackViewModel();
             this.viewModel.PropertyChanged += (s, e) =>
             {
@@ -189,6 +190,22 @@ namespace PunchIn.ViewModels
         {
             //fire a property change event for the timestamp
             Application.Current.Dispatcher.BeginInvoke(new Action(() => OnPropertyChanged("ElapsedTime")));
+        }
+        #endregion
+
+        #region User Settings Bootstrap
+        private void SyncUserSettings()
+        {
+            string defaultSettingsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "My Time");
+            string userSettingsPath = Properties.Settings.Default.DefaultUserDatabaseFolderLocation;
+            if (string.IsNullOrWhiteSpace(userSettingsPath))
+            {
+                userSettingsPath = defaultSettingsPath;
+            }
+            if (!Directory.Exists(userSettingsPath))
+                Directory.CreateDirectory(userSettingsPath);
+            Properties.Settings.Default.DefaultUserDatabaseFolderLocation = userSettingsPath;
+            Properties.Settings.Default.Save();
         }
         #endregion
 

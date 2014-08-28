@@ -57,7 +57,20 @@ namespace PunchIn.Services
         {
             Errors = e.Message;
         }
-        private bool hasSharePointList = true;
+        private bool isBusy = false;
+        public bool IsBusy
+        {
+            get { return this.isBusy; }
+            set
+            {
+                if (this.isBusy != value)
+                {
+                    this.isBusy = value;
+                    OnPropertyChanged("IsBusy");
+                }
+            }
+        }
+        private bool hasSharePointList;
         public bool HasSharePointList
         {
             get { return this.hasSharePointList; }
@@ -78,6 +91,7 @@ namespace PunchIn.Services
         {
             await Task.Run(() =>
                 {
+                    IsBusy = true;
                     clientContext.Load(clientWeb, w => w.Title, w => w.Lists);
                     clientContext.ExecuteQuery();
                     SP.List list = clientWeb.Lists.FirstOrDefault(l => l.Title == listTitle);
@@ -92,7 +106,7 @@ namespace PunchIn.Services
                             listInfo.TemplateType = (int)SP.ListTemplateType.GenericList;
                             list = clientWeb.Lists.Add(listInfo);
 
-                            //TODO: Don't think we care about this...
+                            //TODO: Don't think we need to care about this...but will keep just in case we need to sync data
                             SP.FieldGuid guidField = clientContext.CastTo<SP.FieldGuid>(list.Fields.Add(SP.FieldType.Guid, "TimeEntryGuid", false));
                             guidField.Description = "Guid of the TimeEntry item used for syncing purposes";
                             //guidField.Indexed = true;
@@ -112,9 +126,6 @@ namespace PunchIn.Services
                             chField.Description = "HPOV Change Number";
                             chField.MinimumValue = 0;
                             chField.Update();
-                            SP.FieldText titleField = clientContext.CastTo<SP.FieldText>(list.Fields.Add(SP.FieldType.Text, "Title", true));
-                            titleField.Description = "The work items title";
-                            titleField.Update();
                             SP.FieldText commentField = clientContext.CastTo<SP.FieldText>(list.Fields.Add(SP.FieldType.Text, "Description", true));
                             commentField.Description = "The time entry's description";
                             commentField.Update();
@@ -145,27 +156,81 @@ namespace PunchIn.Services
                             // tell the server and cross our fingers
                             clientContext.ExecuteQuery();
 
+                            // add description to the default Title field
+                            //SP.List trackInfo = clientContext.Web.Lists.GetByTitle(listTitle);
+                            //SP.FieldText titleField = clientContext.CastTo<SP.FieldText>(trackInfo.Fields.GetByInternalNameOrTitle("Title"));
+                            //clientContext.Load(titleField);
+                            //clientContext.ExecuteQuery();
+                            SP.FieldText titleField = clientContext.CastTo<SP.FieldText>(list.Fields.GetByInternalNameOrTitle("Title"));
+                            titleField.Description = "The work items title";
+                            titleField.Update();
+
+                            clientContext.ExecuteQuery();
+
                             HasSharePointList = true;
+                            Errors = string.Empty;
                         }
                         catch (Exception ex)
                         {
                             SetErrorsMessage(ex);
                         }
+                        finally
+                        {
+                            IsBusy = false;
+                        }
                     }
                 });
         }
 
-        private void ExportAndSyncTimes()
+        internal async void ExportCollectionToSharePointList(IList<SPExportItem> collection)
         {
+            IsBusy = true;
+            await Task.Run(() =>
+            {
+                try
+                {
+                    SP.List trackInfo = clientContext.Web.Lists.GetByTitle(listTitle);
+                    clientContext.Load(clientWeb);
+                    clientContext.Load(trackInfo);
+                    clientContext.ExecuteQuery();
 
+                    foreach (SPExportItem item in collection)
+                    {
+                        SP.ListItemCreationInformation createInfo = new SP.ListItemCreationInformation();
+                        SP.ListItem newItem = trackInfo.AddItem(createInfo);
+                        newItem["TimeEntryGuid"] = item.TimeEntryGuid;
+                        newItem["TfsId"] = item.TfsId;
+                        newItem["ServiceCall"] = item.ServiceCall;
+                        newItem["Change"] = item.Change;
+                        newItem["Title"] = item.Title;
+                        newItem["Description"] = item.Description;
+                        newItem["HoursCompleted"] = item.HoursCompleted;
+                        newItem["HoursRemaining"] = item.HoursRemaining;
+                        newItem["State"] = item.State;
+                        newItem["Status"] = item.Status;
+                        newItem["WorkType"] = item.WorkType;
+                        newItem["WeekStarting"] = item.WeekStarting;
+                        newItem["WeekOfYear"] = item.WeekOfYear;
+                        newItem.Update();
+                    }
+                    clientContext.ExecuteQuery();
+                }
+                catch (Exception ex)
+                {
+                    SetErrorsMessage(ex);
+                }
+
+            });
+            
         }
 
-        public async Task<IEnumerable<SPExportItem>> GetListItems()
+        internal async Task<IEnumerable<SPExportItem>> GetListItems()
         {
             IEnumerable<SPExportItem> list = new List<SPExportItem>();
 
             await Task.Run(() =>
             {
+                IsBusy = true;
                 try
                 {
                     SP.List trackInfo = clientContext.Web.Lists.GetByTitle(listTitle);
@@ -189,6 +254,7 @@ namespace PunchIn.Services
                         WeekStarting = (DateTime)f.FieldValues["WeekStarting"],
                         WeekOfYear = (int)f.FieldValues["WeekOfYear"]
                     });
+                    HasSharePointList = true;
                 }
                 catch (System.Net.WebException webEx)
                 {
@@ -210,6 +276,10 @@ namespace PunchIn.Services
                 catch (Exception ex)
                 {
                     SetErrorsMessage(ex);
+                }
+                finally
+                {
+                    IsBusy = false;
                 }
             });
 
