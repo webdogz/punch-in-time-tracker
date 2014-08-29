@@ -12,10 +12,10 @@
       <Value Profile="(Default)">0,0,720,600</Value>
     </Setting>
     <Setting Name="SharePointSiteUri" Type="System.Uri" Scope="User">
-      <Value Profile="(Default)">http://hin-tfsportal/my/personal/he62276/</Value>
+      <Value Profile="(Default)" />
     </Setting>
     <Setting Name="SharePointListName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Micro Management</Value>
+      <Value Profile="(Default)">Punch Time Tracker</Value>
     </Setting>
     <Setting Name="DefaultDateTimePickerFormatString" Type="System.String" Scope="User">
       <Value Profile="(Default)">yyyy.MM.dd hh:mm</Value>
@@ -28,6 +28,9 @@
     </Setting>
     <Setting Name="DefaultUserDatabaseFolderLocation" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="AppDefaultSharePointHostUri" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">http://hin-tfsportal</Value>
     </Setting>
   </Settings>
 </SettingsFile>

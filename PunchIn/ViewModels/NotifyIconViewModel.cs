@@ -21,7 +21,7 @@ namespace PunchIn.ViewModels
         #region Ctor and Instance Accessor
         private NotifyIconViewModel()
         {
-            SyncUserSettings();
+            SettingsViewModel.InitialiseAndSyncSettings();
             this.viewModel = new TimeTrackViewModel();
             this.viewModel.PropertyChanged += (s, e) =>
             {
@@ -193,32 +193,16 @@ namespace PunchIn.ViewModels
         }
         #endregion
 
-        #region User Settings Bootstrap
-        private void SyncUserSettings()
-        {
-            string defaultSettingsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "My Time");
-            string userSettingsPath = Properties.Settings.Default.DefaultUserDatabaseFolderLocation;
-            if (string.IsNullOrWhiteSpace(userSettingsPath))
-            {
-                userSettingsPath = defaultSettingsPath;
-            }
-            if (!Directory.Exists(userSettingsPath))
-                Directory.CreateDirectory(userSettingsPath);
-            Properties.Settings.Default.DefaultUserDatabaseFolderLocation = userSettingsPath;
-            Properties.Settings.Default.Save();
-        }
-        #endregion
-
         #region Shortcut Menu build
         private string GetDefaultUserShortcutsFolder()
         {
             string folder = Properties.Settings.Default.DefaultUserShortcutFolderLocation;
-            if (string.IsNullOrWhiteSpace(folder))
-            {
-                folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Favorites), "HIN");
-                Properties.Settings.Default.DefaultUserShortcutFolderLocation = folder;
-                Properties.Settings.Default.Save();
-            }
+            //if (string.IsNullOrWhiteSpace(folder))
+            //{
+            //    folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Favorites), "HIN");
+            //    Properties.Settings.Default.DefaultUserShortcutFolderLocation = folder;
+            //    Properties.Settings.Default.Save();
+            //}
             return folder;
         }
         private async void BuildShortcutMenusAsync()

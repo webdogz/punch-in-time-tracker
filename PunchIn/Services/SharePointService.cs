@@ -9,15 +9,16 @@ using PunchIn.Extensions;
 
 namespace PunchIn.Services
 {
-    internal class SharePointService : ViewModels.ViewModelBase
+    internal class SharePointService
     {
         #region Fields
-        Uri siteUri;
-        //string siteUrl;
-        string listTitle;
-        SP.ClientContext clientContext;
-        SP.Web clientWeb;
+        private Uri siteUri;
+        private string listTitle;
+        private SP.ClientContext clientContext;
+        private SP.Web clientWeb;
         #endregion
+
+        #region ctor
         public SharePointService()
         {
             // the actual url: http://hin-tfsportal/my/personal/{USERNAME}/Lists/{LIST_NAME}/AllItems.aspx
@@ -25,80 +26,91 @@ namespace PunchIn.Services
             listTitle = Properties.Settings.Default.SharePointListName;
             clientContext = new SP.ClientContext(siteUri.AbsoluteUri);
             clientWeb = clientContext.Web;
+        }
+        #endregion
 
-            if (string.IsNullOrWhiteSpace(listTitle))
-                HasSharePointList = false;
-            // TODO: Add reference to Microsoft.Office.Server.UserProfile and get users personal site programmatically
-            //var profileManager = new UserProfileManager(ServerContext.GetContext(SP.SPContext.Current.Site));
-            //var profile = profileManager.GetUserProfile(string.Format("{0}\\{1}", Environment.UserDomainName, Environment.UserName));
-            //using (SP.SPSite personalSite = profile.PersonalSite)
-            //{
-            //    var personalSiteUrl = personalSite.PersonalUrl;
-            //}
-            
-        }
+        #region Methods
+        #region > Get SharePoint ListItems
+        /// <summary>
+        /// Gets a list of <see cref="SPExportItem"/>'s asyncronously
+        /// </summary>
+        /// <returns>List of <see cref="SPExportItem"/>'s</returns>
+        internal async Task<IEnumerable<SPExportItem>> GetListItems()
+        {
+            IEnumerable<SPExportItem> list = new List<SPExportItem>();
+            string help = string.Empty;
+            try
+            {
+                await Task.Run(() =>
+                {
+                    SP.List trackInfo = clientContext.Web.Lists.GetByTitle(listTitle);
+                    SP.CamlQuery query = new SP.CamlQuery();
+                    SP.ListItemCollection listData = trackInfo.GetItems(query);
+                    var queryResults = clientContext.LoadQuery(listData);
+                    clientContext.ExecuteQuery();
+                    list = queryResults.Select(f => new SPExportItem
+                    {
+                        TimeEntryGuid = Guid.Parse(f.FieldValues["TimeEntryGuid"].ToString()),
+                        TfsId = (int)f.FieldValues["TfsId"],
+                        ServiceCall = (int)f.FieldValues["ServiceCall"],
+                        Change = (int)f.FieldValues["Change"],
+                        Title = f.FieldValues["Title"].ToString(),
+                        Description = f.FieldValues["Description"].ToString(),
+                        HoursCompleted = (double)f.FieldValues["HoursCompleted"],
+                        HoursRemaining = (double)f.FieldValues["HoursRemaining"],
+                        State = f.FieldValues["State"].ToString(),
+                        Status = f.FieldValues["Status"].ToString(),
+                        WorkType = f.FieldValues["WorkType"].ToString(),
+                        WeekStarting = (DateTime)f.FieldValues["WeekStarting"],
+                        WeekOfYear = (int)f.FieldValues["WeekOfYear"]
+                    });
+                });
+            }
+            catch (System.Net.WebException webEx)
+            {
+                throw new System.Net.WebException(
+                    string.Format("An error occurred while connecting to SharePoint: {0}", webEx.Message));
+            }
+            catch (ArgumentException aex)
+            {
+                if (string.IsNullOrWhiteSpace(listTitle))
+                    help = "Try going to the settings page and enter a name for the SharePoint List.";
+                throw new ArgumentException(
+                    string.Format("An error occurred while retrieving the SharePoint list: {0}\n{1}", aex.Message, help));
+            }
+            catch (SP.ServerException sex)
+            {
+                if (sex.HResult.Equals(-2146233088))
+                {
+                    throw new EntryPointNotFoundException(sex.Message);
+                }
+                throw new Exception(sex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(
+                    string.Format("An unexpected error occurred while trying to retrieve SharePoint list: {0}", ex.Message));
+            }
 
-        // for viewmodels using this service. 
-        // TODO: Subscribe to notify changed or should we be good little proggers and throw our exceptions
-        private string errors;
-        public string Errors
-        {
-            get { return this.errors; }
-            set
-            {
-                if (this.errors != value)
-                {
-                    this.errors = value;
-                    OnPropertyChanged("Errors");
-                }
-            }
+            return list;
         }
-        void SetErrorsMessage(Exception e)
-        {
-            Errors = e.Message;
-        }
-        private bool isBusy = false;
-        public bool IsBusy
-        {
-            get { return this.isBusy; }
-            set
-            {
-                if (this.isBusy != value)
-                {
-                    this.isBusy = value;
-                    OnPropertyChanged("IsBusy");
-                }
-            }
-        }
-        private bool hasSharePointList;
-        public bool HasSharePointList
-        {
-            get { return this.hasSharePointList; }
-            set
-            {
-                if (this.hasSharePointList != value)
-                {
-                    this.hasSharePointList = value;
-                    OnPropertyChanged("HasSharePointList");
-                }
-            }
-        }
+        #endregion // Get SharePoint ListItems
 
+        #region > Create SharePoint List
         /// <summary>
         /// Create the Time Trackin SharePoint list
         /// </summary>
-        internal async void AddTimeTrackList()
+        internal async void CreateTimeTrackList()
         {
-            await Task.Run(() =>
-                {
-                    IsBusy = true;
-                    clientContext.Load(clientWeb, w => w.Title, w => w.Lists);
-                    clientContext.ExecuteQuery();
-                    SP.List list = clientWeb.Lists.FirstOrDefault(l => l.Title == listTitle);
-
-                    if (list == null)
+            try
+            {
+                await Task.Run(() =>
                     {
-                        try
+                        clientContext.Load(clientWeb, w => w.Title, w => w.Lists);
+                        clientContext.ExecuteQuery();
+                        SP.List list = clientWeb.Lists.FirstOrDefault(l => l.Title == listTitle);
+
+                        if (list == null)
                         {
                             SP.ListCreationInformation listInfo = new SP.ListCreationInformation();
                             listInfo.Title = listTitle;
@@ -157,37 +169,29 @@ namespace PunchIn.Services
                             clientContext.ExecuteQuery();
 
                             // add description to the default Title field
-                            //SP.List trackInfo = clientContext.Web.Lists.GetByTitle(listTitle);
-                            //SP.FieldText titleField = clientContext.CastTo<SP.FieldText>(trackInfo.Fields.GetByInternalNameOrTitle("Title"));
-                            //clientContext.Load(titleField);
-                            //clientContext.ExecuteQuery();
                             SP.FieldText titleField = clientContext.CastTo<SP.FieldText>(list.Fields.GetByInternalNameOrTitle("Title"));
                             titleField.Description = "The work items title";
                             titleField.Update();
 
                             clientContext.ExecuteQuery();
-
-                            HasSharePointList = true;
-                            Errors = string.Empty;
                         }
-                        catch (Exception ex)
-                        {
-                            SetErrorsMessage(ex);
-                        }
-                        finally
-                        {
-                            IsBusy = false;
-                        }
-                    }
-                });
+                    });
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(
+                    string.Format("An error occurred while trying to add a new SharePoint list: {0}",
+                        ex.Message));
+            }
         }
+        #endregion //Create SharePoint List
 
+        #region > Export Items to SharePoint List
         internal async void ExportCollectionToSharePointList(IList<SPExportItem> collection)
         {
-            IsBusy = true;
-            await Task.Run(() =>
+            try
             {
-                try
+                await Task.Run(() =>
                 {
                     SP.List trackInfo = clientContext.Web.Lists.GetByTitle(listTitle);
                     clientContext.Load(clientWeb);
@@ -214,95 +218,18 @@ namespace PunchIn.Services
                         newItem.Update();
                     }
                     clientContext.ExecuteQuery();
-                }
-                catch (Exception ex)
-                {
-                    SetErrorsMessage(ex);
-                }
 
-            });
-            
-        }
-
-        internal async Task<IEnumerable<SPExportItem>> GetListItems()
-        {
-            IEnumerable<SPExportItem> list = new List<SPExportItem>();
-
-            await Task.Run(() =>
+                });
+            }
+            catch (Exception ex)
             {
-                IsBusy = true;
-                try
-                {
-                    SP.List trackInfo = clientContext.Web.Lists.GetByTitle(listTitle);
-                    SP.CamlQuery query = new SP.CamlQuery();
-                    SP.ListItemCollection listData = trackInfo.GetItems(query);
-                    var queryResults = clientContext.LoadQuery(listData);
-                    clientContext.ExecuteQuery();
-                    list = queryResults.Select(f => new SPExportItem
-                    {
-                        TimeEntryGuid = Guid.Parse(f.FieldValues["TimeEntryGuid"].ToString()),
-                        TfsId = (int)f.FieldValues["TfsId"],
-                        ServiceCall = (int)f.FieldValues["ServiceCall"],
-                        Change = (int)f.FieldValues["Change"],
-                        Title = f.FieldValues["Title"].ToString(),
-                        Description = f.FieldValues["Description"].ToString(),
-                        HoursCompleted = (double)f.FieldValues["HoursCompleted"],
-                        HoursRemaining = (double)f.FieldValues["HoursRemaining"],
-                        State = f.FieldValues["State"].ToString(),
-                        Status = f.FieldValues["Status"].ToString(),
-                        WorkType = f.FieldValues["WorkType"].ToString(),
-                        WeekStarting = (DateTime)f.FieldValues["WeekStarting"],
-                        WeekOfYear = (int)f.FieldValues["WeekOfYear"]
-                    });
-                    HasSharePointList = true;
-                }
-                catch (System.Net.WebException webEx)
-                {
-                    SetErrorsMessage(webEx);
-                }
-                catch (ArgumentException aex)
-                {
-                    SetErrorsMessage(aex);
-                }
-                catch (SP.ServerException sex)
-                {
-                    SetErrorsMessage(sex);
-                    if (sex.HResult.Equals(-2146233088))
-                    {
-                        // list doesn't exist so lets try and create it
-                        HasSharePointList = false;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    SetErrorsMessage(ex);
-                }
-                finally
-                {
-                    IsBusy = false;
-                }
-            });
-
-            return list;
+                throw new Exception(
+                    string.Format("An error occurred while exporting list to SharePoint list [{0}]: {1}",
+                        listTitle,
+                        ex.Message));
+            }
         }
-
-        private void AddItemToList()
-        {
-            SP.List listInfo = clientContext.Web.Lists.GetByTitle(listTitle);
-            clientContext.Load(clientWeb);
-            clientContext.Load(listInfo);
-            clientContext.ExecuteQuery();
-
-
-
-            SP.ListItemCreationInformation createInfo = new SP.ListItemCreationInformation();
-            SP.ListItem newItem = listInfo.AddItem(createInfo);
-            newItem["Title"] = "My new item created from client";
-            newItem["Effort"] = 1.5D;
-            newItem["Date_x0020_Started"] = DateTime.Now;
-            newItem.Update();
-            clientContext.ExecuteQuery();
-            Console.WriteLine("Added new item: {0}", newItem);
-        }
+        #endregion // Export Items to SharePoint List
+        #endregion
     }
 }

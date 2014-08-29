@@ -57,7 +57,9 @@
 
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding DisplayName, Converter={StaticResource ToUpperConverter}}" />
+                                    <Border BorderThickness="0">
+                                        <TextBlock Text="{Binding DisplayName, Converter={StaticResource ToUpperConverter}}" />
+                                    </Border>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>
@@ -96,7 +98,7 @@
                                     <Rectangle Grid.Column="1" Fill="{DynamicResource SeparatorBackground}" Width="1" HorizontalAlignment="Center" VerticalAlignment="Stretch" />
 
                                     <!-- content -->
-                                    <controls:ModernFrame Grid.Column="2" Source="{Binding SelectedSource, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" ContentLoader="{TemplateBinding ContentLoader}" Margin="32,0,0,0" />
+                                    <controls:ModernFrame Grid.Column="2" Source="{Binding SelectedSource, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" ContentLoader="{TemplateBinding ContentLoader}" Margin="8,0,0,0" />
                                 </Grid>
                             </ControlTemplate>
                         </Setter.Value>

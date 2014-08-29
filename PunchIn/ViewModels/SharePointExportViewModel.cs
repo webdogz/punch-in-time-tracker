@@ -1,5 +1,6 @@
 ﻿using PunchIn.Models;
 using PunchIn.Services;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
@@ -12,29 +13,45 @@ namespace PunchIn.ViewModels
         public SharePointExportViewModel()
         {
             this.service = new SharePointService();
-            this.service.PropertyChanged += (s, e) =>
-            {
-                if (e.PropertyName == "Errors")
-                {
-                    Errors = ((SharePointService)s).Errors;
-                }
-                if (e.PropertyName == "HasSharePointList")
-                {
-                    HasSharePointList = ((SharePointService)s).HasSharePointList;
-                }
-                if (e.PropertyName == "IsBusy")
-                {
-                    IsBusy = ((SharePointService)s).IsBusy;
-                }
-            };
             LoadItems();
         }
         private async void LoadItems()
         {
-            var listItems = await this.service.GetListItems();
-            SharePointList = new ObservableCollection<SPExportItem>(listItems);
+            IsBusy = true;
+            try
+            {
+                var listItems = await this.service.GetListItems();
+                SharePointList = new ObservableCollection<SPExportItem>(listItems);
+                IsSharePointEnabled = true;
+            }
+            catch (System.Net.WebException webEx)
+            {
+                SetErrorsMessage(webEx);
+                IsSharePointEnabled = false;
+            }
+            catch (ArgumentException aex)
+            {
+                SetErrorsMessage(aex);
+                HasSharePointList = false;
+            }
+            catch (EntryPointNotFoundException listNotFoundEx)
+            {
+                SetErrorsMessage(listNotFoundEx);
+                HasSharePointList = false;
+            }
+            catch (Exception ex)
+            {
+                SetErrorsMessage(ex);
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
-        
+        private void SetErrorsMessage(Exception e)
+        {
+            Errors = e.Message;
+        }
         private bool hasError;
         public bool HasError
         {
@@ -88,6 +105,19 @@ namespace PunchIn.ViewModels
                 }
             }
         }
+        private bool isSharePointEnabled;
+        public bool IsSharePointEnabled
+        {
+            get { return this.isSharePointEnabled; }
+            set
+            {
+                if (this.isSharePointEnabled != value)
+                {
+                    this.isSharePointEnabled = value;
+                    OnPropertyChanged("IsSharePointEnabled");
+                }
+            }
+        }
         private ObservableCollection<SPExportItem> sharePointList;
         public ObservableCollection<SPExportItem> SharePointList
         {
@@ -101,84 +131,118 @@ namespace PunchIn.ViewModels
                 }
             }
         }
-
+        #region Commands
+        private ICommand _addListCommand;
         public ICommand AddListCommand
         {
             get
             {
-                return new DelegateCommand
-                {
-                    CanExecuteFunc = (o) => !HasSharePointList && !IsBusy,
-                    CommandAction = (o) =>
+                if (_addListCommand == null)
+                    _addListCommand = new DelegateCommand
                     {
-                        this.service.AddTimeTrackList();
-                    }
-                };
+                        CanExecuteFunc = (o) => IsSharePointEnabled && !HasSharePointList && !IsBusy,
+                        CommandAction = (o) =>
+                        {
+                            IsBusy = true;
+                            try
+                            {
+                                this.service.CreateTimeTrackList();
+                            }
+                            catch (Exception ex)
+                            {
+                                SetErrorsMessage(ex);
+                                IsSharePointEnabled = false;
+                            }
+                            IsBusy = false;
+                        }
+                    };
+                return _addListCommand;
             }
         }
 
+        private ICommand _exportToSharePointListCommand;
         public ICommand ExportToSharePointListCommand
         {
             get
             {
-                return new DelegateCommand
-                {
-                    CanExecuteFunc = (o) => HasSharePointList && !IsBusy,
-                    CommandAction = (o) =>
+                if (_exportToSharePointListCommand == null)
+                    _exportToSharePointListCommand = new DelegateCommand
                     {
-                        IsBusy = true;
-                        PunchInService dbService = new PunchInService();
-
-                        List<SPExportItem> exportList = new List<SPExportItem>();
-                        foreach(ReportExportItem item in dbService.GetReportExportItems())
+                        CanExecuteFunc = (o) => IsSharePointEnabled && HasSharePointList && !IsBusy,
+                        CommandAction = (o) =>
                         {
-                            exportList.Add(new SPExportItem
+                            IsBusy = true;
+                            try
+                            {
+                                PunchInService dbService = new PunchInService();
+                                List<SPExportItem> exportList = new List<SPExportItem>();
+                                foreach (ReportExportItem item in dbService.GetReportExportItems())
                                 {
-                                    TimeEntryGuid = item.Id,
-                                    TfsId = item.TfsId ?? 0,
-                                    ServiceCall = item.ServiceCall ?? 0,
-                                    Change = item.Change ?? 0,
-                                    Title = item.Title,
-                                    Description = item.Description,
-                                    HoursCompleted = item.HoursCompleted,
-                                    HoursRemaining = item.HoursRemaining,
-                                    State = item.State.ToString(),
-                                    Status = item.Status.ToString(),
-                                    WorkType = item.WorkType.ToString(),
-                                    WeekStarting = item.WeekStarting,
-                                    WeekOfYear = item.WeekOfYear
-                                });
+                                    exportList.Add(new SPExportItem
+                                        {
+                                            TimeEntryGuid = item.Id,
+                                            TfsId = item.TfsId ?? 0,
+                                            ServiceCall = item.ServiceCall ?? 0,
+                                            Change = item.Change ?? 0,
+                                            Title = item.Title,
+                                            Description = item.Description,
+                                            HoursCompleted = item.HoursCompleted,
+                                            HoursRemaining = item.HoursRemaining,
+                                            State = item.State.ToString(),
+                                            Status = item.Status.ToString(),
+                                            WorkType = item.WorkType.ToString(),
+                                            WeekStarting = item.WeekStarting,
+                                            WeekOfYear = item.WeekOfYear
+                                        });
+                                }
+
+                                this.service.ExportCollectionToSharePointList(exportList);
+                            }
+                            catch (Exception ex)
+                            {
+                                SetErrorsMessage(ex);
+                            }
+                            IsBusy = false;
                         }
-
-                        this.service.ExportCollectionToSharePointList(exportList);
-
-                        IsBusy = false;
-                    }
-                };
+                    };
+                return _exportToSharePointListCommand;
             }
         }
-
+        private ICommand _exportToExcelCommand;
         public ICommand ExportToExcelCommand
         {
             get
             {
-                return new DelegateCommand
-                {
-                    CanExecuteFunc = (o) => !IsBusy,
-                    CommandAction = (o) =>
+                if (_exportToExcelCommand == null)
+                    _exportToExcelCommand = new DelegateCommand
                     {
-                        IsBusy = true;
-                        string exportFilename = string.Format("{0}-{1}-{2}.csv", "times", System.Environment.UserName, System.DateTime.Now);
-                        string exportPath = System.IO.Path.Combine(Properties.Settings.Default.DefaultUserDatabaseFolderLocation, exportFilename);
-                        PunchInService dbService = new PunchInService();
-                        CsvExportService csv = new CsvExportService();
-                        csv.ExportCollection(dbService.GetReportExportItems(), 
-                            new string[] { "TfsId", "ServiceCall", "Change", "Title", "HoursCompleted", "HoursRemaining", "Description", "State", "Status", "WorkType" }, 
-                            true,  exportPath);
-                        IsBusy = false;
-                    }
-                };
+                        CanExecuteFunc = (o) => !IsBusy,
+                        CommandAction = (o) =>
+                        {
+                            IsBusy = true;
+                            try
+                            {
+                                string exportFilename = string.Format("{0}-{1}-{2}.csv",
+                                    "times",
+                                    System.Environment.UserName,
+                                    System.DateTime.Now.ToString("yyyyMMddHHmm"));
+                                string exportPath = System.IO.Path.Combine(Properties.Settings.Default.DefaultUserDatabaseFolderLocation, exportFilename);
+                                PunchInService dbService = new PunchInService();
+                                CsvExportService csv = new CsvExportService();
+                                csv.ExportCollection(dbService.GetReportExportItems(),
+                                    new string[] { "TfsId", "ServiceCall", "Change", "Title", "HoursCompleted", "HoursRemaining", "Description", "State", "Status", "WorkType" },
+                                    true, exportPath);
+                            }
+                            catch (Exception ex)
+                            {
+                                SetErrorsMessage(ex);
+                            }
+                            IsBusy = false;
+                        }
+                    };
+                return _exportToExcelCommand;
             }
         }
+        #endregion
     }
 }

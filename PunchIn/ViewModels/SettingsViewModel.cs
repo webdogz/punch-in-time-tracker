@@ -12,7 +12,7 @@ namespace PunchIn.ViewModels
             "SharePointListName", "SharePointSiteUri",
             "DefaultDatePickerFormatString", "DefaultDateTimePickerFormatString",
             "SharePointSiteUri","SharePointListName",
-            "DefaultUserShortcutFolder"
+            "DefaultUserShortcutFolder", "DefaultUserDatabaseFolderLocation"
         };
         public SettingsViewModel()
         {
@@ -21,6 +21,7 @@ namespace PunchIn.ViewModels
             this.defaultDatePickerFormatString = Properties.Settings.Default.DefaultDatePickerFormatString;
             this.defaultDateTimePickerFormatString = Properties.Settings.Default.DefaultDateTimePickerFormatString;
             this.defaultUserShortcutFolder = Properties.Settings.Default.DefaultUserShortcutFolderLocation;
+            this.defaultUserDatabaseFolder = Properties.Settings.Default.DefaultUserDatabaseFolderLocation;
             this.PropertyChanged += SettingsViewModel_PropertyChanged;
         }
 
@@ -30,6 +31,47 @@ namespace PunchIn.ViewModels
                 Properties.Settings.Default.Save();
         }
 
+        #region > Static Methods
+        internal static void InitialiseAndSyncSettings()
+        {
+            const string AppName = "Punch Time Tracker";
+            // User Database location
+            string defaultSettingsPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), AppName);
+            string userSettingsPath = Properties.Settings.Default.DefaultUserDatabaseFolderLocation;
+            if (string.IsNullOrWhiteSpace(userSettingsPath))
+            {
+                userSettingsPath = defaultSettingsPath;
+            }
+            if (!System.IO.Directory.Exists(userSettingsPath))
+                System.IO.Directory.CreateDirectory(userSettingsPath);
+            Properties.Settings.Default.DefaultUserDatabaseFolderLocation = userSettingsPath;
+            // Shortcuts folder
+            if (string.IsNullOrWhiteSpace(Properties.Settings.Default.DefaultUserShortcutFolderLocation))
+            {
+                Properties.Settings.Default.DefaultUserShortcutFolderLocation =
+                    System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Favorites), AppName); ;
+            }
+            // SharePoint Uri
+            if (Properties.Settings.Default.SharePointSiteUri == null ||
+                string.IsNullOrWhiteSpace(Properties.Settings.Default.SharePointSiteUri.AbsoluteUri))
+                Properties.Settings.Default.SharePointSiteUri = 
+                    new Uri(string.Format("{0}/my/personal/{1}/", 
+                            Properties.Settings.Default.AppDefaultSharePointHostUri, 
+                            Environment.UserName));
+            // SharePoint List Name
+            if (string.IsNullOrWhiteSpace(Properties.Settings.Default.SharePointListName))
+                Properties.Settings.Default.SharePointListName = AppName;
+            // Default Date Format for DatePicker
+            if (string.IsNullOrWhiteSpace(Properties.Settings.Default.DefaultDatePickerFormatString))
+                Properties.Settings.Default.DefaultDatePickerFormatString = "dd/MM/yyyy";
+            // Default Date Format for DateTimePicker
+            if (string.IsNullOrWhiteSpace(Properties.Settings.Default.DefaultDatePickerFormatString))
+                Properties.Settings.Default.DefaultDateTimePickerFormatString = "yyyy.MM.dd HH:mm";
+            Properties.Settings.Default.Save();
+        }
+        #endregion // Static Methods
+
+        #region View properties
         private string GetDateFormatted(string format)
         {
             try
@@ -42,7 +84,6 @@ namespace PunchIn.ViewModels
             }
         }
 
-        #region View properties
         public string PreviewDefaultDateFormat
         {
             get { return GetDateFormatted(this.defaultDatePickerFormatString); }
@@ -55,12 +96,28 @@ namespace PunchIn.ViewModels
 
         #region Properties
         
+        private string defaultUserDatabaseFolder;
+        public string DefaultUserDatabaseFolder
+        {
+            get { return this.defaultUserDatabaseFolder; }
+            set
+            {
+                // TODO: add ValidationError
+                if (this.defaultUserDatabaseFolder != value &&
+                    System.IO.Directory.Exists(value))
+                {
+                    this.defaultUserDatabaseFolder = value;
+                    OnPropertyChanged("DefaultUserDatabaseFolder");
+                }
+            }
+        }
         private string defaultUserShortcutFolder;
         public string DefaultUserShortcutFolder
         {
             get { return this.defaultUserShortcutFolder; }
             set
             {
+                // TODO: add ValidationError
                 if (this.defaultUserShortcutFolder != value &&
                     System.IO.Directory.Exists(value))
                 {
