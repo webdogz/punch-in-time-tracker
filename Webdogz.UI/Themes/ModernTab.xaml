@@ -57,9 +57,7 @@
 
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <Border BorderThickness="0">
-                                        <TextBlock Text="{Binding DisplayName, Converter={StaticResource ToUpperConverter}}" />
-                                    </Border>
+                                    <TextBlock Text="{Binding DisplayName, Converter={StaticResource ToUpperConverter}}" />
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>
