@@ -119,12 +119,6 @@
     <Compile Include="Pages\Content\SettingsFileLocations.xaml.cs">
       <DependentUpon>SettingsFileLocations.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Content\ReportLastWeek.xaml.cs">
-      <DependentUpon>ReportLastWeek.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\Content\ReportThisWeek.xaml.cs">
-      <DependentUpon>ReportThisWeek.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Pages\Messages.xaml.cs">
       <DependentUpon>Messages.xaml</DependentUpon>
     </Compile>
@@ -337,14 +331,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\Content\SettingsFileLocations.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Pages\Content\ReportLastWeek.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Pages\Content\ReportThisWeek.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
