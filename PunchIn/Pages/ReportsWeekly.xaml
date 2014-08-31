@@ -89,13 +89,31 @@
             <Rectangle Fill="{DynamicResource report}" Width="32" Height="32" Stretch="Uniform" Margin="4,0,10,0"/>
             <TextBlock Text="My Weekly Times" Style="{StaticResource Heading2}" VerticalAlignment="Center" />
         </StackPanel>
-
+        <ContentControl Template="{StaticResource ErrorsBlock}" Margin="0"
+                        Visibility="{Binding Path=Errors, Converter={StaticResource NullOrEmptyStringToVisibilityConverter}, ConverterParameter=inverse}">
+            <StackPanel>
+                <TextBlock Text="{Binding Path=Errors}" Foreground="#333" TextWrapping="Wrap"/>
+            </StackPanel>
+        </ContentControl>
         <!-- Filtering -->
         <ScrollViewer Grid.Row="1">
-            <ListBox>
-                <ListBoxItem>THIS WEEK</ListBoxItem>
-                <ListBoxItem>LAST WEEK</ListBoxItem>
-            </ListBox>
+            <StackPanel>
+                <ComboBox ItemsSource="{Binding Path=WeekOfYearList}"
+                          SelectedValuePath="WeekOfYear"
+                          DisplayMemberPath="WeekOfYearDate"
+                          SelectedValue="{Binding Path=WeekOfYearFilter, Mode=TwoWay}"/>
+                <ItemsControl Name="workTypesList"
+                              ItemsSource="{Binding Path=WorkTypesFilter}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <CheckBox Margin="0,5" 
+                                      Content="{Binding Path=Text}"
+                                      IsChecked="{Binding Path=IsSelected}"
+                                      Command="{Binding Path=Command}"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
         </ScrollViewer>
 
         <!-- seperator -->

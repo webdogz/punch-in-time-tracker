@@ -22,7 +22,7 @@
             <ContentControl Template="{StaticResource ErrorsBlock}" Margin="0"
                             Visibility="{Binding Path=HasError, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=inverse}">
                 <StackPanel>
-                    <TextBlock Text="{Binding Path=Errors}" TextWrapping="Wrap"/>
+                    <TextBlock Text="{Binding Path=Errors}" Foreground="#333" TextWrapping="Wrap"/>
                     <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
                         <Button Command="{Binding Path=AddListCommand}">Add SharePoint List</Button>
                     </StackPanel>
