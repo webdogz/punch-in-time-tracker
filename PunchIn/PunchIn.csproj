@@ -55,14 +55,6 @@
     <Reference Include="EmitMapper">
       <HintPath>..\packages\EmitMapper.1.0.0\lib\EmitMapper.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Lync.Controls, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Assemblies\Microsoft.Lync.Controls.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Lync.Model, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Assemblies\Microsoft.Lync.Model.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.SharePoint.Client, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Assemblies\Microsoft.SharePoint.Client.dll</HintPath>
@@ -120,9 +112,6 @@
     <Compile Include="Pages\Content\SettingsFileLocations.xaml.cs">
       <DependentUpon>SettingsFileLocations.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Messages.xaml.cs">
-      <DependentUpon>Messages.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Pages\ReportsExport.xaml.cs">
       <DependentUpon>ReportsExport.xaml</DependentUpon>
     </Compile>
@@ -135,7 +124,6 @@
     <Compile Include="Services\CsvExporter.cs" />
     <Compile Include="Services\CsvExportService.cs" />
     <Compile Include="Services\IExporter.cs" />
-    <Compile Include="Services\LyncService.cs" />
     <Compile Include="Services\SharePointService.cs" />
     <Compile Include="ViewModels\Converters\WorkItemToViewModelConverter.cs" />
     <Compile Include="Pages\Content\SettingsAppearance.xaml.cs">
@@ -159,7 +147,6 @@
     <Compile Include="ViewModels\DelegateCommand.cs" />
     <Compile Include="ViewModels\Enums.cs" />
     <Compile Include="ViewModels\IMenuItemViewModel.cs" />
-    <Compile Include="ViewModels\MessagesViewModel.cs" />
     <Compile Include="ViewModels\MenuItemViewModel.cs" />
     <Compile Include="ViewModels\PunchMenuItemViewModel.cs" />
     <Compile Include="ViewModels\ReportsWeeklyViewModel.cs" />
@@ -336,10 +323,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\Content\SettingsAppearance.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Pages\Messages.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
