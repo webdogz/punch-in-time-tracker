@@ -20,14 +20,15 @@ namespace PunchIn.ViewModels
             IsBusy = true;
             try
             {
+                IsSharePointEnabled = true;
+                HasSharePointList = true;
                 var listItems = await this.service.GetListItems();
                 SharePointList = new ObservableCollection<SPExportItem>(listItems);
-                IsSharePointEnabled = true;
             }
             catch (System.Net.WebException webEx)
             {
                 SetErrorsMessage(webEx);
-                IsSharePointEnabled = false;
+                IsSharePointEnabled = HasSharePointList = false;
             }
             catch (ArgumentException aex)
             {
@@ -42,6 +43,7 @@ namespace PunchIn.ViewModels
             catch (Exception ex)
             {
                 SetErrorsMessage(ex);
+                IsSharePointEnabled = HasSharePointList = false;
             }
             finally
             {
@@ -132,6 +134,23 @@ namespace PunchIn.ViewModels
             }
         }
         #region Commands
+        private ICommand _refresh;
+        public ICommand Refresh
+        {
+            get
+            {
+                if (this._refresh == null)
+                    this._refresh = new DelegateCommand
+                    {
+                        CanExecuteFunc = (o) => true,
+                        CommandAction = (o) =>
+                        {
+                            LoadItems();
+                        }
+                    };
+                return this._refresh;
+            }
+        }
         private ICommand _addListCommand;
         public ICommand AddListCommand
         {

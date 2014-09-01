@@ -29,6 +29,7 @@ namespace PunchIn
 
         protected override void OnExit(ExitEventArgs e)
         {
+            NotifyIconViewModel.Current.CleanUp();
             notifyIcon.Dispose(); //the icon would clean up automatically, but this is cleaner
             base.OnExit(e);
         }

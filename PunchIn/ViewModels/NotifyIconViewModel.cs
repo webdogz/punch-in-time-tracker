@@ -39,7 +39,7 @@ namespace PunchIn.ViewModels
             BuildShortcutMenusAsync();
             SyncThemeSettings();
             IsTimerActive = false;
-            timer = new DispatcherTimer(TimeSpan.FromSeconds(1), DispatcherPriority.Normal, OnTimerTick, Application.Current.Dispatcher);
+            timer = GetUITimer(TimeSpan.FromSeconds(1), OnTimerTick);// new DispatcherTimer(TimeSpan.FromSeconds(1), DispatcherPriority.Normal, OnTimerTick, Application.Current.Dispatcher);
         }
         private static NotifyIconViewModel current = new NotifyIconViewModel();
         /// <summary>
@@ -51,6 +51,12 @@ namespace PunchIn.ViewModels
         }
         #endregion
 
+        #region Misc UI stuff
+        private DispatcherTimer GetUITimer(TimeSpan ts, EventHandler eventHandler)
+        {
+            return new DispatcherTimer(ts, DispatcherPriority.Normal, eventHandler, Application.Current.Dispatcher);
+        }
+
         private void SyncThemeSettings()
         {
             Webdogz.UI.Presentation.AppearanceManager.Current.SyncFromUserSettings
@@ -59,6 +65,8 @@ namespace PunchIn.ViewModels
                     Properties.Settings.Default.SelectedThemeSource
                 );
         }
+        #endregion
+
         #region WorkItem Menu build
         private async void BuildWorkItemMenusAsync()
         {
@@ -175,7 +183,10 @@ namespace PunchIn.ViewModels
             }
         }
         private bool isTimerActive;
+        #endregion
 
+        #region Taskbar Popup
+        private DispatcherTimer timer;
         public string ElapsedTime
         {
             get
@@ -197,24 +208,55 @@ namespace PunchIn.ViewModels
         private string GetDefaultUserShortcutsFolder()
         {
             string folder = Properties.Settings.Default.DefaultUserShortcutFolderLocation;
-            //if (string.IsNullOrWhiteSpace(folder))
-            //{
-            //    folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Favorites), "HIN");
-            //    Properties.Settings.Default.DefaultUserShortcutFolderLocation = folder;
-            //    Properties.Settings.Default.Save();
-            //}
             return folder;
         }
         private async void BuildShortcutMenusAsync()
         {
             await Task.Run(() => 
             {
-                // TODO: Should this be a User Setting?
                 DirectoryInfo rootPath = new DirectoryInfo(GetDefaultUserShortcutsFolder());
                 if (!rootPath.Exists) rootPath.Create();
                 ShortcutMenus = GetShortcutMenu(rootPath, "Shortcuts");
+                InitShortcutWatcher(rootPath);
             });
         }
+        #region Shortcut Folder/File Watcher
+        private FileSystemWatcher shortcutWatcher;
+        private DispatcherTimer shortcutTimer;
+        private void InitShortcutWatcher(DirectoryInfo rootPath)
+        {
+            if (this.shortcutWatcher != null) return;
+            this.shortcutWatcher = new FileSystemWatcher(rootPath.FullName);
+            this.shortcutWatcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.LastAccess | NotifyFilters.DirectoryName | NotifyFilters.FileName;
+            this.shortcutWatcher.IncludeSubdirectories = true;
+            this.shortcutWatcher.Changed += OnShortcutWatcher_Changed;
+            this.shortcutWatcher.Created += OnShortcutWatcher_Changed;
+            this.shortcutWatcher.Deleted += OnShortcutWatcher_Changed;
+            this.shortcutWatcher.Renamed += OnShortcutWatcher_Renamed;
+            this.shortcutWatcher.EnableRaisingEvents = true;
+        }
+        private void RebuildShortcutMenusHandler(object sender, EventArgs e)
+        {
+            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                ShortcutMenus = null;
+                BuildShortcutMenusAsync();
+                this.shortcutTimer.Tick -= RebuildShortcutMenusHandler;
+                this.shortcutTimer = null;
+            }));
+        }
+        void OnShortcutWatcher_Renamed(object sender, RenamedEventArgs e)
+        {
+            if (this.shortcutTimer != null) return;
+            this.shortcutTimer = GetUITimer(TimeSpan.FromMilliseconds(900), RebuildShortcutMenusHandler);
+        }
+
+        void OnShortcutWatcher_Changed(object sender, FileSystemEventArgs e)
+        {
+            if (this.shortcutTimer != null) return;
+            this.shortcutTimer = GetUITimer(TimeSpan.FromMilliseconds(900), RebuildShortcutMenusHandler);
+        }
+        #endregion
         private ShortcutMenuItemViewModel GetShortcutMenu(DirectoryInfo root, string name)
         {
             var menu = new ShortcutMenuItemViewModel() { Text = name ?? root.Name, Icon = "folder" };
@@ -247,7 +289,7 @@ namespace PunchIn.ViewModels
         private ShortcutMenuItemViewModel shortcutMenus;
         #endregion
 
-        private DispatcherTimer timer;
+        #region Time Tracker ViewModels
         public TimeTrackViewModel ViewModel { get { return viewModel; } }
         private readonly TimeTrackViewModel viewModel;
 
@@ -283,6 +325,7 @@ namespace PunchIn.ViewModels
             }
         }
         private WorkItemViewModel currentWorkItem = null;
+        #endregion
 
         #region Commands
         public ICommand PunchInCommand
@@ -478,6 +521,40 @@ namespace PunchIn.ViewModels
             get
             {
                 return new DelegateCommand {CommandAction = (o) => Application.Current.Shutdown()};
+            }
+        }
+        #endregion
+
+        #region Shutdown/Clean up
+        internal void CleanUp()
+        {
+            // do clean up here
+            try
+            {
+                if (timer.IsEnabled)
+                {
+                    timer.Stop();
+                    timer.Tick -= OnTimerTick;
+                }
+            }
+            finally
+            {
+                timer = null;
+            }
+            try
+            {
+                if (this.shortcutWatcher != null)
+                {
+                    this.shortcutWatcher.Changed -= OnShortcutWatcher_Changed;
+                    this.shortcutWatcher.Created -= OnShortcutWatcher_Changed;
+                    this.shortcutWatcher.Deleted -= OnShortcutWatcher_Changed;
+                    this.shortcutWatcher.Renamed -= OnShortcutWatcher_Renamed;
+                }
+                this.shortcutWatcher.Dispose();
+            }
+            finally
+            {
+                this.shortcutWatcher = null;
             }
         }
         #endregion

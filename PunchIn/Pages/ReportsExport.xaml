@@ -24,7 +24,8 @@
                 <StackPanel>
                     <TextBlock Text="{Binding Path=Errors}" Foreground="#333" TextWrapping="Wrap"/>
                     <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                        <Button Command="{Binding Path=AddListCommand}">Add SharePoint List</Button>
+                        <Button Margin="0,0,4,0" Command="{Binding Path=AddListCommand}">Add SharePoint List</Button>
+                        <Button Margin="0,0,4,0" Command="{Binding Path=Refresh}">Refresh</Button>
                     </StackPanel>
                 </StackPanel>
             </ContentControl>
@@ -39,6 +40,17 @@
                 <Button Margin="0,0,4,0" Content="Export to Excel" Command="{Binding Path=ExportToExcelCommand}" />
             </StackPanel>
         </StackPanel>
-        <ListView Grid.Row="1" ItemsSource="{Binding Path=SharePointList}" />
+        <ListView Grid.Row="1" ItemsSource="{Binding Path=SharePointList}">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Width="40" Header="TFS" DisplayMemberBinding="{Binding Path=TfsId}"/>
+                    <GridViewColumn Width="40" Header="SC" DisplayMemberBinding="{Binding Path=ServiceCall}"/>
+                    <GridViewColumn Width="40" Header="CH" DisplayMemberBinding="{Binding Path=Change}"/>
+                    <GridViewColumn Width="150" Header="Title" DisplayMemberBinding="{Binding Path=Title}"/>
+                    <GridViewColumn Width="150" Header="Description" DisplayMemberBinding="{Binding Path=Description}"/>
+                    <GridViewColumn Header="Status" DisplayMemberBinding="{Binding Path=Status}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
     </Grid>
 </UserControl>

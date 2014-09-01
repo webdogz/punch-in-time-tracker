@@ -89,7 +89,7 @@
             <Rectangle Fill="{DynamicResource report}" Width="32" Height="32" Stretch="Uniform" Margin="4,0,10,0"/>
             <TextBlock Text="My Weekly Times" Style="{StaticResource Heading2}" VerticalAlignment="Center" />
         </StackPanel>
-        <ContentControl Template="{StaticResource ErrorsBlock}" Margin="0"
+        <ContentControl Grid.ColumnSpan="3" Template="{StaticResource ErrorsBlock}" Margin="0"
                         Visibility="{Binding Path=Errors, Converter={StaticResource NullOrEmptyStringToVisibilityConverter}, ConverterParameter=inverse}">
             <StackPanel>
                 <TextBlock Text="{Binding Path=Errors}" Foreground="#333" TextWrapping="Wrap"/>
