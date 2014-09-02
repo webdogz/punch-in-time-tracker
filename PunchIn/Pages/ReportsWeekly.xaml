@@ -23,7 +23,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <Rectangle Grid.Column="0" Grid.RowSpan="2" Width="24" Height="24" Fill="{Binding Icon, Converter={StaticResource stringToResourceConverter}}"
+                <Rectangle Grid.Column="0" Grid.RowSpan="2" Width="24" Height="24" Fill="{Binding Icon, Converter={StaticResource StringToResourceConverter}, ConverterParameter=tolower}"
                            VerticalAlignment="Top"/>
                 <TextBlock Grid.Column="1" Text="{Binding Path=Title, FallbackValue=Title goes here}" Margin="3"/>
                 <StackPanel Grid.Row="1" Grid.Column="1">

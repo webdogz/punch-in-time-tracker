@@ -84,7 +84,7 @@ namespace PunchIn.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("yyyy.MM.dd hh:mm")]
+        [global::System.Configuration.DefaultSettingValueAttribute("yyyy.MM.dd HH:mm")]
         public string DefaultDateTimePickerFormatString {
             get {
                 return ((string)(this["DefaultDateTimePickerFormatString"]));

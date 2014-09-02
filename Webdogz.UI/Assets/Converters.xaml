@@ -7,7 +7,7 @@
     <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
     <converters:NullOrEmptyStringToVisibilityConverter x:Key="NullOrEmptyStringToVisibilityConverter" />
     <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
-    <converters:StringToResourceConverter x:Key="stringToResourceConverter" />
+    <converters:StringToResourceConverter x:Key="StringToResourceConverter" />
     <converters:TimeFormatToDateTimeFormatConverter x:Key="TimeFormatToDateTimeFormatConverter" />
     <converters:ToUpperConverter x:Key="ToUpperConverter" />
     <converters:ToLowerConverter x:Key="ToLowerConverter" />

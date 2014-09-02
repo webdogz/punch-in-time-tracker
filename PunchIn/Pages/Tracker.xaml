@@ -3,13 +3,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:wui="http://schema.webdogz/wui"
+             xmlns:props="clr-namespace:PunchIn.Properties"
+             xmlns:controls="clr-namespace:PunchIn.Controls"
              xmlns:content="clr-namespace:PunchIn.Pages.Content"
              xmlns:model="clr-namespace:PunchIn.Models"
              xmlns:vm="clr-namespace:PunchIn.ViewModels"
              xmlns:converters="clr-namespace:PunchIn.ViewModels.Converters"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" x:Name="trackerControl"
-             d:DesignHeight="300" d:DesignWidth="500">
+             d:DesignHeight="480" d:DesignWidth="640">
     <UserControl.DataContext>
         <vm:TrackerViewModel />
     </UserControl.DataContext>
@@ -34,15 +36,22 @@
         
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         
-        <GridSplitter Width="5" Grid.Column="1" Grid.RowSpan="2"
+        <StackPanel Orientation="Horizontal" Background="{DynamicResource ButtonBackgroundHover}" Grid.ColumnSpan="3">
+            <ScrollViewer>
+                <wui:ModernButton Margin="4,2" Content="Save" IconData="F1 M 20.5833,20.5833L 55.4167,20.5833L 55.4167,55.4167L 45.9167,55.4167L 45.9167,44.3333L 30.0833,44.3333L 30.0833,55.4167L 20.5833,55.4167L 20.5833,20.5833 Z M 33.25,55.4167L 33.25,50.6667L 39.5833,50.6667L 39.5833,55.4167L 33.25,55.4167 Z M 26.9167,23.75L 26.9167,33.25L 49.0833,33.25L 49.0833,23.75L 26.9167,23.75 Z" />
+            </ScrollViewer>
+        </StackPanel>
+        
+        <GridSplitter Width="5" Grid.Column="1" Grid.Row="1" Grid.RowSpan="2"
                       VerticalAlignment="Stretch"
                       HorizontalAlignment="Center"
                       ResizeDirection="Columns"/>
         
-        <ListView Grid.RowSpan="2" SelectionMode="Single" 
+        <ListView Grid.RowSpan="2" Grid.Row="1" SelectionMode="Single" 
                   SelectedItem="{Binding Path=ViewModel.CurrentWorkItem}"
                   ItemsSource="{Binding Path=ViewModel.WorkItems}">
             <ListView.View>
@@ -50,44 +59,8 @@
                     <GridViewColumn>
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <Rectangle Name="workTypeImage" Fill="{DynamicResource exit}"  Style="{StaticResource parentImage}" />
-                                <DataTemplate.Triggers>
-                                    <DataTrigger Binding="{Binding Path=WorkType, UpdateSourceTrigger=PropertyChanged}" 
-                                                 Value="BacklogItem">
-                                        <Setter TargetName="workTypeImage" Property="Fill" 
-                                                Value="{DynamicResource backlogitem}"/>
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding Path=WorkType, UpdateSourceTrigger=PropertyChanged}" 
-                                                 Value="Bug">
-                                        <Setter TargetName="workTypeImage" Property="Fill" 
-                                                Value="{DynamicResource bug}"/>
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding Path=WorkType, UpdateSourceTrigger=PropertyChanged}" 
-                                                 Value="Change">
-                                        <Setter TargetName="workTypeImage" Property="Fill" 
-                                                Value="{DynamicResource change}"/>
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding Path=WorkType, UpdateSourceTrigger=PropertyChanged}" 
-                                                 Value="Datafix">
-                                        <Setter TargetName="workTypeImage" Property="Fill" 
-                                                Value="{DynamicResource datafix}"/>
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding Path=WorkType, UpdateSourceTrigger=PropertyChanged}" 
-                                                 Value="ServiceCall">
-                                        <Setter TargetName="workTypeImage" Property="Fill" 
-                                                Value="{DynamicResource servicecall}"/>
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding Path=WorkType, UpdateSourceTrigger=PropertyChanged}" 
-                                                 Value="Support">
-                                        <Setter TargetName="workTypeImage" Property="Fill" 
-                                                Value="{DynamicResource support}"/>
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding Path=WorkType, UpdateSourceTrigger=PropertyChanged}" 
-                                                 Value="Task">
-                                        <Setter TargetName="workTypeImage" Property="Fill" 
-                                                Value="{DynamicResource task}"/>
-                                    </DataTrigger>
-                                </DataTemplate.Triggers>
+                                <Rectangle Fill="{Binding Path=WorkType, Converter={StaticResource StringToResourceConverter}, ConverterParameter=tolower}"
+                                           Style="{StaticResource parentImage}"/>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
@@ -104,9 +77,9 @@
             </ListView.View>
         </ListView>
         
-        <content:WorkItemForm Grid.Column="2" Grid.Row="0" DataContext="{Binding Path=ViewModel.CurrentWorkItem, Converter={StaticResource workItemToViewModelConverter}}" />
+        <content:WorkItemForm Grid.Column="2" Grid.Row="1" DataContext="{Binding Path=ViewModel.CurrentWorkItem, Converter={StaticResource workItemToViewModelConverter}}" />
 
-        <DataGrid Grid.Column="2" Grid.Row="1" Margin="5" AutoGenerateColumns="False"
+        <DataGrid Grid.Column="2" Grid.Row="2" Margin="5" AutoGenerateColumns="False"
                   DataContext="{Binding Path=ViewModel}"
                   ItemsSource="{Binding Path=CurrentWorkItem.Entries}"
                   SelectedItem="{Binding Path=CurrentEntry}"
@@ -123,23 +96,28 @@
                     </DataGridTemplateColumn.CellTemplate>
                     <DataGridTemplateColumn.CellEditingTemplate>
                         <DataTemplate>
-                            <wui:DateTimePicker Style="{StaticResource DateTimePickerStyle}" 
-                                                Value="{Binding Path=StartDate, Mode=TwoWay}"
-                                                Watermark="Start (yyyy.MM.dd HH:mm)"/>
+                            <wui:DateTimePicker Value="{Binding Path=StartDate, Mode=TwoWay}"
+                                                Watermark="Start (yyyy.MM.dd HH:mm)"
+                                                Format="Custom"
+                                                FormatString="{Binding Source={x:Static props:Settings.Default}, Path=DefaultDateTimePickerFormatString}"/>
+                            <!--<wui:DateTimeUpDown Value="{Binding Path=StartDate, Mode=TwoWay}"
+                                                Format="Custom"
+                                                FormatString="{Binding Source={x:Static props:Settings.Default}, Path=DefaultDateTimePickerFormatString}"/>-->
                         </DataTemplate>
                     </DataGridTemplateColumn.CellEditingTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="End Time">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Path=StartDate}"/>
+                            <TextBlock Text="{Binding Path=EndDate}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                     <DataGridTemplateColumn.CellEditingTemplate>
                         <DataTemplate>
-                            <wui:DateTimePicker Style="{StaticResource DateTimePickerStyle}" 
-                                                Value="{Binding Path=EndDate, Mode=TwoWay}"
-                                                Watermark="End (yyyy.MM.dd HH:mm)" />
+                            <wui:DateTimePicker Value="{Binding Path=EndDate, Mode=TwoWay}"
+                                                Watermark="End (yyyy.MM.dd HH:mm)"
+                                                Format="Custom"
+                                                FormatString="{Binding Source={x:Static props:Settings.Default}, Path=DefaultDateTimePickerFormatString}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellEditingTemplate>
                 </DataGridTemplateColumn>
