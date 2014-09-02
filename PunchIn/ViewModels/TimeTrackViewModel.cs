@@ -66,9 +66,12 @@ namespace PunchIn.ViewModels
             get { return currentEntry; }
             set
             {
-                currentEntry = value;
-                OnPropertyChanged("CurrentEntry");
-                OnPropertyChanged("CanModifyEntry");
+                if (this.currentEntry != value)
+                {
+                    this.currentEntry = value;
+                    OnPropertyChanged("CurrentEntry");
+                    OnPropertyChanged("CanModifyEntry");
+                }
             }
         }
         private TimeEntry currentEntry;

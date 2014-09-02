@@ -26,6 +26,7 @@
             <Setter Property="FontWeight" Value="Thin" />
         </Style>
         <converters:WorkItemToViewModelConverter x:Key="workItemToViewModelConverter" />
+        <converters:DisableCurrentWorkItemConverter x:Key="DisableCurrentWorkItemConverter" />
     </UserControl.Resources>
     <Grid Style="{StaticResource ContentRoot}">
         <Grid.ColumnDefinitions>
@@ -42,7 +43,9 @@
         
         <StackPanel Orientation="Horizontal" Background="{DynamicResource ButtonBackgroundHover}" Grid.ColumnSpan="3">
             <ScrollViewer>
-                <wui:ModernButton Margin="4,2" Content="Save" IconData="F1 M 20.5833,20.5833L 55.4167,20.5833L 55.4167,55.4167L 45.9167,55.4167L 45.9167,44.3333L 30.0833,44.3333L 30.0833,55.4167L 20.5833,55.4167L 20.5833,20.5833 Z M 33.25,55.4167L 33.25,50.6667L 39.5833,50.6667L 39.5833,55.4167L 33.25,55.4167 Z M 26.9167,23.75L 26.9167,33.25L 49.0833,33.25L 49.0833,23.75L 26.9167,23.75 Z" />
+                <wui:ModernButton Margin="4,2" Content="Save" 
+                                  Command="{Binding Path=SaveCommand}"
+                                  IconData="F1 M 20.5833,20.5833L 55.4167,20.5833L 55.4167,55.4167L 45.9167,55.4167L 45.9167,44.3333L 30.0833,44.3333L 30.0833,55.4167L 20.5833,55.4167L 20.5833,20.5833 Z M 33.25,55.4167L 33.25,50.6667L 39.5833,50.6667L 39.5833,55.4167L 33.25,55.4167 Z M 26.9167,23.75L 26.9167,33.25L 49.0833,33.25L 49.0833,23.75L 26.9167,23.75 Z" />
             </ScrollViewer>
         </StackPanel>
         
@@ -52,8 +55,14 @@
                       ResizeDirection="Columns"/>
         
         <ListView Grid.RowSpan="2" Grid.Row="1" SelectionMode="Single" 
-                  SelectedItem="{Binding Path=ViewModel.CurrentWorkItem}"
+                  SelectedItem="{Binding Path=CurrentWorkItem}"
                   ItemsSource="{Binding Path=ViewModel.WorkItems}">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource ListViewItemDefaultStyle}">
+                    <Setter Property="IsEnabled" 
+						    Value="{Binding Id, Converter={StaticResource DisableCurrentWorkItemConverter}}"/>
+                </Style>
+            </ListView.ItemContainerStyle>
             <ListView.View>
                 <GridView>
                     <GridViewColumn>
@@ -64,20 +73,20 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="ID" Width="Auto">
+                    <GridViewColumn Header="TFSID" Width="40">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Path=TfsId}" TextAlignment="Right"/>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn DisplayMemberBinding="{Binding Path=Title}" Header="Name" Width="100"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=Title}" Header="Title" Width="180"/>
                     <GridViewColumn DisplayMemberBinding="{Binding Path=Status}" Header="State" Width="100"/>
                 </GridView>
             </ListView.View>
         </ListView>
         
-        <content:WorkItemForm Grid.Column="2" Grid.Row="1" DataContext="{Binding Path=ViewModel.CurrentWorkItem, Converter={StaticResource workItemToViewModelConverter}}" />
+        <content:WorkItemForm Grid.Column="2" Grid.Row="1" DataContext="{Binding Path=CurrentWorkItem, Converter={StaticResource workItemToViewModelConverter}}" />
 
         <DataGrid Grid.Column="2" Grid.Row="2" Margin="5" AutoGenerateColumns="False"
                   DataContext="{Binding Path=ViewModel}"
