@@ -7,13 +7,21 @@
                   LogoData="{DynamicResource StopwatchGeometry}"
                   Icon="/PunchIn;component/Resources/stopwatch.ico"
                   ContentSource="/Pages/Tracker.xaml">
-    <Window.TaskbarItemInfo>
+    <wui:ModernWindow.TaskbarItemInfo>
         <TaskbarItemInfo x:Name="taskBarItemInfoPunchIn" 
-                         ThumbnailClipMargin="80,0,80,140"
-                         Description="Punch In Info - Add current workitem countdown here">
-
+                         ProgressState="{Binding Path=ProgressState}"
+                         Description="{Binding Path=TaskbarDescription}">
+            <TaskbarItemInfo.ThumbButtonInfos>
+                <ThumbButtonInfoCollection>
+                    <ThumbButtonInfo
+                        DismissWhenClicked="False"
+                        Command="{Binding Path=PunchCommand}"
+                        Description="{Binding Path=ThumbDescription}"
+                        ImageSource="{Binding Path=PunchImage, Converter={StaticResource StringToResourceConverter}}"/>
+                </ThumbButtonInfoCollection>
+            </TaskbarItemInfo.ThumbButtonInfos>
         </TaskbarItemInfo>
-    </Window.TaskbarItemInfo>
+    </wui:ModernWindow.TaskbarItemInfo>
     
     <wui:ModernWindow.TitleLinks>
         <wui:TitleLink DisplayName="Settings" IconData="{DynamicResource CogGeometry}" Source="/Pages/Settings.xaml" />

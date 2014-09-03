@@ -1,13 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-	<DrawingBrush x:Key="shortcut" Stretch="Uniform">
-		<DrawingBrush.Drawing>
-			<DrawingGroup ClipGeometry="F1 M 0,0L 44,0L 44,44L 0,44L 0,0">
-				<DrawingGroup.Children>
-					<GeometryDrawing Brush="#FF0096FF" Geometry="F1 M 11.5,8.75001L 26.0313,8.75001L 34,16.7188L 34,35L 11.5,35L 11.5,8.75001 Z M 24.5839,11.25L 14,11.25L 14,32.5L 31.5,32.5L 31.5,18.1661"/>
-                    <GeometryDrawing Brush="{DynamicResource ButtonText}" Geometry="F1 M 22.3334,23.8333C 22.3334,18.8426 24.6365,14.1754 28,11L 19,11L 24,6.00001L 37,6.00001L 37,19L 32,24L 32,15C 29.5706,17.1744 28.125,20.3164 28.125,23.8333L 28.25,25L 22.5,25L 22.3334,23.8333 Z "/>
-				</DrawingGroup.Children>
-			</DrawingGroup>
-		</DrawingBrush.Drawing>
-	</DrawingBrush>
+    <DrawingGroup x:Key="DrawingGroupShortcut" ClipGeometry="F1 M 0,0L 44,0L 44,44L 0,44L 0,0">
+        <DrawingGroup.Children>
+            <GeometryDrawing Brush="#FF0096FF" Geometry="F1 M 11.5,8.75001L 26.0313,8.75001L 34,16.7188L 34,35L 11.5,35L 11.5,8.75001 Z M 24.5839,11.25L 14,11.25L 14,32.5L 31.5,32.5L 31.5,18.1661"/>
+            <GeometryDrawing Brush="{DynamicResource ButtonText}" Geometry="F1 M 22.3334,23.8333C 22.3334,18.8426 24.6365,14.1754 28,11L 19,11L 24,6.00001L 37,6.00001L 37,19L 32,24L 32,15C 29.5706,17.1744 28.125,20.3164 28.125,23.8333L 28.25,25L 22.5,25L 22.3334,23.8333 Z "/>
+        </DrawingGroup.Children>
+    </DrawingGroup>
+    <DrawingBrush x:Key="shortcut" Stretch="Uniform" Drawing="{StaticResource DrawingGroupShortcut}"/>
+    <DrawingImage x:Key="shortcutImage" Drawing="{StaticResource DrawingGroupShortcut}"/>
 </ResourceDictionary>

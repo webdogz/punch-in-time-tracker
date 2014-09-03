@@ -15,6 +15,7 @@ namespace PunchIn.ViewModels
             this.dirtyWorkItems = new List<WorkItem>();
         }
 
+        #region TimeTracker Overrides
         public override WorkItem CurrentWorkItem
         {
             get
@@ -39,12 +40,15 @@ namespace PunchIn.ViewModels
                 }
             }
         }
+        #endregion
 
+        #region Properties
         private List<WorkItem> dirtyWorkItems;
         public List<WorkItem> DirtyWorkItems
         {
             get { return this.dirtyWorkItems; }
         }
+        #endregion
 
         #region Enum Lists
         public IEnumerable<States> StatesList
@@ -102,8 +106,7 @@ namespace PunchIn.ViewModels
                             }
                             catch (Exception ex)
                             {
-                                // swallow for now...
-                                //TODO: implement errors
+                                Errors = ex.Message;
                             }
                         }
                     };

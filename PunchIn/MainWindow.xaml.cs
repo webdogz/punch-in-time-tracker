@@ -1,16 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using PunchIn.ViewModels;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using Webdogz.UI.Controls;
 
 namespace PunchIn
@@ -24,6 +13,7 @@ namespace PunchIn
         {
             InitializeComponent();
             Loaded += MainWindow_Loaded;
+            DataContext = new MainWindowViewModel();
         }
 
         void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -51,7 +41,11 @@ namespace PunchIn
                     new Rect(this.Left, this.Top, this.ActualWidth, this.ActualHeight);
                 Properties.Settings.Default.Save();
             }
-            catch { }
+            finally
+            {
+                (DataContext as MainWindowViewModel).CleanUp();
+                DataContext = null;
+            }
         }
     }
 }

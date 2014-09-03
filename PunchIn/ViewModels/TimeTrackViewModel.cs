@@ -99,14 +99,6 @@ namespace PunchIn.ViewModels
         #endregion
 
         #region Public Methods
-        //public WorkItem GetCurrentWorkItem()
-        //{
-        //    return this.CurrentWorkItem;
-        //}
-        //public TimeEntry GetCurrentTimeEntry()
-        //{
-        //    return this.CurrentEntry;
-        //}
         public WorkItem GetWorkItemById(Guid id)
         {
             return this.client.GetItemById(id);

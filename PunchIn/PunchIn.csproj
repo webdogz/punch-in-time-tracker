@@ -148,6 +148,7 @@
     <Compile Include="ViewModels\DelegateCommand.cs" />
     <Compile Include="ViewModels\Enums.cs" />
     <Compile Include="ViewModels\IMenuItemViewModel.cs" />
+    <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\MenuItemViewModel.cs" />
     <Compile Include="ViewModels\PunchMenuItemViewModel.cs" />
     <Compile Include="ViewModels\ReportsWeeklyViewModel.cs" />
@@ -194,10 +195,6 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\app_cancel.png" />
-    <Resource Include="Resources\app_save.png" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">
@@ -380,54 +377,7 @@
     <Resource Include="Resources\stopwatch.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\app_delete.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\app_check.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\backlogitem.png" />
-    <Resource Include="Resources\bug.png" />
-    <Resource Include="Resources\change.png" />
-    <Resource Include="Resources\datafix.png" />
-    <Resource Include="Resources\servicecall.png" />
-    <Resource Include="Resources\support.png" />
-    <Resource Include="Resources\task.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\clock_select_remain.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\add.png" />
-    <Resource Include="Resources\exit.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\form.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\tasks.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\cancel.png" />
-    <Resource Include="Resources\excel.png" />
-    <Resource Include="Resources\punchin.png" />
-    <Resource Include="Resources\punchout.png" />
-    <Resource Include="Resources\report.png" />
-    <Resource Include="Resources\timer.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\save.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\app_add.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\folder.png" />
-    <Resource Include="Resources\shortcut.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\list.png" />
-    <Resource Include="Resources\settings.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Themes\underworld.png" />

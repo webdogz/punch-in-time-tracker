@@ -27,7 +27,6 @@
                               Grid.Column="0" Grid.ColumnSpan="2" Margin="5">
             <wui:WatermarkTextBox.Watermark>
                 <StackPanel Orientation="Horizontal">
-                    <!--<Image Source="/Resources/form.png" Width="20" Height="20" Stretch="Fill" />-->
                     <Rectangle Width="16" Height="16" VerticalAlignment="Center"
                                Stretch="Uniform" Fill="{DynamicResource task}"/>
                     <TextBlock Text="Enter a title" Margin="4,0,0,0" />
@@ -56,7 +55,6 @@
                 <wui:IntegerUpDown.Watermark>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="TFS #" Margin="4,0,4,0" />
-                        <!--<Image Source="/Resources/backlogitem.png" Width="16" Height="16" Stretch="Fill" />-->
                         <Rectangle Width="16" Height="16" VerticalAlignment="Center"
                                    Stretch="Uniform" Fill="{DynamicResource backlogitem}"/>
                     </StackPanel>
@@ -69,7 +67,6 @@
                 <wui:IntegerUpDown.Watermark>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="SC #" Margin="4,0,4,0" />
-                        <!--<Image Source="/Resources/servicecall.png" Width="16" Height="16" Stretch="Fill" />-->
                         <Rectangle Width="16" Height="16" VerticalAlignment="Center"
                                    Stretch="Uniform" Fill="{DynamicResource servicecall}"/>
                     </StackPanel>
@@ -82,7 +79,6 @@
                 <wui:IntegerUpDown.Watermark>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Change #" Margin="4,0,4,0" />
-                        <!--<Image Source="/Resources/change.png" Width="16" Height="16" Stretch="Fill" />-->
                         <Rectangle Width="16" Height="16" VerticalAlignment="Center"
                                    Stretch="Uniform" Fill="{DynamicResource change}"/>
                     </StackPanel>
@@ -95,7 +91,6 @@
                 <wui:DoubleUpDown.Watermark>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Effort in days" Margin="4,0,4,0" />
-                        <!--<Image Source="/Resources/clock_select_remain.png" Width="16" Height="16" Stretch="Fill" />-->
                         <Rectangle Width="16" Height="16" VerticalAlignment="Center"
                                    Stretch="Uniform" Fill="{DynamicResource timer}"/>
                     </StackPanel>

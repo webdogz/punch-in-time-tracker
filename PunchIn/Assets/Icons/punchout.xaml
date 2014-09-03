@@ -1,13 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-	<DrawingBrush x:Key="punchout" Stretch="Uniform">
-		<DrawingBrush.Drawing>
-			<DrawingGroup ClipGeometry="F1 M 0,0L 44,0L 44,44L 0,44L 0,0">
-				<DrawingGroup.Children>
-					<GeometryDrawing Brush="#FFB40000" Geometry="F1 M 22,24.6296L 38.3704,24.6296L 38.3704,41L 22,41L 22,24.6296 Z "/>
-                    <GeometryDrawing Brush="{DynamicResource ButtonText}" Geometry="F1 M 28.5,22.5L 32.1508,22.5C 31.4829,17.4867 27.5133,13.5171 22.5,12.8492L 22.5,16.5L 19.5,16.5L 19.5,12.8492C 14.4867,13.5171 10.5171,17.4867 9.84912,22.5L 13.5,22.5L 13.5,25.5L 9.8491,25.5C 10.5171,30.5134 14.4867,34.4829 19.5,35.1509L 19.5,31.5L 21,31.5L 21,39C 12.7157,39 6,32.2843 6,24C 6,16.222 11.92,9.82665 19.5,9.07406L 19.5,7.5L 15,7.5L 15,3L 27,3L 27,7.5L 22.5,7.5L 22.5,9.07406C 25.5168,9.37359 28.2707,10.567 30.4931,12.3856L 31.5754,11.3033L 29.4541,9.18197L 32.636,6L 39,12.364L 35.818,15.5459L 33.6967,13.4246L 32.6144,14.5069C 34.6577,17.0038 35.9117,20.1717 35.9955,23.6296L 28.5,23.6296L 28.5,22.5 Z M 21,21C 22.5314,21 23.7948,22.1476 23.9773,23.6296L 21,23.6296L 21,27L 15,31.5L 18,24C 18,22.3432 19.3431,21 21,21 Z "/>
-				</DrawingGroup.Children>
-			</DrawingGroup>
-		</DrawingBrush.Drawing>
-	</DrawingBrush>
+    <DrawingGroup x:Key="DrawingGroupPunchOut" ClipGeometry="F1 M 0,0L 44,0L 44,44L 0,44L 0,0">
+        <DrawingGroup.Children>
+            <GeometryDrawing Brush="#FFB40000" Geometry="F1 M 22,24.6296L 38.3704,24.6296L 38.3704,41L 22,41L 22,24.6296 Z "/>
+            <GeometryDrawing Brush="{DynamicResource ButtonText}" Geometry="F1 M 28.5,22.5L 32.1508,22.5C 31.4829,17.4867 27.5133,13.5171 22.5,12.8492L 22.5,16.5L 19.5,16.5L 19.5,12.8492C 14.4867,13.5171 10.5171,17.4867 9.84912,22.5L 13.5,22.5L 13.5,25.5L 9.8491,25.5C 10.5171,30.5134 14.4867,34.4829 19.5,35.1509L 19.5,31.5L 21,31.5L 21,39C 12.7157,39 6,32.2843 6,24C 6,16.222 11.92,9.82665 19.5,9.07406L 19.5,7.5L 15,7.5L 15,3L 27,3L 27,7.5L 22.5,7.5L 22.5,9.07406C 25.5168,9.37359 28.2707,10.567 30.4931,12.3856L 31.5754,11.3033L 29.4541,9.18197L 32.636,6L 39,12.364L 35.818,15.5459L 33.6967,13.4246L 32.6144,14.5069C 34.6577,17.0038 35.9117,20.1717 35.9955,23.6296L 28.5,23.6296L 28.5,22.5 Z M 21,21C 22.5314,21 23.7948,22.1476 23.9773,23.6296L 21,23.6296L 21,27L 15,31.5L 18,24C 18,22.3432 19.3431,21 21,21 Z "/>
+        </DrawingGroup.Children>
+    </DrawingGroup>
+    <DrawingBrush x:Key="punchout" Stretch="Uniform" Drawing="{StaticResource DrawingGroupPunchOut}"/>
+    <DrawingImage x:Key="punchoutImage" Drawing="{StaticResource DrawingGroupPunchOut}"/>
 </ResourceDictionary>

@@ -1,13 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-	<DrawingBrush x:Key="folder" Stretch="Uniform">
-		<DrawingBrush.Drawing>
-			<DrawingGroup ClipGeometry="F1 M 0,0L 44,0L 44,44L 0,44L 0,0">
-				<DrawingGroup.Children>
-					<GeometryDrawing Brush="#FFFFC800" Geometry="F1 M 7,35.25L 36,35.25L 39,16.25C 39,16.25 39,14.25 37,14.25C 35,14.25 30,14.25 30,14.25C 30,14.25 29,14.25 29,15.25C 29,16.25 29,17.25 29,17.25L 7,17.25C 6.99999,17.25 5,17.25 5,19.25"/>
-					<GeometryDrawing Brush="#FFFFC800" Geometry="F1 M 5.52828,11C 5.52828,11 5.52828,9.00001 7.3385,9.00003L 15.6743,9C 15.6743,9 16.5794,9 16.5794,10L 16.5794,11.25L 35.4918,11.25C 35.4918,11.25 37.1851,11.25 37.2963,13.0593C 37.2121,13.0512 37.1238,13.0469 37.0312,13.0469L 29.0312,13.0469C 29.0312,13.0469 27.75,13 27.7812,14.0469L 27.7812,16.0469L 7.03125,16.0469C 7.03125,16.0469 6.1042,16.0469 5.51242,16.678L 5.52828,11 Z "/>
-				</DrawingGroup.Children>
-			</DrawingGroup>
-		</DrawingBrush.Drawing>
-	</DrawingBrush>
+    <DrawingGroup x:Key="DrawingGroupFolder" ClipGeometry="F1 M 0,0L 44,0L 44,44L 0,44L 0,0">
+        <DrawingGroup.Children>
+            <GeometryDrawing Brush="#FFFFC800" Geometry="F1 M 7,35.25L 36,35.25L 39,16.25C 39,16.25 39,14.25 37,14.25C 35,14.25 30,14.25 30,14.25C 30,14.25 29,14.25 29,15.25C 29,16.25 29,17.25 29,17.25L 7,17.25C 6.99999,17.25 5,17.25 5,19.25"/>
+            <GeometryDrawing Brush="#FFFFC800" Geometry="F1 M 5.52828,11C 5.52828,11 5.52828,9.00001 7.3385,9.00003L 15.6743,9C 15.6743,9 16.5794,9 16.5794,10L 16.5794,11.25L 35.4918,11.25C 35.4918,11.25 37.1851,11.25 37.2963,13.0593C 37.2121,13.0512 37.1238,13.0469 37.0312,13.0469L 29.0312,13.0469C 29.0312,13.0469 27.75,13 27.7812,14.0469L 27.7812,16.0469L 7.03125,16.0469C 7.03125,16.0469 6.1042,16.0469 5.51242,16.678L 5.52828,11 Z "/>
+        </DrawingGroup.Children>
+    </DrawingGroup>
+    <DrawingBrush x:Key="folder" Stretch="Uniform" Drawing="{StaticResource DrawingGroupFolder}"/>
+    <DrawingImage x:Key="folderImage" Drawing="{StaticResource DrawingGroupFolder}"/>
 </ResourceDictionary>

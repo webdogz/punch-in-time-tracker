@@ -22,7 +22,6 @@
                                Grid.Column="0" Grid.ColumnSpan="2" Margin="5">
             <wui:WatermarkTextBox.Watermark>
                 <StackPanel Orientation="Horizontal">
-                    <!--<Image Source="/Resources/clock_select_remain.png" Width="20" Height="20" Stretch="Fill" />-->
                     <Rectangle Width="16" Height="16" VerticalAlignment="Center"
                                Stretch="Uniform" Fill="{DynamicResource timer}"/>
                     <TextBlock Text="Enter a description" Margin="4,0,0,0" />

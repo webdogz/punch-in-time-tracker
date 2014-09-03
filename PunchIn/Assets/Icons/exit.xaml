@@ -1,17 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-	<DrawingBrush x:Key="exit" Stretch="Uniform">
-		<DrawingBrush.Drawing>
-			<DrawingGroup ClipGeometry="F1 M 0,0L 44,0L 44,44L 0,44L 0,0">
-				<DrawingGroup.Children>
-					<GeometryDrawing Brush="#FFB40000" Geometry="F1 M 22,3C 32.4934,3 41,11.5066 41,22C 41,32.4934 32.4934,41 22,41C 11.5066,41 3,32.4934 3,22C 3,11.5066 11.5066,3 22,3 Z ">
-						<GeometryDrawing.Pen>
-							<Pen Thickness="1" LineJoin="Round" Brush="#FF009664"/>
-						</GeometryDrawing.Pen>
-					</GeometryDrawing>
-					<GeometryDrawing Brush="#FFFFFFFF" Geometry="F1 M 9.97917,14.2218L 14.2218,9.97919L 22,17.7574L 29.7782,9.97919L 34.0208,14.2218L 26.2426,22L 34.0208,29.7782L 29.7782,34.0208L 22,26.2426L 14.2218,34.0208L 9.97917,29.7782L 17.7573,22L 9.97917,14.2218 Z "/>
-				</DrawingGroup.Children>
-			</DrawingGroup>
-		</DrawingBrush.Drawing>
-	</DrawingBrush>
+    <DrawingGroup x:Key="DrawingGroupExit" ClipGeometry="F1 M 0,0L 44,0L 44,44L 0,44L 0,0">
+        <DrawingGroup.Children>
+            <GeometryDrawing Brush="#FFB40000" Geometry="F1 M 22,3C 32.4934,3 41,11.5066 41,22C 41,32.4934 32.4934,41 22,41C 11.5066,41 3,32.4934 3,22C 3,11.5066 11.5066,3 22,3 Z ">
+                <GeometryDrawing.Pen>
+                    <Pen Thickness="1" LineJoin="Round" Brush="#FF009664"/>
+                </GeometryDrawing.Pen>
+            </GeometryDrawing>
+            <GeometryDrawing Brush="#FFFFFFFF" Geometry="F1 M 9.97917,14.2218L 14.2218,9.97919L 22,17.7574L 29.7782,9.97919L 34.0208,14.2218L 26.2426,22L 34.0208,29.7782L 29.7782,34.0208L 22,26.2426L 14.2218,34.0208L 9.97917,29.7782L 17.7573,22L 9.97917,14.2218 Z "/>
+        </DrawingGroup.Children>
+    </DrawingGroup>
+    <DrawingBrush x:Key="exit" Stretch="Uniform" Drawing="{StaticResource DrawingGroupExit}"/>
+    <DrawingImage x:Key="exitImage" Drawing="{StaticResource DrawingGroupExit}"/>
 </ResourceDictionary>

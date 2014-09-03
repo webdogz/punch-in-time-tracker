@@ -20,7 +20,7 @@
         </Grid.RowDefinitions>
         <StackPanel>
             <ContentControl Template="{StaticResource ErrorsBlock}" Margin="0"
-                            Visibility="{Binding Path=HasError, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=inverse}">
+                            Visibility="{Binding Path=Errors, Converter={StaticResource NullOrEmptyStringToVisibilityConverter}, ConverterParameter=inverse}">
                 <StackPanel>
                     <TextBlock Text="{Binding Path=Errors}" Foreground="#333" TextWrapping="Wrap"/>
                     <StackPanel Orientation="Horizontal" Margin="0,5,0,0">

@@ -140,19 +140,20 @@ namespace PunchIn.ViewModels
                 }
             }
         }
-        private string errors;
-        public string Errors
-        {
-            get { return this.errors; }
-            set
-            {
-                if (this.errors != value)
-                {
-                    this.errors = value;
-                    OnPropertyChanged("Errors");
-                }
-            }
-        }
+        
+        //private string errors;
+        //public string Errors
+        //{
+        //    get { return this.errors; }
+        //    set
+        //    {
+        //        if (this.errors != value)
+        //        {
+        //            this.errors = value;
+        //            OnPropertyChanged("Errors");
+        //        }
+        //    }
+        //}
         #endregion
     }
 

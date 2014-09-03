@@ -15,6 +15,8 @@ namespace PunchIn.ViewModels
             this.service = new SharePointService();
             LoadItems();
         }
+
+        #region Methods
         private async void LoadItems()
         {
             IsBusy = true;
@@ -54,33 +56,9 @@ namespace PunchIn.ViewModels
         {
             Errors = e.Message;
         }
-        private bool hasError;
-        public bool HasError
-        {
-            get { return this.hasError; }
-            set
-            {
-                if (this.hasError != value)
-                {
-                    this.hasError = value;
-                    OnPropertyChanged("HasError");
-                }
-            }
-        }
-        private string errors;
-        public string Errors
-        {
-            get { return this.errors; }
-            set
-            {
-                if (this.errors != value)
-                {
-                    this.errors = value;
-                    OnPropertyChanged("Errors");
-                    HasError = !string.IsNullOrWhiteSpace(this.errors);
-                }
-            }
-        }
+        #endregion
+
+        #region Properties
         private bool isBusy = false;
         public bool IsBusy
         {
@@ -133,6 +111,8 @@ namespace PunchIn.ViewModels
                 }
             }
         }
+        #endregion
+
         #region Commands
         private ICommand _refresh;
         public ICommand Refresh
