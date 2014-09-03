@@ -8,57 +8,38 @@ using PunchIn.Services;
 
 namespace PunchIn.ViewModels
 {
-    public class TrackerViewModel : ViewModelBase
+    public class TrackerViewModel : TimeTrackViewModel
     {
-        public TrackerViewModel()
+        public TrackerViewModel() : base()
         {
-            this.viewModel = new TimeTrackViewModel();
             this.dirtyWorkItems = new List<WorkItem>();
         }
 
-        public TimeTrackViewModel ViewModel
-        {
-            get { return this.viewModel; }
-        }
-        private readonly TimeTrackViewModel viewModel;
-
-        public WorkItem CurrentWorkItem
+        public override WorkItem CurrentWorkItem
         {
             get
             {
-                if (this.ViewModel.CurrentWorkItem != null &&
-                    NotifyIconViewModel.Current.CurrentWorkItem != null &&
-                    NotifyIconViewModel.Current.CurrentWorkItem.Id != this.ViewModel.CurrentWorkItem.Id)
+                if (base.CurrentWorkItem != null)
                 {
-                    return this.ViewModel.CurrentWorkItem;
+                    if (NotifyIconViewModel.Current.CurrentWorkItem != null &&
+                        NotifyIconViewModel.Current.CurrentWorkItem.Id == base.CurrentWorkItem.Id)
+                        return null;
+                    return base.CurrentWorkItem;
                 }
                 return null;
             }
             set
             {
-                if (this.ViewModel.CurrentWorkItem != value &&
-                    NotifyIconViewModel.Current.CurrentWorkItem.Id != ((WorkItem)value).Id)
+                if (base.CurrentWorkItem != value)
                 {
-                    this.ViewModel.CurrentWorkItem = value;
-                    OnPropertyChanged("CurrentWorkItem");
+                    if (NotifyIconViewModel.Current.CurrentWorkItem != null && value != null &&
+                        NotifyIconViewModel.Current.CurrentWorkItem.Id == ((WorkItem)value).Id)
+                        return;
+                    base.CurrentWorkItem = value;
                 }
             }
         }
-        private bool isDirty;
-        public bool IsDirty
-        {
-            get { return this.isDirty; }
-            set
-            {
-                if (this.isDirty != value)
-                {
-                    this.isDirty = value;
-                    OnPropertyChanged("IsDirty");
-                    if (!this.isDirty)
-                        this.ViewModel.IsDirty = false;
-                }
-            }
-        }
+
         private List<WorkItem> dirtyWorkItems;
         public List<WorkItem> DirtyWorkItems
         {
@@ -76,8 +57,7 @@ namespace PunchIn.ViewModels
             get { return Enum.GetValues(typeof(WorkTypes)).Cast<WorkTypes>(); }
         }
         #endregion
-        //TODO: Add commands for WorkItem list...delete, and canexecute only if item is not 
-        //      NotifyIconViewModel.Current.CurrentWorkItem
+
         #region Commands
         private ICommand _saveCommand;
         public ICommand SaveCommand
@@ -91,14 +71,44 @@ namespace PunchIn.ViewModels
                         CanExecuteFunc = (o) => IsDirty,
                         CommandAction = (o) =>
                         {
-                            PunchInService service = new PunchInService();
                             foreach (WorkItem item in DirtyWorkItems)
-                                service.SaveWorkItem(item);
+                                this.Client.SaveWorkItem(item);
                             IsDirty = false;
                         }
                     };
                 }
                 return this._saveCommand;
+            }
+        }
+        private ICommand _deleteWorkItemCommand;
+        public ICommand DeleteWorkItemCommand
+        {
+            get
+            {
+                if (this._deleteWorkItemCommand == null)
+                {
+                    this._deleteWorkItemCommand = new DelegateCommand
+                    {
+                        CanExecuteFunc = (o) => CurrentWorkItem != null,
+                        CommandAction = (o) =>
+                        {
+                            try
+                            {
+                                this.Client.DeleteWorkItem(CurrentWorkItem.Id);
+                                this.WorkItems.Remove(CurrentWorkItem);
+                                OnPropertyChanged("WorkItems");
+                                CurrentWorkItem = null;
+                                SetCurrentWorkItem();
+                            }
+                            catch (Exception ex)
+                            {
+                                // swallow for now...
+                                //TODO: implement errors
+                            }
+                        }
+                    };
+                }
+                return this._deleteWorkItemCommand;
             }
         }
         #endregion

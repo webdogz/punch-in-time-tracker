@@ -12,6 +12,7 @@ namespace PunchIn.ViewModels
     public class TimeTrackViewModel : ViewModelBase
     {
         private readonly PunchInService client;
+        internal PunchInService Client { get { return this.client; } }
         #region ctor and init
         public TimeTrackViewModel()
         {
@@ -29,20 +30,24 @@ namespace PunchIn.ViewModels
         #endregion
 
         #region Fields and Properties
-        public IEnumerable<WorkItem> WorkItems
+        public List<WorkItem> WorkItems
         {
             get { return workItems; }
             set
             {
                 workItems = value;
                 OnPropertyChanged("WorkItems");
-                if (CurrentWorkItem == null)
-                    CurrentWorkItem = workItems.Where(w => w.Entries.Any(e => e.EndDate == null)).LastOrDefault() ?? workItems.LastOrDefault();
+                SetCurrentWorkItem();
             }
         }
-        private IEnumerable<WorkItem>  workItems;
+        private List<WorkItem> workItems;
+        protected void SetCurrentWorkItem()
+        {
+            if (CurrentWorkItem == null)
+                CurrentWorkItem = workItems.Where(w => w.Entries.Any(e => e.EndDate == null)).LastOrDefault() ?? workItems.LastOrDefault();
+        }
 
-        public WorkItem CurrentWorkItem
+        public virtual WorkItem CurrentWorkItem
         {
             get { return currentWorkItem; }
             set
@@ -61,7 +66,7 @@ namespace PunchIn.ViewModels
         }
         private WorkItem currentWorkItem;
 
-        public TimeEntry CurrentEntry
+        public virtual TimeEntry CurrentEntry
         {
             get { return currentEntry; }
             set
@@ -94,6 +99,14 @@ namespace PunchIn.ViewModels
         #endregion
 
         #region Public Methods
+        //public WorkItem GetCurrentWorkItem()
+        //{
+        //    return this.CurrentWorkItem;
+        //}
+        //public TimeEntry GetCurrentTimeEntry()
+        //{
+        //    return this.CurrentEntry;
+        //}
         public WorkItem GetWorkItemById(Guid id)
         {
             return this.client.GetItemById(id);

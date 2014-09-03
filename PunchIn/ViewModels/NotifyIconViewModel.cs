@@ -313,7 +313,9 @@ namespace PunchIn.ViewModels
             {
                 if (CurrentTimeEntry != null && CurrentTimeEntry.CurrentWorkItem != null)
                     this.currentWorkItem = WorkItemViewModel.ConvertFrom(CurrentTimeEntry.CurrentWorkItem);
-                return this.currentWorkItem; 
+                else
+                    this.currentWorkItem = WorkItemViewModel.ConvertFrom(viewModel.CurrentWorkItem);
+                return this.currentWorkItem;
             }
             set
             {
@@ -334,7 +336,7 @@ namespace PunchIn.ViewModels
             {
                 return new DelegateCommand
                 {
-                    CanExecuteFunc = (o) => ViewModel.CurrentWorkItem != null,
+                    CanExecuteFunc = (o) => this.ViewModel.CurrentWorkItem != null,
                     CommandAction = (o) =>
                         {
                             if (CurrentTimeEntry == null)

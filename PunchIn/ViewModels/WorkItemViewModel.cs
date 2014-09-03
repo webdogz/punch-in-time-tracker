@@ -9,7 +9,10 @@ namespace PunchIn.ViewModels
 {
     public class WorkItemViewModel : ViewModelBase
     {
-        public WorkItemViewModel() { }
+        public WorkItemViewModel()
+        {
+            this.Entries = new List<TimeEntry>();
+        }
 
         #region Properties
         public Guid Id { get; set; }
@@ -90,6 +93,8 @@ namespace PunchIn.ViewModels
         }
         private WorkTypes workType;
         #endregion
+
+        public List<TimeEntry> Entries { get; set; }
 
         #region Enum Lists
         public IEnumerable<States> StatesList

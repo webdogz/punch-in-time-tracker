@@ -4,6 +4,7 @@
         <!-- Notify Icon -->
         <ResourceDictionary Source="NotifyIconResources.xaml"/>
         <!-- icons -->
+        <ResourceDictionary Source="Glyphs.xaml" />
         <ResourceDictionary Source="Icons/add.xaml" />
         <ResourceDictionary Source="Icons/backlogitem.xaml" />
         <ResourceDictionary Source="Icons/bug.xaml" />
