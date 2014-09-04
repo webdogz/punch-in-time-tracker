@@ -125,6 +125,7 @@
     <Compile Include="Services\CsvExportService.cs" />
     <Compile Include="Services\IExporter.cs" />
     <Compile Include="Services\SharePointService.cs" />
+    <Compile Include="ViewModels\Converters\HiLiteCurrentWorkItemConverter.cs" />
     <Compile Include="ViewModels\Converters\DisableCurrentWorkItemConverter.cs" />
     <Compile Include="ViewModels\Converters\WorkItemToViewModelConverter.cs" />
     <Compile Include="Pages\Content\SettingsAppearance.xaml.cs">

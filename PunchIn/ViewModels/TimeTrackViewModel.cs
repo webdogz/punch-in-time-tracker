@@ -30,7 +30,7 @@ namespace PunchIn.ViewModels
         #endregion
 
         #region Fields and Properties
-        public List<WorkItem> WorkItems
+        public virtual List<WorkItem> WorkItems
         {
             get { return workItems; }
             set

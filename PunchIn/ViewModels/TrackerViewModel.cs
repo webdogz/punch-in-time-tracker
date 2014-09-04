@@ -13,6 +13,16 @@ namespace PunchIn.ViewModels
         public TrackerViewModel() : base()
         {
             this.dirtyWorkItems = new List<WorkItem>();
+            NotifyIconViewModel.Current.PropertyChanged += NotifyIcon_PropertyChanged;
+        }
+
+        private string[] _notifyIconProperties = new string[] { "CurrentTimeEntry", "CurrentWorkItem" };
+        private void NotifyIcon_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (_notifyIconProperties.Contains(e.PropertyName))
+            {
+                OnPropertyChanged("IsCurrentWorkItemNotSelected", "WorkItems");
+            }
         }
 
         #region TimeTracker Overrides
@@ -20,29 +30,32 @@ namespace PunchIn.ViewModels
         {
             get
             {
-                if (base.CurrentWorkItem != null)
-                {
-                    if (NotifyIconViewModel.Current.CurrentWorkItem != null &&
-                        NotifyIconViewModel.Current.CurrentWorkItem.Id == base.CurrentWorkItem.Id)
-                        return null;
-                    return base.CurrentWorkItem;
-                }
-                return null;
+                return base.CurrentWorkItem;
             }
             set
             {
                 if (base.CurrentWorkItem != value)
                 {
-                    if (NotifyIconViewModel.Current.CurrentWorkItem != null && value != null &&
-                        NotifyIconViewModel.Current.CurrentWorkItem.Id == ((WorkItem)value).Id)
-                        return;
                     base.CurrentWorkItem = value;
+                    OnPropertyChanged("IsCurrentWorkItemNotSelected");
                 }
             }
         }
         #endregion
 
         #region Properties
+        public bool IsCurrentWorkItemNotSelected
+        {
+            get
+            {
+                if (base.CurrentWorkItem != null)
+                {
+                    return (NotifyIconViewModel.Current.CurrentWorkItem != null &&
+                            NotifyIconViewModel.Current.CurrentWorkItem.Id != base.CurrentWorkItem.Id);
+                }
+                return true;
+            }
+        }
         private List<WorkItem> dirtyWorkItems;
         public List<WorkItem> DirtyWorkItems
         {

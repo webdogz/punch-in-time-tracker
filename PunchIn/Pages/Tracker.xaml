@@ -27,6 +27,7 @@
         </Style>
         <converters:WorkItemToViewModelConverter x:Key="workItemToViewModelConverter" />
         <converters:DisableCurrentWorkItemConverter x:Key="DisableCurrentWorkItemConverter" />
+        <converters:HiLiteCurrentWorkItemConverter x:Key="HiLiteCurrentWorkItemConverter" />
     </UserControl.Resources>
     <Grid Style="{StaticResource ContentRoot}">
         <Grid.ColumnDefinitions>
@@ -68,9 +69,13 @@
                   SelectedItem="{Binding Path=CurrentWorkItem}"
                   ItemsSource="{Binding Path=WorkItems}">
             <ListView.ItemContainerStyle>
-                <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource ListViewItemDefaultStyle}">
+                <!--<Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource ListViewItemDefaultStyle}">
                     <Setter Property="IsEnabled" 
                             Value="{Binding Id, Converter={StaticResource DisableCurrentWorkItemConverter}}"/>
+                </Style>-->
+                <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource ListViewItemDefaultStyle}">
+                    <Setter Property="Background" 
+                            Value="{Binding Id, Converter={StaticResource HiLiteCurrentWorkItemConverter}}"/>
                 </Style>
             </ListView.ItemContainerStyle>
             <ListView.View>
@@ -96,12 +101,14 @@
             </ListView.View>
         </ListView>
 
-        <content:WorkItemForm Grid.Column="2" Grid.Row="2" DataContext="{Binding Path=CurrentWorkItem, Converter={StaticResource workItemToViewModelConverter}}" />
+        <content:WorkItemForm Grid.Column="2" Grid.Row="2" DataContext="{Binding Path=CurrentWorkItem, Converter={StaticResource workItemToViewModelConverter}}" 
+                              IsEnabled="{Binding Path=DataContext.IsCurrentWorkItemNotSelected, RelativeSource={RelativeSource AncestorType=UserControl}}" />
 
         <DataGrid Grid.Column="2" Grid.Row="3" Margin="5" AutoGenerateColumns="False"
                   ItemsSource="{Binding Path=CurrentWorkItem.Entries}"
                   SelectedItem="{Binding Path=CurrentEntry}"
                   CanUserAddRows="False"
+                  IsEnabled="{Binding Path=DataContext.IsCurrentWorkItemNotSelected, RelativeSource={RelativeSource AncestorType=UserControl}}"
                   SelectionMode="Extended">
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Path=Description}"
