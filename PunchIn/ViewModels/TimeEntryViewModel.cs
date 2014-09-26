@@ -28,7 +28,7 @@ namespace PunchIn.ViewModels
         {
             CurrentEntry.EndDate = DateTime.Now;
             CurrentEntry.Status = States.Done;
-            parent.SaveWorkItemCommand.Execute(null);
+            parent.SaveWorkItemCommand.Execute(new Action(() => this.parent.CurrentEntry = null));
         }
 
         public TimeEntry CurrentEntry

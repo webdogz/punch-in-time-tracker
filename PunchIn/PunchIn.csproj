@@ -101,6 +101,7 @@
     <Compile Include="Extensions\BindableStaticResourceExtension.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Extensions\SharePointExtensions.cs" />
+    <Compile Include="GlobalConfig.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>

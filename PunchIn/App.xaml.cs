@@ -21,7 +21,8 @@ namespace PunchIn
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-
+            //initialise settings
+            GlobalConfig.InitialiseAndSyncSettings();
             //create the notifyicon (it's a resource declared in NotifyIconResources.xaml
             notifyIcon = (TaskbarIcon)FindResource("NotifyIcon");
             notifyIcon.DataContext = NotifyIconViewModel.Current;

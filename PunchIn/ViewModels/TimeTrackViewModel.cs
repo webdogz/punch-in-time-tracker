@@ -136,6 +136,8 @@ namespace PunchIn.ViewModels
                     {
                         client.SaveWorkItem(CurrentWorkItem);
                         IsDirty = false;
+                        if (o is Action)
+                            (o as Action).Invoke();
                     }
                 };
             }

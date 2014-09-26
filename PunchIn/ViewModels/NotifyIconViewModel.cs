@@ -21,7 +21,6 @@ namespace PunchIn.ViewModels
         #region Ctor and Instance Accessor
         private NotifyIconViewModel()
         {
-            SettingsViewModel.InitialiseAndSyncSettings();
             this.viewModel = new TimeTrackViewModel();
             this.viewModel.PropertyChanged += (s, e) =>
             {
@@ -39,7 +38,7 @@ namespace PunchIn.ViewModels
             BuildShortcutMenusAsync();
             SyncThemeSettings();
             IsTimerActive = false;
-            timer = GetUITimer(TimeSpan.FromSeconds(1), OnTimerTick);// new DispatcherTimer(TimeSpan.FromSeconds(1), DispatcherPriority.Normal, OnTimerTick, Application.Current.Dispatcher);
+            timer = GetUITimer(TimeSpan.FromSeconds(1), OnTimerTick);
         }
         private static NotifyIconViewModel current = new NotifyIconViewModel();
         /// <summary>
@@ -135,6 +134,7 @@ namespace PunchIn.ViewModels
         }
         private PunchMenuItemViewModel workItemMenus;
 
+        #region Punch Menu Item
         public string PunchMenuText
         {
             get { return punchMenuText; }
@@ -183,6 +183,8 @@ namespace PunchIn.ViewModels
             }
         }
         private bool isTimerActive;
+        #endregion
+
         #endregion
 
         #region Taskbar Popup
@@ -330,117 +332,136 @@ namespace PunchIn.ViewModels
         #endregion
 
         #region Commands
+        private ICommand punchInCommand;
+        /// <summary>
+        /// PunchIn/PunchOut command will create new TimeEntry and start its timer or close the CurrentTimeEntry
+        /// </summary>
         public ICommand PunchInCommand
         {
             get
             {
-                return new DelegateCommand
-                {
-                    CanExecuteFunc = (o) => this.ViewModel.CurrentWorkItem != null,
-                    CommandAction = (o) =>
-                        {
-                            if (CurrentTimeEntry == null)
+                if (this.punchInCommand == null)
+                    this.punchInCommand = new DelegateCommand
+                    {
+                        CanExecuteFunc = (o) => this.ViewModel.CurrentWorkItem != null,
+                        CommandAction = (o) =>
                             {
-                                CurrentTimeEntry = new TimeEntryViewModel(ViewModel);
-
-                                var dialog = new TrayDialog
+                                if (CurrentTimeEntry == null)
                                 {
-                                    Title = "New Time Entry",
-                                    Content = new TimeEntryForm(),
-                                    WindowStartupLocation = WindowStartupLocation.Manual,
-                                    IsTrayWindow = true,
-                                    DataContext = CurrentTimeEntry
-                                };
-                                dialog.Buttons = new Button[] { dialog.OkButton, dialog.CancelButton };
-                                dialog.ShowDialog();
+                                    CurrentTimeEntry = new TimeEntryViewModel(ViewModel);
 
-                                if (dialog.DialogResult.HasValue &&
-                                    dialog.DialogResult.Value)
-                                {
-                                    CurrentTimeEntry.PunchIn();
-                                    IsTimerActive = true;
+                                    var dialog = new TrayDialog
+                                    {
+                                        Title = "New Time Entry",
+                                        Content = new TimeEntryForm(),
+                                        WindowStartupLocation = WindowStartupLocation.Manual,
+                                        IsTrayWindow = true,
+                                        DataContext = CurrentTimeEntry
+                                    };
+                                    dialog.Buttons = new Button[] { dialog.OkButton, dialog.CancelButton };
+                                    dialog.ShowDialog();
+
+                                    if (dialog.DialogResult.HasValue &&
+                                        dialog.DialogResult.Value)
+                                    {
+                                        CurrentTimeEntry.PunchIn();
+                                        IsTimerActive = true;
+                                    }
+                                    else
+                                        CurrentTimeEntry = null;
                                 }
                                 else
+                                {
+                                    CurrentTimeEntry.PunchOut();
+                                    IsTimerActive = false;
                                     CurrentTimeEntry = null;
+                                }
                             }
-                            else
-                            {
-                                CurrentTimeEntry.PunchOut();
-                                IsTimerActive = false;
-                                CurrentTimeEntry = null;
-                            }
-                        }
-                };
+                    };
+                return this.punchInCommand;
             }
         }
+        private ICommand newWorkItemCommand;
+        /// <summary>
+        /// Create a new WorkItem, add it to the list and make it the CurrentWorkItem
+        /// </summary>
         public ICommand NewWorkItemCommand
         {
             get
             {
-                return new DelegateCommand
-                {
-                    CanExecuteFunc = (o) => ViewModel != null,
-                    CommandAction = (o) =>
+                if (this.newWorkItemCommand == null)
+                    this.newWorkItemCommand = new DelegateCommand
                     {
-                        var dialog = new TrayDialog
+                        CanExecuteFunc = (o) => ViewModel != null,
+                        CommandAction = (o) =>
                         {
-                            Title = "New Work Item",
-                            Content = new WorkItemForm(),
-                            WindowStartupLocation = WindowStartupLocation.Manual,
-                            IsTrayWindow = true,
-                            SizeToContent = System.Windows.SizeToContent.Height,
-                            DataContext = new WorkItemViewModel()
-                        };
-                        dialog.Buttons = new Button[] { dialog.OkButton, dialog.CancelButton };
-                        dialog.ShowDialog();
+                            var dialog = new TrayDialog
+                            {
+                                Title = "New Work Item",
+                                Content = new WorkItemForm(),
+                                WindowStartupLocation = WindowStartupLocation.Manual,
+                                IsTrayWindow = true,
+                                SizeToContent = System.Windows.SizeToContent.Height,
+                                DataContext = new WorkItemViewModel()
+                            };
+                            dialog.Buttons = new Button[] { dialog.OkButton, dialog.CancelButton };
+                            dialog.ShowDialog();
 
-                        if (dialog.DialogResult.HasValue &&
-                            dialog.DialogResult.Value)
-                        {
-                            WorkItem model = ((WorkItemViewModel)dialog.DataContext).WorkItem;
-                            ViewModel.AddWorkItemCommand.Execute(model);
-                            ViewModel.SaveWorkItemCommand.Execute(null);
-                            WorkItemMenus.Children.Add(NewPunchMenuItem(model));
+                            if (dialog.DialogResult.HasValue &&
+                                dialog.DialogResult.Value)
+                            {
+                                WorkItem model = ((WorkItemViewModel)dialog.DataContext).WorkItem;
+                                ViewModel.AddWorkItemCommand.Execute(model);
+                                ViewModel.SaveWorkItemCommand.Execute(null);
+                                WorkItemMenus.Children.Add(NewPunchMenuItem(model));
+                            }
                         }
-                    }
-                };
+                    };
+                return this.newWorkItemCommand;
             }
         }
+        private ICommand selectWorkItemCommand;
+        /// <summary>
+        /// Select a given WorkItem and make it the CurrentWorkItem
+        /// </summary>
         public ICommand SelectWorkItemCommand
         {
             get
             {
-                return new DelegateCommand
-                {
-                    CanExecuteFunc = (idParam) => 
-                        {
-                            try
+                if (this.selectWorkItemCommand == null)
+                    this.selectWorkItemCommand = new DelegateCommand
+                    {
+                        CanExecuteFunc = (idParam) => 
+                            {
+                                try
+                                {
+                                    Guid id = (Guid)idParam;
+                                    return this.ViewModel.CurrentWorkItem != null && !id.Equals(this.ViewModel.CurrentWorkItem.Id);
+                                }
+                                catch { return true; }
+                            },
+                        CommandAction = (idParam) =>
                             {
                                 Guid id = (Guid)idParam;
-                                return this.ViewModel.CurrentWorkItem != null && !id.Equals(this.ViewModel.CurrentWorkItem.Id);
-                            }
-                            catch { return true; }
-                        },
-                    CommandAction = (idParam) =>
-                        {
-                            Guid id = (Guid)idParam;
                             
-                            // are we already punched in?
-                            if (this.CurrentTimeEntry != null)
-                            {
-                                // since we have a current time entry, this will punch out and clean up timer
-                                this.PunchInCommand.Execute(null);
+                                // are we already punched in?
+                                if (this.CurrentTimeEntry != null)
+                                {
+                                    // since we have a current time entry, this will punch out and clean up timer
+                                    this.PunchInCommand.Execute(null);
+                                }
+                                this.ViewModel.SelectWorkItemById(id);
+                                // punch back in with new time entry
+                                if (this.ViewModel.CurrentWorkItem != null && this.CurrentTimeEntry == null)
+                                {
+                                    this.PunchInCommand.Execute(null);
+                                }
                             }
-                            this.ViewModel.SelectWorkItemById(id);
-                            // punch back in with new time entry
-                            if (this.ViewModel.CurrentWorkItem != null && this.CurrentTimeEntry == null)
-                            {
-                                this.PunchInCommand.Execute(null);
-                            }
-                        }
-                };
+                    };
+                return this.selectWorkItemCommand;
             }
         }
+        private ICommand shortcutActionCommand;
         /// <summary>
         /// Shows a window, if none is already open.
         /// </summary>
@@ -448,37 +469,22 @@ namespace PunchIn.ViewModels
         {
             get
             {
-                return new DelegateCommand
-                {
-                    CanExecuteFunc = (o) => true,
-                    CommandAction = (filePath) =>
+                if (this.shortcutActionCommand == null)
+                    this.shortcutActionCommand = new DelegateCommand
                     {
-                        if (filePath != null)
+                        CanExecuteFunc = (o) => true,
+                        CommandAction = (filePath) =>
                         {
-                            Process.Start(((FileInfo)filePath).FullName);
+                            if (filePath != null)
+                            {
+                                Process.Start(((FileInfo)filePath).FullName);
+                            }
                         }
-                    }
-                };
+                    };
+                return this.shortcutActionCommand;
             }
         }
-
-        //public ICommand ShowCurrentTaskPopupCommand
-        //{
-        //    get
-        //    {
-        //        return new DelegateCommand
-        //        {
-        //            CanExecuteFunc = (o) => true,
-        //            CommandAction = (o) =>
-        //            {
-        //                TaskbarIcon notifyIcon = (TaskbarIcon)Application.Current.FindResource("NotifyIcon");
-        //                CurrentTaskPopup balloon = new CurrentTaskPopup { DataContext = notifyIcon.DataContext };
-        //                //show balloon and close it after 10 seconds
-        //                notifyIcon.ShowCustomBalloon(balloon, System.Windows.Controls.Primitives.PopupAnimation.Slide, 10000);
-        //            }
-        //        };
-        //    }
-        //}
+        private ICommand showWindowCommand;
         /// <summary>
         /// Shows a window, if none is already open.
         /// </summary>
@@ -486,34 +492,19 @@ namespace PunchIn.ViewModels
         {
             get
             {
-                var self = this;
-                return new DelegateCommand
-                {
-                    CanExecuteFunc = (o) => Application.Current.MainWindow == null,
-                    CommandAction = (o) =>
+                if (this.showWindowCommand == null)
+                    this.showWindowCommand = new DelegateCommand
                     {
-                        Application.Current.MainWindow = new MainWindow();
-                        Application.Current.MainWindow.Show();
-                    }
-                };
+                        CanExecuteFunc = (o) => Application.Current.MainWindow == null,
+                        CommandAction = (o) =>
+                        {
+                            Application.Current.MainWindow = new MainWindow();
+                            Application.Current.MainWindow.Show();
+                        }
+                    };
+                return this.showWindowCommand;
             }
         }
-
-        /// <summary>
-        /// Hides the main window. This command is only enabled if a window is open.
-        /// </summary>
-        public ICommand HideWindowCommand
-        {
-            get
-            {
-                return new DelegateCommand
-                {
-                    CommandAction = (o) => Application.Current.MainWindow.Close(),
-                    CanExecuteFunc = (o) => Application.Current.MainWindow != null
-                };
-            }
-        }
-
 
         /// <summary>
         /// Shuts down the application.
