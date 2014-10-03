@@ -28,19 +28,6 @@ namespace PunchIn.Services
                 }
             }
         }
-        private string errors;
-        public string Errors
-        {
-            get { return this.errors; }
-            set
-            {
-                if (this.errors != value)
-                {
-                    this.errors = value;
-                    OnPropertyChanged("Errors");
-                }
-            }
-        }
         void SetErrorsMessage(Exception e)
         {
             Errors = e.Message;
@@ -52,6 +39,7 @@ namespace PunchIn.Services
         }
         private async void ExportAndDisplayAsync(IList<ReportExportItem> collection, string[] columns, bool withHeading, string exportPath)
         {
+            string filename = "";
             await Task.Run(() =>
                 {
                     IsBusy = true;
@@ -87,8 +75,7 @@ namespace PunchIn.Services
                             }
                             exporter.AddLineBreak();
                         }
-
-                        System.Diagnostics.Process.Start(exporter.Export(exportPath));
+                        filename = exporter.Export(exportPath);
                     }
                     catch (System.IO.IOException ioex)
                     {
@@ -103,6 +90,13 @@ namespace PunchIn.Services
                         IsBusy = false;
                     }
                 });
+
+            if (!string.IsNullOrWhiteSpace(filename))
+            {
+                System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo(filename);
+                startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal;
+                System.Diagnostics.Process start = System.Diagnostics.Process.Start(startInfo);
+            }
         }
     }
 }

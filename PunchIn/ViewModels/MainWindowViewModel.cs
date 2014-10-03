@@ -15,7 +15,7 @@ namespace PunchIn.ViewModels
         {
             NotifyIconViewModel.Current.PropertyChanged += NotifyIcon_PropertyChanged;
         }
-        #region Methods
+        #region Event Handlers
         private void NotifyIcon_PropertyChanged(object s, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "CurrentTimeEntry")
@@ -85,13 +85,11 @@ namespace PunchIn.ViewModels
             get
             {
                 if (this.punchCommand == null)
-                {
                     this.punchCommand = new DelegateCommand
                     {
                         CanExecuteFunc = (o) => true,
                         CommandAction = (o) => NotifyIconViewModel.Current.PunchInCommand.Execute(o)
                     };
-                }
                 return this.punchCommand;
             }
         }

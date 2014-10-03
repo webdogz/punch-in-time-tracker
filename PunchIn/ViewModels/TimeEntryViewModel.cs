@@ -17,6 +17,7 @@ namespace PunchIn.ViewModels
                 CurrentEntry = new TimeEntry { StartDate = DateTime.Now, Status = States.Analysis };
         }
 
+        #region Methods
         public void PunchIn()
         {
             if (!parent.CanModifyEntry)
@@ -30,7 +31,9 @@ namespace PunchIn.ViewModels
             CurrentEntry.Status = States.Done;
             parent.SaveWorkItemCommand.Execute(new Action(() => this.parent.CurrentEntry = null));
         }
+        #endregion
 
+        #region Properties
         public TimeEntry CurrentEntry
         {
             get { return currentEntry; }
@@ -68,5 +71,6 @@ namespace PunchIn.ViewModels
             }
         }
         private bool? dialogResult;
+        #endregion
     }
 }

@@ -32,6 +32,11 @@ namespace PunchIn.Services
             sb.AppendLine();
         }
 
+        /// <summary>
+        /// Validates the exportPath passed in, writes the StringBuilder's contents to the file and returns new exportPath
+        /// </summary>
+        /// <param name="exportPath"></param>
+        /// <returns>The validated exportPath</returns>
         public string Export(string exportPath)
         {
             if (string.IsNullOrEmpty(exportPath))

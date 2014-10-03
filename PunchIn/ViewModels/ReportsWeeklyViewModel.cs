@@ -26,6 +26,23 @@ namespace PunchIn.ViewModels
                 Errors = ex.Message;
             }
         }
+
+        #region Properties
+        private bool isBusy = false;
+        public bool IsBusy
+        {
+            get { return this.isBusy; }
+            set
+            {
+                if (this.isBusy != value)
+                {
+                    this.isBusy = value;
+                    OnPropertyChanged("IsBusy");
+                }
+            }
+        }
+        #endregion
+
         #region Filter Propterties
         private ObservableCollection<WorkTypesListCheckbox> workTypesFilter;
         public ObservableCollection<WorkTypesListCheckbox> WorkTypesFilter
@@ -140,20 +157,47 @@ namespace PunchIn.ViewModels
                 }
             }
         }
-        
-        //private string errors;
-        //public string Errors
-        //{
-        //    get { return this.errors; }
-        //    set
-        //    {
-        //        if (this.errors != value)
-        //        {
-        //            this.errors = value;
-        //            OnPropertyChanged("Errors");
-        //        }
-        //    }
-        //}
+        #endregion
+
+        #region Commands
+        private ICommand exportToExcelCommand;
+        /// <summary>
+        /// Export the currently selected weeks items to csv
+        /// </summary>
+        public ICommand ExportToExcelCommand
+        {
+            get
+            {
+                if (this.exportToExcelCommand == null)
+                    this.exportToExcelCommand = new DelegateCommand
+                    {
+                        CanExecuteFunc = (o) => !IsBusy,
+                        CommandAction = (o) =>
+                        {
+                            IsBusy = true;
+                            try
+                            {
+                                string exportFilename = string.Format("{0}-{1}-{2}.csv",
+                                    "times",
+                                    System.Environment.UserName,
+                                    System.DateTime.Now.ToString("yyyyMMddHHmm"));
+                                string exportPath = System.IO.Path.Combine(Properties.Settings.Default.DefaultUserDatabaseFolderLocation, exportFilename);
+                                PunchInService dbService = new PunchInService();
+                                CsvExportService csv = new CsvExportService();
+                                csv.ExportCollection(dbService.GetReportExportItems(this.weekOfYearFilter),
+                                    new string[] { "TfsId", "ServiceCall", "Change", "Title", "HoursCompleted", "HoursRemaining", "Description", "State", "Status", "WorkType" },
+                                    true, exportPath);
+                            }
+                            catch (Exception ex)
+                            {
+                                Errors = ex.Message;
+                            }
+                            IsBusy = false;
+                        }
+                    };
+                return this.exportToExcelCommand;
+            }
+        }
         #endregion
     }
 

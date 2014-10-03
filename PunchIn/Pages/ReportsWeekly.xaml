@@ -6,6 +6,7 @@
              xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
              xmlns:vm="clr-namespace:PunchIn.ViewModels"
              xmlns:models="clr-namespace:PunchIn.Models"
+             xmlns:wui="http://schema.webdogz/wui"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.DataContext>
@@ -85,9 +86,15 @@
             <ColumnDefinition Width="9" />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <StackPanel Orientation="Horizontal" Margin="0,0,0,10" Grid.ColumnSpan="3">
-            <Rectangle Fill="{DynamicResource report}" Width="32" Height="32" Stretch="Uniform" Margin="4,0,10,0"/>
-            <TextBlock Text="My Weekly Times" Style="{StaticResource Heading2}" VerticalAlignment="Center" />
+        <StackPanel Orientation="Vertical" Grid.ColumnSpan="3">
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                <Rectangle Fill="{DynamicResource report}" Width="32" Height="32" Stretch="Uniform" Margin="4,0,10,0"/>
+                <TextBlock Text="My Weekly Times" Style="{StaticResource Heading2}" VerticalAlignment="Center" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <wui:ModernButton Margin="0,0,4,0" Content="Export to Excel" IconData="{StaticResource OfficeExcelGeometry}"
+                              Command="{Binding Path=ExportToExcelCommand, UpdateSourceTrigger=PropertyChanged}" />
+            </StackPanel>
         </StackPanel>
         <ContentControl Grid.ColumnSpan="3" Template="{StaticResource ErrorsBlock}" Margin="0"
                         Visibility="{Binding Path=Errors, Converter={StaticResource NullOrEmptyStringToVisibilityConverter}, ConverterParameter=inverse}">

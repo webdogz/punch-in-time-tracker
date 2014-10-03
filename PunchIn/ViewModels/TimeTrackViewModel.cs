@@ -110,74 +110,86 @@ namespace PunchIn.ViewModels
         #endregion
 
         #region Commands
+        private ICommand refreshWorkItemsCommand;
         public ICommand RefreshWorkItemsCommand
         {
             get
             {
-                return new DelegateCommand
-                {
-                    CanExecuteFunc = (o) => IsDirty,
-                    CommandAction = (o) =>
+                if (this.refreshWorkItemsCommand == null)
+                    this.refreshWorkItemsCommand = new DelegateCommand
                     {
-                        this.Refresh();
-                    }
-                };
+                        CanExecuteFunc = (o) => IsDirty,
+                        CommandAction = (o) =>
+                        {
+                            this.Refresh();
+                        }
+                    };
+                return this.refreshWorkItemsCommand;
             }
         }
 
+        private ICommand saveWorkItemCommand;
         public ICommand SaveWorkItemCommand
         {
             get
             {
-                return new DelegateCommand
-                {
-                    CanExecuteFunc = (o) => this.CurrentWorkItem != null,
-                    CommandAction = (o) =>
+                if (this.saveWorkItemCommand == null)
+                    this.saveWorkItemCommand = new DelegateCommand
                     {
-                        client.SaveWorkItem(CurrentWorkItem);
-                        IsDirty = false;
-                        if (o is Action)
-                            (o as Action).Invoke();
-                    }
-                };
+                        CanExecuteFunc = (o) => this.CurrentWorkItem != null,
+                        CommandAction = (o) =>
+                        {
+                            client.SaveWorkItem(CurrentWorkItem);
+                            IsDirty = false;
+                            if (o is Action)
+                                (o as Action).Invoke();
+                        }
+                    };
+                return this.saveWorkItemCommand;
             }
         }
 
+        private ICommand addWorkItemCommand;
         public ICommand AddWorkItemCommand
         {
             get
             {
-                return new DelegateCommand
-                {
-                    CanExecuteFunc = (o) => true,
-                    CommandAction = (o) =>
+                if (this.addWorkItemCommand == null)
+                    this.addWorkItemCommand = new DelegateCommand
                     {
-                        if (null != o && o is WorkItem)
-                            this.CurrentWorkItem = o as WorkItem;
-                        else
-                            this.CurrentWorkItem = new WorkItem();
-                        IsDirty = true;
-                    }
-                };
+                        CanExecuteFunc = (o) => true,
+                        CommandAction = (o) =>
+                        {
+                            if (null != o && o is WorkItem)
+                                this.CurrentWorkItem = o as WorkItem;
+                            else
+                                this.CurrentWorkItem = new WorkItem();
+                            IsDirty = true;
+                        }
+                    };
+                return this.addWorkItemCommand;
             }
         }
 
+        private ICommand addEntryCommand;
         public ICommand AddEntryCommand
         {
             get
             {
-                return new DelegateCommand
-                {
-                    CanExecuteFunc = (o) => this.CurrentWorkItem != null,
-                    CommandAction = (o) =>
+                if (this.addEntryCommand == null)
+                    this.addEntryCommand = new DelegateCommand
                     {
-                        if (null != o && o is TimeEntry)
-                            this.CurrentEntry = o as TimeEntry;
-                        else
-                            this.CurrentEntry = new TimeEntry { StartDate = DateTime.Now };
-                        this.CurrentWorkItem.Entries.Add(this.CurrentEntry);
-                    }
-                };
+                        CanExecuteFunc = (o) => this.CurrentWorkItem != null,
+                        CommandAction = (o) =>
+                        {
+                            if (null != o && o is TimeEntry)
+                                this.CurrentEntry = o as TimeEntry;
+                            else
+                                this.CurrentEntry = new TimeEntry { StartDate = DateTime.Now };
+                            this.CurrentWorkItem.Entries.Add(this.CurrentEntry);
+                        }
+                    };
+                return this.addEntryCommand;
             }
         }
         #endregion

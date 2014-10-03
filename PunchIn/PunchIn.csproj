@@ -105,7 +105,7 @@
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Models\ReportByWeek.cs" />
+    <Compile Include="Models\ReportModels.cs" />
     <Compile Include="Models\SPExportItem.cs" />
     <Compile Include="Pages\Content\SettingsDisplayFormats.xaml.cs">
       <DependentUpon>SettingsDisplayFormats.xaml</DependentUpon>

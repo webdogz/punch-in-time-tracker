@@ -199,24 +199,10 @@ namespace PunchIn.Services
             get
             {
                 if (_dbName == null)
-                    _dbName = GlobalConfig.DatabaseLocation; //GetDbName(Environment.UserName);
+                    _dbName = GlobalConfig.DatabaseLocation;
                 return _dbName;
             }
         }
-        //private string GetDbName(string username)
-        //{
-        //    return _dbNamesCache.GetOrAdd(username, ProduceDbName);
-        //}
-
-        //private static string ProduceDbName(string login)
-        //{
-        //    var dbName = string.Format("{0}_punchin.ndb", login);
-
-        //    var path = Properties.Settings.Default.DefaultUserDatabaseFolderLocation;
-        //    if (string.IsNullOrWhiteSpace(path)) path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "My Time");
-
-        //    return Path.Combine(path, dbName);
-        //}
         #endregion
     }
 }
