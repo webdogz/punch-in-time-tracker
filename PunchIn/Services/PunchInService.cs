@@ -51,14 +51,25 @@ namespace PunchIn.Services
         /// <param name="workItem">WorkItem to be saved</param>
         public void SaveWorkItem(WorkItem workItem)
         {
-            var mapper = ObjectMapperManager.DefaultInstance.GetMapper<WorkItem, WorkItem>(
-                    new DefaultMapConfig().ConstructBy<WorkItem>(() => new WorkItem(workItem.Id))
-                );
             using (var db = OdbFactory.Open(this.DbName))
             {
-                WorkItem wi = mapper.Map(workItem, GetItemById(workItem.Id, db));
-                db.Store<WorkItem>(wi);
+                WorkItem toWorkItem = GetItemById(workItem.Id, db);
+                if (toWorkItem == null)
+                    db.Store<WorkItem>(workItem);
+                else
+                {
+                    UpdateWorkItem(workItem, toWorkItem, db);
+                }
             }
+        }
+
+        private void UpdateWorkItem(WorkItem fromWorkItem, WorkItem toWorkItem, NDatabase.Api.IOdb db)
+        {
+            var mapper = ObjectMapperManager.DefaultInstance.GetMapper<WorkItem, WorkItem>(
+                    new DefaultMapConfig().ConstructBy<WorkItem>(() => new WorkItem(fromWorkItem.Id))
+                );
+            WorkItem wi = mapper.Map(fromWorkItem, toWorkItem);
+            db.Store<WorkItem>(wi);
         }
 
         public void DeleteWorkItem(Guid workItemId)
