@@ -1,50 +1,74 @@
 ﻿using System;
 using PunchIn.Models;
+using EmitMapper;
+using EmitMapper.MappingConfiguration;
 
 namespace PunchIn.ViewModels
 {
-    public class TimeEntryViewModel : ViewModelBase
+    public class TimeEntryViewModel : DbViewModelBase, IGuidPK
     {
-        private readonly TimeTrackViewModel parent;
-        public TimeEntryViewModel(TimeTrackViewModel parent/*, TimeEntry currentEntry = null*/)
+        public TimeEntryViewModel()
         {
-            //TODO: Refactor all this if/else/then crap code to something a little more elegant :)
-            this.parent = parent;
-            CurrentWorkItem = this.parent.CurrentWorkItem;
-            if (this.parent.CurrentEntry != null)
-                CurrentEntry = this.parent.CurrentEntry;
-            else
-                CurrentEntry = new TimeEntry { StartDate = DateTime.Now, Status = States.Analysis };
         }
-
-        #region Methods
-        public void PunchIn()
-        {
-            if (!parent.CanModifyEntry)
-                parent.AddEntryCommand.Execute(CurrentEntry);
-            //todo: to save or not to save?
-            parent.SaveWorkItemCommand.Execute(null);
-        }
-        public void PunchOut()
-        {
-            CurrentEntry.EndDate = DateTime.Now;
-            CurrentEntry.Status = States.Done;
-            parent.SaveWorkItemCommand.Execute(new Action(() => this.parent.CurrentEntry = null));
-        }
-        #endregion
 
         #region Properties
-        public TimeEntry CurrentEntry
+        public Guid Id { get; set; }
+        
+        private string description;
+        public string Description
         {
-            get { return currentEntry; }
+            get { return this.description; }
             set
-            {
-                currentEntry = value;
-                OnPropertyChanged("CurrentEntry");
+            { 
+                if (this.description != value)
+                {
+                    this.description = value;
+                    OnPropertyChanged("Description");
+                }
             }
         }
-        private TimeEntry currentEntry;
 
+        private DateTime startDate;
+        public DateTime StartDate
+        { get { return this.startDate; }
+            set
+            {
+                if (this.startDate != value)
+                {
+                    this.startDate = value;
+                    OnPropertyChanged("StartDate");
+                }
+            }
+        }
+
+        private Nullable<DateTime> endDate;
+        public Nullable<DateTime> EndDate {
+            get { return this.endDate; }
+            set
+            {
+                if(this.endDate != value)
+                {
+                    this.endDate = value;
+                    OnPropertyChanged("EndDate");
+                }
+            }
+        }
+
+        private States status;
+        public States Status
+        {
+            get { return this.status; }
+            set
+            {
+                if(this.status != value)
+                {
+                    this.status = value;
+                    OnPropertyChanged("Status");
+                }
+            }
+        }
+
+        private WorkItem currentWorkItem;
         public WorkItem CurrentWorkItem
         {
             get { return currentWorkItem; }
@@ -54,23 +78,30 @@ namespace PunchIn.ViewModels
                 OnPropertyChanged("CurrentWorkItem");
             }
         }
-        private WorkItem currentWorkItem;
 
-        public bool CanModifyEntry
+        #endregion
+
+        #region Methods
+        /// <summary>
+        /// New up a TimeEntryViewModel based on the timeEntry
+        /// </summary>
+        /// <param name="workItem"></param>
+        /// <returns>New WorkItemViewModel mapped from WorkItem</returns>
+        public static TimeEntryViewModel ConvertFrom(TimeEntry timeEntry)
         {
-            get { return CurrentEntry != null; }
+            return ToViewModel<TimeEntry, TimeEntryViewModel>(timeEntry);
         }
-
-        public bool? DialogResult
+        /// <summary>
+        /// Gets the TimeEntry associated with this TimeEntryViewModel instance
+        /// </summary>
+        public TimeEntry TimeEntry
         {
-            get { return dialogResult; }
-            set
+            get
             {
-                dialogResult = value;
-                OnPropertyChanged("DialogResult");
+                //return ToModel<TimeEntryViewModel, TimeEntry>(this, this.Id);
+                return ToModel<TimeEntryViewModel, TimeEntry>(this);
             }
         }
-        private bool? dialogResult;
         #endregion
     }
 }

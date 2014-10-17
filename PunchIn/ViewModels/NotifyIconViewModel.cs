@@ -30,7 +30,7 @@ namespace PunchIn.ViewModels
                 {
                     if (this.viewModel.CurrentEntry != null)
                     {
-                        CurrentTimeEntry = new TimeEntryViewModel(this.ViewModel);
+                        CurrentTimeEntry = new CurrentEntryViewModel(this.ViewModel);
                         IsTimerActive = true;
                     }
                 }
@@ -295,7 +295,7 @@ namespace PunchIn.ViewModels
         public TimeTrackViewModel ViewModel { get { return viewModel; } }
         private readonly TimeTrackViewModel viewModel;
 
-        public TimeEntryViewModel CurrentTimeEntry
+        public CurrentEntryViewModel CurrentTimeEntry
         {
             get { return currentTimeEntry; }
             set
@@ -307,7 +307,7 @@ namespace PunchIn.ViewModels
                 }
             }
         }
-        private TimeEntryViewModel currentTimeEntry = null;
+        private CurrentEntryViewModel currentTimeEntry = null;
 
         public WorkItemViewModel CurrentWorkItem
         {
@@ -348,7 +348,7 @@ namespace PunchIn.ViewModels
                             {
                                 if (CurrentTimeEntry == null)
                                 {
-                                    CurrentTimeEntry = new TimeEntryViewModel(ViewModel);
+                                    CurrentTimeEntry = new CurrentEntryViewModel(ViewModel);
 
                                     var dialog = new TrayDialog
                                     {

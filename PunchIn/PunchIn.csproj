@@ -126,8 +126,13 @@
     <Compile Include="Services\CsvExportService.cs" />
     <Compile Include="Services\IExporter.cs" />
     <Compile Include="Services\SharePointService.cs" />
+    <Compile Include="ViewModels\Common\DbViewModelBase.cs" />
+    <Compile Include="ViewModels\Common\FlatteringConfig.cs" />
+    <Compile Include="ViewModels\Common\IDbModelViewModel.cs" />
+    <Compile Include="ViewModels\Common\IGuidPK.cs" />
     <Compile Include="ViewModels\Converters\HiLiteCurrentWorkItemConverter.cs" />
     <Compile Include="ViewModels\Converters\DisableCurrentWorkItemConverter.cs" />
+    <Compile Include="ViewModels\Converters\ModelListToViewModelListConverter.cs" />
     <Compile Include="ViewModels\Converters\WorkItemToViewModelConverter.cs" />
     <Compile Include="Pages\Content\SettingsAppearance.xaml.cs">
       <DependentUpon>SettingsAppearance.xaml</DependentUpon>
@@ -147,18 +152,20 @@
     <Compile Include="Models\TimeEntry.cs" />
     <Compile Include="Models\WorkItem.cs" />
     <Compile Include="Services\PunchInService.cs" />
-    <Compile Include="ViewModels\DelegateCommand.cs" />
-    <Compile Include="ViewModels\Enums.cs" />
+    <Compile Include="ViewModels\Common\DelegateCommand.cs" />
+    <Compile Include="Models\Enums.cs" />
     <Compile Include="ViewModels\IMenuItemViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\MenuItemViewModel.cs" />
+    <Compile Include="ViewModels\Common\ObservableElementCollection.cs" />
     <Compile Include="ViewModels\PunchMenuItemViewModel.cs" />
     <Compile Include="ViewModels\ReportsWeeklyViewModel.cs" />
     <Compile Include="ViewModels\SettingsAppearanceViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\SharePointExportViewModel.cs" />
     <Compile Include="ViewModels\ShortcutMenuItemViewModel.cs" />
-    <Compile Include="ViewModels\ViewModelBase.cs" />
+    <Compile Include="ViewModels\CurrentEntryViewModel.cs" />
+    <Compile Include="ViewModels\Common\ViewModelBase.cs" />
     <Compile Include="ViewModels\NotifyIconViewModel.cs" />
     <Compile Include="ViewModels\TimeEntryViewModel.cs" />
     <Compile Include="ViewModels\TimeTrackViewModel.cs" />

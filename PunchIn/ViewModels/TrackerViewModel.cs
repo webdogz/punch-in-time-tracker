@@ -37,7 +37,28 @@ namespace PunchIn.ViewModels
                 if (base.CurrentWorkItem != value)
                 {
                     base.CurrentWorkItem = value;
-                    OnPropertyChanged("IsCurrentWorkItemNotSelected");
+                    OnPropertyChanged("IsCurrentWorkItemNotSelected", "CurrentWorkItemViewModel");
+                }
+            }
+        }
+        public WorkItemViewModel CurrentWorkItemViewModel
+        {
+            get
+            {
+                return WorkItemViewModel.ConvertFrom(CurrentWorkItem);
+            }
+        }
+        private TimeEntryViewModel currentEntryViewModel;
+        public TimeEntryViewModel CurrentEntryViewModel
+        {
+            get { return this.currentEntryViewModel; }
+            set
+            {
+                if (this.currentEntryViewModel != value)
+                {
+                    this.currentEntryViewModel = value;
+                    OnPropertyChanged("CurrentEntryViewModel");
+                    base.CurrentEntry = value == null ? null : this.currentEntryViewModel.TimeEntry;
                 }
             }
         }
@@ -90,6 +111,7 @@ namespace PunchIn.ViewModels
                         {
                             foreach (WorkItem item in DirtyWorkItems)
                                 this.Client.SaveWorkItem(item);
+                            DirtyWorkItems.Clear();
                             IsDirty = false;
                         }
                     };

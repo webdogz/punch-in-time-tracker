@@ -4,9 +4,12 @@ namespace PunchIn.Models
 {
     public class TimeEntry
     {
-        public TimeEntry()
+        public TimeEntry() : this(Guid.NewGuid()) { }
+        public TimeEntry(Guid id)
         {
-            this.Id = Guid.NewGuid();
+            if (id.Equals(Guid.Empty))
+                id = Guid.NewGuid();
+            this.Id = id;
             this.StartDate = DateTime.Now;
         }
         public Guid Id { get; private set; }
