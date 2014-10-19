@@ -5,10 +5,15 @@ using EmitMapper.MappingConfiguration;
 
 namespace PunchIn.ViewModels
 {
-    public class TimeEntryViewModel : DbViewModelBase, IGuidPK
+    public class TimeEntryViewModel : DbViewModelBase, IGuidPK, ICanDirty
     {
+        private bool _initialised = false;
         public TimeEntryViewModel()
         {
+        }
+        public void Init()
+        {
+            _initialised = true;
         }
 
         #region Properties
@@ -23,7 +28,7 @@ namespace PunchIn.ViewModels
                 if (this.description != value)
                 {
                     this.description = value;
-                    OnPropertyChanged("Description");
+                    EnsurePropertyChanged(value, "Description");
                 }
             }
         }
@@ -36,7 +41,7 @@ namespace PunchIn.ViewModels
                 if (this.startDate != value)
                 {
                     this.startDate = value;
-                    OnPropertyChanged("StartDate");
+                    EnsurePropertyChanged(value, "StartDate");
                 }
             }
         }
@@ -49,7 +54,7 @@ namespace PunchIn.ViewModels
                 if(this.endDate != value)
                 {
                     this.endDate = value;
-                    OnPropertyChanged("EndDate");
+                    EnsurePropertyChanged(value, "EndDate");
                 }
             }
         }
@@ -63,7 +68,7 @@ namespace PunchIn.ViewModels
                 if(this.status != value)
                 {
                     this.status = value;
-                    OnPropertyChanged("Status");
+                    EnsurePropertyChanged(value, "Status");
                 }
             }
         }
@@ -79,17 +84,45 @@ namespace PunchIn.ViewModels
             }
         }
 
+        #region Bubble Properties
+        public bool IsDirty
+        {
+            get { return this.isDirty; }
+            set
+            {
+                this.isDirty = value;
+                OnPropertyChanged("IsDirty");
+            }
+        }
+        private bool isDirty = false;
+
+        protected void EnsurePropertyChanged(object obj, string propertyName)
+        {
+            OnPropertyChanged(propertyName);
+            if (_initialised && obj != null)
+                IsDirty = true;
+        }
+        #endregion
+
         #endregion
 
         #region Methods
         /// <summary>
         /// New up a TimeEntryViewModel based on the timeEntry
         /// </summary>
-        /// <param name="workItem"></param>
-        /// <returns>New WorkItemViewModel mapped from WorkItem</returns>
+        /// <param name="timeEntry"></param>
+        /// <returns>New TimeEntryViewModel mapped from TimeEntry</returns>
         public static TimeEntryViewModel ConvertFrom(TimeEntry timeEntry)
         {
-            return ToViewModel<TimeEntry, TimeEntryViewModel>(timeEntry);
+            return ToViewModel<TimeEntry, TimeEntryViewModel>(timeEntry, EmitMapper.ObjectMapperManager.DefaultInstance
+                        .GetMapper<TimeEntry, TimeEntryViewModel>(
+                            new EmitMapper.MappingConfiguration.DefaultMapConfig()
+                            .PostProcess<TimeEntryViewModel>((vm, state) =>
+                            {
+                                vm.Init();
+                                return vm;
+                            })
+                        ));
         }
         /// <summary>
         /// Gets the TimeEntry associated with this TimeEntryViewModel instance
@@ -98,7 +131,6 @@ namespace PunchIn.ViewModels
         {
             get
             {
-                //return ToModel<TimeEntryViewModel, TimeEntry>(this, this.Id);
                 return ToModel<TimeEntryViewModel, TimeEntry>(this);
             }
         }

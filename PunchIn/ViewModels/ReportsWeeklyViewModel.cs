@@ -184,7 +184,12 @@ namespace PunchIn.ViewModels
                                 string exportPath = System.IO.Path.Combine(Properties.Settings.Default.DefaultUserDatabaseFolderLocation, exportFilename);
                                 PunchInService dbService = new PunchInService();
                                 CsvExportService csv = new CsvExportService();
-                                csv.ExportCollection(dbService.GetReportExportItems(this.weekOfYearFilter),
+                                List<ReportExportItem> exportItems;
+                                if (o == null)
+                                    exportItems = dbService.GetReportExportItems();
+                                else
+                                    exportItems = dbService.GetReportExportItems(this.weekOfYearFilter);
+                                csv.ExportCollection(exportItems,
                                     new string[] { "TfsId", "ServiceCall", "Change", "Title", "HoursCompleted", "HoursRemaining", "Description", "State", "Status", "WorkType" },
                                     true, exportPath);
                             }

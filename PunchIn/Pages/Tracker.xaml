@@ -66,13 +66,9 @@
                       ResizeDirection="Columns"/>
 
         <ListView Grid.RowSpan="2" Grid.Row="2" SelectionMode="Single" 
-                  SelectedItem="{Binding Path=CurrentWorkItem}"
-                  ItemsSource="{Binding Path=WorkItems}">
+                  SelectedItem="{Binding Path=SelectedWorkItemViewModel}"
+                  ItemsSource="{Binding Path=ObservableWorkItems}">
             <ListView.ItemContainerStyle>
-                <!--<Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource ListViewItemDefaultStyle}">
-                    <Setter Property="IsEnabled" 
-                            Value="{Binding Id, Converter={StaticResource DisableCurrentWorkItemConverter}}"/>
-                </Style>-->
                 <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource ListViewItemDefaultStyle}">
                     <Setter Property="Background" 
                             Value="{Binding Id, Converter={StaticResource HiLiteCurrentWorkItemConverter}}"/>
@@ -101,17 +97,14 @@
             </ListView.View>
         </ListView>
 
-        <!--<content:WorkItemForm Grid.Column="2" Grid.Row="2" DataContext="{Binding Path=CurrentWorkItem, Converter={StaticResource workItemToViewModelConverter}}" 
-                              IsEnabled="{Binding Path=DataContext.IsCurrentWorkItemNotSelected, RelativeSource={RelativeSource AncestorType=UserControl}}" />-->
-
-        <content:WorkItemForm Grid.Column="2" Grid.Row="2" DataContext="{Binding Path=CurrentWorkItemViewModel}" 
-                              IsEnabled="{Binding Path=DataContext.IsCurrentWorkItemNotSelected, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+        <content:WorkItemForm Grid.Column="2" Grid.Row="2" DataContext="{Binding Path=SelectedWorkItemViewModel}" 
+                              IsEnabled="{Binding Path=DataContext.IsSelectedWorkItemNotSelected, RelativeSource={RelativeSource AncestorType=UserControl}}" />
         
         <DataGrid Grid.Column="2" Grid.Row="3" Margin="5" AutoGenerateColumns="False"
-                  ItemsSource="{Binding Path=CurrentWorkItemViewModel.TimeEntries}"
-                  SelectedItem="{Binding Path=CurrentEntryViewModel}"
+                  ItemsSource="{Binding Path=SelectedWorkItemViewModel.Entries}"
+                  SelectedItem="{Binding Path=SelectedEntryViewModel}"
                   CanUserAddRows="False"
-                  IsEnabled="{Binding Path=DataContext.IsCurrentWorkItemNotSelected, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                  IsEnabled="{Binding Path=DataContext.IsSelectedWorkItemNotSelected, RelativeSource={RelativeSource AncestorType=UserControl}}"
                   SelectionMode="Extended">
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Path=Description}"
@@ -128,9 +121,6 @@
                                                 Watermark="Start (yyyy.MM.dd HH:mm)"
                                                 Format="Custom"
                                                 FormatString="{Binding Source={x:Static props:Settings.Default}, Path=DefaultDateTimePickerFormatString}"/>
-                            <!--<wui:DateTimeUpDown Value="{Binding Path=StartDate, Mode=TwoWay}"
-                                                Format="Custom"
-                                                FormatString="{Binding Source={x:Static props:Settings.Default}, Path=DefaultDateTimePickerFormatString}"/>-->
                         </DataTemplate>
                     </DataGridTemplateColumn.CellEditingTemplate>
                 </DataGridTemplateColumn>

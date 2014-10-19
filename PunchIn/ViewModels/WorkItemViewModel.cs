@@ -5,11 +5,16 @@ using System.Linq;
 
 namespace PunchIn.ViewModels
 {
-    public class WorkItemViewModel : DbViewModelBase, IGuidPK
+    public class WorkItemViewModel : DbViewModelBase, IGuidPK, ICanDirty
     {
+        private bool _initialised = false;
         public WorkItemViewModel()
         {
             this.Entries = new List<TimeEntryViewModel>();
+        }
+        public void Init()
+        {
+            _initialised = true;
         }
 
         #region Properties
@@ -22,7 +27,7 @@ namespace PunchIn.ViewModels
                 if (this.tfsId != value)
                 {
                     this.tfsId = value;
-                    OnPropertyChanged("TfsId");
+                    EnsurePropertyChanged(value, "TfsId");
                 }
             }
         }
@@ -36,7 +41,7 @@ namespace PunchIn.ViewModels
                 if (this.serviceCall != value)
                 {
                     this.serviceCall = value;
-                    OnPropertyChanged("ServiceCall");
+                    EnsurePropertyChanged(value, "ServiceCall");
                 }
             }
         }
@@ -50,7 +55,7 @@ namespace PunchIn.ViewModels
                 if (this.change != value)
                 {
                     this.change = value;
-                    OnPropertyChanged("Change");
+                    EnsurePropertyChanged(value, "Change");
                 }
             }
         }
@@ -64,7 +69,7 @@ namespace PunchIn.ViewModels
                 if (this.title != value)
                 {
                     this.title = value;
-                    OnPropertyChanged("Title");
+                    EnsurePropertyChanged(value, "Title");
                 }
             }
         }
@@ -78,7 +83,7 @@ namespace PunchIn.ViewModels
                 if (this.effort != value)
                 {
                     this.effort = value;
-                    OnPropertyChanged("Effort");
+                    EnsurePropertyChanged(value, "Effort");
                 }
             }
         }
@@ -92,7 +97,7 @@ namespace PunchIn.ViewModels
                 if (this.status != value)
                 {
                     this.status = value;
-                    OnPropertyChanged("Status");
+                    EnsurePropertyChanged(value, "Status");
                 }
             }
         }
@@ -106,12 +111,13 @@ namespace PunchIn.ViewModels
                 if (this.workType != value)
                 {
                     this.workType = value;
-                    OnPropertyChanged("WorkType");
+                    EnsurePropertyChanged(value, "WorkType");
                 }
             }
         }
         private WorkTypes workType;
-        #endregion
+
+        public List<TimeEntryViewModel> Entries { get; set; }
 
         #region Bubble Properties
         public bool IsDirty
@@ -124,10 +130,16 @@ namespace PunchIn.ViewModels
             }
         }
         private bool isDirty = false;
+
+        protected void EnsurePropertyChanged(object obj, params string[] propertyNames)
+        {
+            OnPropertyChanged(propertyNames);
+            if (_initialised && obj != null)
+                IsDirty = true;
+        }
         #endregion
 
-        public List<TimeEntryViewModel> Entries { get; set; }
-        public ObservableElementCollection<TimeEntryViewModel> TimeEntries { get; set; }
+        #endregion
 
         #region Enum Lists
         public IEnumerable<States> StatesList
@@ -155,8 +167,7 @@ namespace PunchIn.ViewModels
                                 new EmitMapper.MappingConfiguration.DefaultCustomConverterProvider(typeof(Converters.ModelListToViewModelListConverter<TimeEntry, TimeEntryViewModel>))
                             ).PostProcess<WorkItemViewModel>((vm, state) => 
                             {
-                                vm.TimeEntries = new ObservableElementCollection<TimeEntryViewModel>(vm.Entries);
-                                vm.TimeEntries.ChildElementPropertyChanged += new ObservableElementCollection<TimeEntryViewModel>.ChildElementPropertyChangedEventHandler(vm.Entries_ChildElementPropertyChanged);
+                                vm.Init();
                                 return vm;
                             })
                         ));
@@ -170,27 +181,6 @@ namespace PunchIn.ViewModels
             {
                 return ToModel<WorkItemViewModel, WorkItem>(this);
             }
-        }
-
-        public class TimeEntriesToVMListConverter
-        {
-            public List<TimeEntryViewModel> Convert(IList<PunchIn.Models.TimeEntry> from, object state)
-            {
-                if (from == null) return null;
-                List<TimeEntryViewModel> list = new List<TimeEntryViewModel>();
-                foreach (var item in from)
-                {
-                    list.Add(TimeEntryViewModel.ConvertFrom(item));
-                }
-                return list;
-            }
-        }
-        #endregion
-
-        #region Events
-        void Entries_ChildElementPropertyChanged(ObservableElementCollection<TimeEntryViewModel>.ChildElementPropertyChangedEventArgs e)
-        {
-            Console.WriteLine((e.ChildElement as TimeEntryViewModel).Description);
         }
         #endregion
     }

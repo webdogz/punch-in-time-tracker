@@ -182,11 +182,13 @@ namespace PunchIn.ViewModels
                         CanExecuteFunc = (o) => this.CurrentWorkItem != null,
                         CommandAction = (o) =>
                         {
+                            TimeEntry entry;
                             if (null != o && o is TimeEntry)
-                                this.CurrentEntry = o as TimeEntry;
+                                entry = o as TimeEntry;
                             else
-                                this.CurrentEntry = new TimeEntry { StartDate = DateTime.Now };
-                            this.CurrentWorkItem.Entries.Add(this.CurrentEntry);
+                                entry = new TimeEntry { StartDate = DateTime.Now };
+                            this.CurrentWorkItem.Entries.Add(entry);
+                            this.CurrentEntry = entry;
                         }
                     };
                 return this.addEntryCommand;

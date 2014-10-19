@@ -4,7 +4,7 @@ namespace PunchIn.ViewModels
 {
     public abstract class ViewModelBase : INotifyPropertyChanged
     {
-        protected void OnPropertyChanged(params string[] propertyName)
+        protected virtual void OnPropertyChanged(params string[] propertyName)
         {
             if (PropertyChanged != null)
             {

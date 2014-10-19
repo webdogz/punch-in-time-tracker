@@ -10,6 +10,7 @@
         <ResourceDictionary Source="/Webdogz.UI;component/Assets/Converters.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
+    <!--#region Window Gradients -->
     <LinearGradientBrush x:Key="BackgroundGradient" EndPoint="0,1" StartPoint="0,0">
         <GradientStop Color="{DynamicResource AccentColor}"
                           Offset="0" />
@@ -34,27 +35,25 @@
         <GradientStop Offset="1" Color="#FFFEFCC8" />
         <GradientStop Offset="1" Color="#FFFF9100" />
     </RadialGradientBrush>
-    
-    <!--<Image x:Key="icon" Source="{Binding Icon}" Height="16" Width="16" x:Shared="false" />-->
-    <!--<Image x:Key="punchIcon" Source="{Binding PunchMenuIcon}" Height="16" Width="16" x:Shared="false" />-->
-    
+    <!--#endregion Window Gradients -->
+
+    <!--#region NotifyIcon Menu -->
+    <!-- Convert Icon(string referring to asset/resource) to ResourceKey -->
     <ContentControl x:Key="iconPath" x:Shared="false">
         <Rectangle Fill="{Binding Icon, Converter={StaticResource StringToResourceConverter}, ConverterParameter=tolower}" Height="16" Width="16" />
     </ContentControl>
-    <!--<ContentControl x:Key="punchMenuIconPath" x:Shared="false">
-        <Rectangle Fill="{Binding PunchMenuIcon, Converter={StaticResource StringToResourceConverter}}" Height="16" Width="16" />
-    </ContentControl>-->
-    
+
     <ControlTemplate x:Key="MenuSeparatorTemplate">
         <Separator />
-        <!--Style="{StaticResource {x:Static MenuItem.SeparatorStyleKey}}" />-->
     </ControlTemplate>
 
+    <!-- Limit Text to width of 300 and add ellipsis suffix -->
     <DataTemplate x:Key="menuHeader">
         <TextBlock TextTrimming="CharacterEllipsis"
                    Text="{Binding}" MaxWidth="300" />
     </DataTemplate>
 
+    <!-- Main systray menu -->
     <ContextMenu x:Shared="false" x:Key="SysTrayMenu" Placement="Top">
         <MenuItem Header="{Binding PunchMenuText}" Command="{Binding PunchInCommand}">
             <MenuItem.Icon>
@@ -64,7 +63,6 @@
         <Separator />
         <MenuItem DataContext="{Binding Path=WorkItemMenus}" ItemsSource="{Binding Path=Children}">
             <MenuItem.Resources>
-                <!--<HierarchicalDataTemplate DataType="{x:Type vm:PunchMenuItemViewModel}" ItemsSource="{Binding Path=Children}"/>-->
                 <Style TargetType="{x:Type MenuItem}">
                     <Setter Property="HeaderTemplate" Value="{StaticResource menuHeader}" />
                     <Setter Property="Header" Value="{Binding Path=Text}"/>
@@ -104,8 +102,9 @@
             </MenuItem.Icon>
         </MenuItem>
     </ContextMenu>
+    <!--#endregion NotifyIcon Menu -->
 
-    <!-- the application's NotifyIcon -->
+    <!--#region the application's NotifyIcon -->
     <wui:TaskbarIcon x:Key="NotifyIcon"
                     IconSource="/Resources/stopwatch.ico"
                     Visibility="Visible"
@@ -120,6 +119,7 @@
             <app:CurrentTaskPopup Opacity="0.9" DataContext="{Binding}" />
         </wui:TaskbarIcon.TrayPopup>
     </wui:TaskbarIcon>
+    <!--#endregion the application's NotifyIcon -->
 
     <!-- default date time picker style -->
     <Style x:Key="DateTimePickerStyle" TargetType="{x:Type wui:DateTimePicker}">

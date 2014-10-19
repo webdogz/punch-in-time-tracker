@@ -91,9 +91,12 @@
                 <Rectangle Fill="{DynamicResource report}" Width="32" Height="32" Stretch="Uniform" Margin="4,0,10,0"/>
                 <TextBlock Text="My Weekly Times" Style="{StaticResource Heading2}" VerticalAlignment="Center" />
             </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <wui:ModernButton Margin="0,0,4,0" Content="Export to Excel" IconData="{StaticResource OfficeExcelGeometry}"
-                              Command="{Binding Path=ExportToExcelCommand, UpdateSourceTrigger=PropertyChanged}" />
+            <StackPanel Orientation="Horizontal" Background="{DynamicResource ButtonBackgroundHover}">
+                <wui:ModernButton Margin="0,0,4,0" Content="Export Selected Week to Excel" IconData="{StaticResource OfficeExcelGeometry}"
+                                  Command="{Binding Path=ExportToExcelCommand, UpdateSourceTrigger=PropertyChanged}"
+                                  CommandParameter="true"/>
+                <wui:ModernButton Margin="0,0,4,0" Content="Export All to Excel" IconData="{StaticResource OfficeExcelGeometry}"
+                                  Command="{Binding Path=ExportToExcelCommand, UpdateSourceTrigger=PropertyChanged}" />
             </StackPanel>
         </StackPanel>
         <ContentControl Grid.ColumnSpan="3" Template="{StaticResource ErrorsBlock}" Margin="0"

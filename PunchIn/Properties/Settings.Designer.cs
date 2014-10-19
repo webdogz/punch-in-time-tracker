@@ -138,5 +138,17 @@ namespace PunchIn.Properties {
                 return ((string)(this["AppDefaultSharePointHostUri"]));
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool SharePointEnabled {
+            get {
+                return ((bool)(this["SharePointEnabled"]));
+            }
+            set {
+                this["SharePointEnabled"] = value;
+            }
+        }
     }
 }

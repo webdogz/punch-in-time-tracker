@@ -16,7 +16,7 @@ namespace PunchIn.ViewModels
     /// <summary>
     /// Provides bindable properties and commands for the NotifyIcon
     /// </summary>
-    public class NotifyIconViewModel : ViewModelBase
+    public class NotifyIconViewModel : ViewModelBase, ICleanUp
     {
         #region Ctor and Instance Accessor
         private NotifyIconViewModel()
@@ -329,6 +329,20 @@ namespace PunchIn.ViewModels
             }
         }
         private WorkItemViewModel currentWorkItem = null;
+
+        private TrackerViewModel manager;
+        public TrackerViewModel Manager
+        {
+            get { return this.manager; }
+            set
+            {
+                if (this.manager != value)
+                {
+                    this.manager = value;
+                    OnPropertyChanged("Manager");
+                }
+            }
+        }
         #endregion
 
         #region Commands
@@ -348,15 +362,13 @@ namespace PunchIn.ViewModels
                             {
                                 if (CurrentTimeEntry == null)
                                 {
-                                    CurrentTimeEntry = new CurrentEntryViewModel(ViewModel);
-
                                     var dialog = new TrayDialog
                                     {
                                         Title = "New Time Entry",
                                         Content = new TimeEntryForm(),
                                         WindowStartupLocation = WindowStartupLocation.Manual,
                                         IsTrayWindow = true,
-                                        DataContext = CurrentTimeEntry
+                                        DataContext = new CurrentEntryViewModel(ViewModel)
                                     };
                                     dialog.Buttons = new Button[] { dialog.OkButton, dialog.CancelButton };
                                     dialog.ShowDialog();
@@ -364,16 +376,20 @@ namespace PunchIn.ViewModels
                                     if (dialog.DialogResult.HasValue &&
                                         dialog.DialogResult.Value)
                                     {
-                                        CurrentTimeEntry.PunchIn();
+                                        var tmpCurrentTimeEntry = (dialog.DataContext as CurrentEntryViewModel);
+                                        tmpCurrentTimeEntry.PunchIn();
+                                        currentTimeEntry = tmpCurrentTimeEntry;
                                         IsTimerActive = true;
+                                        OnPropertyChanged("PunchIn");
                                     }
-                                    else
-                                        CurrentTimeEntry = null;
+                                    dialog.DataContext = null;
+                                    dialog = null;
                                 }
                                 else
                                 {
                                     CurrentTimeEntry.PunchOut();
                                     IsTimerActive = false;
+                                    OnPropertyChanged("PunchOut");
                                     CurrentTimeEntry = null;
                                 }
                             }
@@ -495,11 +511,16 @@ namespace PunchIn.ViewModels
                 if (this.showWindowCommand == null)
                     this.showWindowCommand = new DelegateCommand
                     {
-                        CanExecuteFunc = (o) => Application.Current.MainWindow == null,
+                        CanExecuteFunc = (o) => true,
                         CommandAction = (o) =>
                         {
-                            Application.Current.MainWindow = new MainWindow();
-                            Application.Current.MainWindow.Show();
+                            if (Application.Current.MainWindow == null)
+                            {
+                                Application.Current.MainWindow = new MainWindow();
+                                Application.Current.MainWindow.Show();
+                            }
+                            else
+                                Application.Current.MainWindow.Activate();
                         }
                     };
                 return this.showWindowCommand;
@@ -519,7 +540,7 @@ namespace PunchIn.ViewModels
         #endregion
 
         #region Shutdown/Clean up
-        internal void CleanUp()
+        public void CleanUp()
         {
             // do clean up here
             try

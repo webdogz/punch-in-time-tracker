@@ -9,7 +9,7 @@ using System.Windows.Shell;
 
 namespace PunchIn.ViewModels
 {
-    public class MainWindowViewModel : ViewModelBase
+    public class MainWindowViewModel : ViewModelBase, ICleanUp
     {
         public MainWindowViewModel()
         {
@@ -103,7 +103,6 @@ namespace PunchIn.ViewModels
                 NotifyIconViewModel.Current.PropertyChanged -= NotifyIcon_PropertyChanged;
             }
             catch { }
-            
         }
         #endregion
     }

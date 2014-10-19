@@ -18,21 +18,9 @@ namespace PunchIn.ViewModels
         }
         public TModel ToModel<TViewModel, TModel>(IGuidPK viewModel)
         {
-            return ObjectMapperManager.DefaultInstance
-                .GetMapper<TViewModel, TModel>(
-                    new DefaultMapConfig().ConstructBy<TModel>(() => (TModel)Activator.CreateInstance(typeof(TModel), viewModel.Id))
-                ).Map((TViewModel)viewModel);
-        }
-
-        public static TViewModel ToViewModelWithList<TModel, TViewModel, TChildModel, TChildViewModel>(TModel model)
-        {
-            var mapper = EmitMapper.ObjectMapperManager.DefaultInstance
-                .GetMapper<TModel, TViewModel>(
-                    new EmitMapper.MappingConfiguration.DefaultMapConfig().ConvertGeneric(typeof(IList<TChildModel>), typeof(IList<TChildViewModel>),
-                        new EmitMapper.MappingConfiguration.DefaultCustomConverterProvider(typeof(Converters.ModelListToViewModelListConverter<TChildModel, TChildViewModel>))
-                    )
-                );
-            return mapper.Map(model);
+            var vm = (TViewModel)viewModel;
+            var m = (TModel)Activator.CreateInstance(typeof(TModel), viewModel.Id);
+            return ObjectMapperManager.DefaultInstance.GetMapper<TViewModel, TModel>().Map(vm, m);
         }
         #endregion
     }

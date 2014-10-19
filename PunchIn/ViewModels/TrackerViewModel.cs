@@ -8,21 +8,13 @@ using PunchIn.Services;
 
 namespace PunchIn.ViewModels
 {
-    public class TrackerViewModel : TimeTrackViewModel
+    public class TrackerViewModel : TimeTrackViewModel, ICleanUp
     {
         public TrackerViewModel() : base()
         {
             this.dirtyWorkItems = new List<WorkItem>();
             NotifyIconViewModel.Current.PropertyChanged += NotifyIcon_PropertyChanged;
-        }
-
-        private string[] _notifyIconProperties = new string[] { "CurrentTimeEntry", "CurrentWorkItem" };
-        private void NotifyIcon_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (_notifyIconProperties.Contains(e.PropertyName))
-            {
-                OnPropertyChanged("IsCurrentWorkItemNotSelected", "WorkItems");
-            }
+            NotifyIconViewModel.Current.Manager = this;
         }
 
         #region TimeTracker Overrides
@@ -37,46 +29,100 @@ namespace PunchIn.ViewModels
                 if (base.CurrentWorkItem != value)
                 {
                     base.CurrentWorkItem = value;
-                    OnPropertyChanged("IsCurrentWorkItemNotSelected", "CurrentWorkItemViewModel");
-                }
-            }
-        }
-        public WorkItemViewModel CurrentWorkItemViewModel
-        {
-            get
-            {
-                return WorkItemViewModel.ConvertFrom(CurrentWorkItem);
-            }
-        }
-        private TimeEntryViewModel currentEntryViewModel;
-        public TimeEntryViewModel CurrentEntryViewModel
-        {
-            get { return this.currentEntryViewModel; }
-            set
-            {
-                if (this.currentEntryViewModel != value)
-                {
-                    this.currentEntryViewModel = value;
-                    OnPropertyChanged("CurrentEntryViewModel");
-                    base.CurrentEntry = value == null ? null : this.currentEntryViewModel.TimeEntry;
+                    if (value != null)
+                        SelectedWorkItemViewModel = WorkItemViewModel.ConvertFrom(value);
                 }
             }
         }
         #endregion
 
         #region Properties
-        public bool IsCurrentWorkItemNotSelected
+        public override List<WorkItem> WorkItems
         {
             get
             {
-                if (base.CurrentWorkItem != null)
+                return base.WorkItems;
+            }
+            set
+            {
+                base.WorkItems = value;
+                if (base.WorkItems != null)
+                {
+                    SetObservableWorkItems();
+                }
+            }
+        }
+
+        private ObservableCollection<WorkItemViewModel> observableWorkItems;
+        public ObservableCollection<WorkItemViewModel> ObservableWorkItems
+        {
+            get { return this.observableWorkItems; }
+            set
+            {
+                if (this.observableWorkItems != value)
+                {
+                    this.observableWorkItems = value;
+                    OnPropertyChanged("ObservableWorkItems");
+                }
+            }
+        }
+        
+        private WorkItemViewModel selectedWorkItemViewModel;
+        public WorkItemViewModel SelectedWorkItemViewModel
+        {
+            get
+            {
+                return this.selectedWorkItemViewModel;
+            }
+            set
+            {
+                if (this.selectedWorkItemViewModel != value)
+                {
+                    if (this.selectedWorkItemViewModel != null)
+                        this.selectedWorkItemViewModel.PropertyChanged -= SelectedWorkItemViewModel_PropertyChanged;
+                    this.selectedWorkItemViewModel = value;
+                    if (this.selectedWorkItemViewModel != null)
+                        this.selectedWorkItemViewModel.PropertyChanged += SelectedWorkItemViewModel_PropertyChanged;
+                    OnPropertyChanged("SelectedWorkItemViewModel", "IsSelectedWorkItemNotSelected");
+                }
+            }
+        }
+
+        private TimeEntryViewModel selectedEntryViewModel;
+        public TimeEntryViewModel SelectedEntryViewModel
+        {
+            get { return this.selectedEntryViewModel; }
+            set
+            {
+                if (this.selectedEntryViewModel != value)
+                {
+                    if (this.selectedEntryViewModel != null)
+                        this.selectedEntryViewModel.PropertyChanged -= SelectedWorkItemViewModel_PropertyChanged;
+                    this.selectedEntryViewModel = value;
+                    if (this.selectedEntryViewModel != null)
+                    {
+                        this.selectedEntryViewModel.Init();
+                        this.selectedEntryViewModel.PropertyChanged += SelectedWorkItemViewModel_PropertyChanged;
+                    }
+                    OnPropertyChanged("SelectedEntryViewModel");
+                    base.CurrentEntry = value == null ? null : this.selectedEntryViewModel.TimeEntry;
+                }
+            }
+        }
+
+        public bool IsSelectedWorkItemNotSelected
+        {
+            get
+            {
+                if (this.selectedWorkItemViewModel != null)
                 {
                     return (NotifyIconViewModel.Current.CurrentWorkItem != null &&
-                            NotifyIconViewModel.Current.CurrentWorkItem.Id != base.CurrentWorkItem.Id);
+                            NotifyIconViewModel.Current.CurrentWorkItem.Id != this.selectedWorkItemViewModel.Id);
                 }
                 return true;
             }
         }
+
         private List<WorkItem> dirtyWorkItems;
         public List<WorkItem> DirtyWorkItems
         {
@@ -93,6 +139,94 @@ namespace PunchIn.ViewModels
         public IEnumerable<WorkTypes> WorkTypesList
         {
             get { return Enum.GetValues(typeof(WorkTypes)).Cast<WorkTypes>(); }
+        }
+        #endregion
+
+        #region Methods
+        private void UpdateWorkItemsWithCurrentWorkItem()
+        {
+            UpdateWorkItemCollection(NotifyIconViewModel.Current.CurrentWorkItem, true);
+        }
+
+        private void UpdateWorkItemCollection(WorkItemViewModel viewModel, bool updateObservables)
+        {
+            int index = WorkItems.FindIndex(w => w.Id == viewModel.Id);
+            if (index > -1)
+                WorkItems[index] = viewModel.WorkItem;
+            else
+                WorkItems.Add(viewModel.WorkItem);
+            if (updateObservables)
+                SetObservableWorkItems();
+        }
+
+        private void SetObservableWorkItems()
+        {
+            var selected = this.selectedWorkItemViewModel;
+            Converters.ModelListToViewModelListConverter<WorkItem, WorkItemViewModel> converter =
+                        new Converters.ModelListToViewModelListConverter<WorkItem, WorkItemViewModel>();
+            ObservableWorkItems = new ObservableCollection<WorkItemViewModel>(converter.Convert(WorkItems, null));
+            if (selected != null)
+            {
+                SelectedWorkItemViewModel = ObservableWorkItems.FirstOrDefault(w => w.Id == selected.Id);
+            }
+        }
+
+        private void UpdateSelectedWorkItem(WorkItemViewModel workItem)
+        {
+            if (IsDirty && workItem.IsDirty)
+            {
+                foreach (var item in ObservableWorkItems.Where(w => w.IsDirty))
+                {
+                    System.Diagnostics.Debug.WriteLine(string.Format("Dirty Item:TfsId:{0}:{1}", item.TfsId, item.Id));
+                    int dirtyIdx = DirtyWorkItems.FindIndex(w => w.Id == item.Id);
+                    if (dirtyIdx > -1)
+                        DirtyWorkItems[dirtyIdx] = item.WorkItem;
+                    else
+                        DirtyWorkItems.Add(item.WorkItem);
+                }
+                UpdateWorkItemCollection(workItem, false);
+            }
+        }
+        #endregion
+
+        #region Events Handlers
+        /// <summary>
+        /// Detect when the currently selected global workitem changes so we can sync it up here.
+        /// You should not be able to modify the current global workitem from the Tracker manager.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void NotifyIcon_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case "PunchIn":
+                case "PunchOut":
+                case "SaveWorkItem":
+                    UpdateWorkItemsWithCurrentWorkItem();
+                    break;
+                case "CurrentTimeEntry":
+                case "CurrentWorkItem":
+                    OnPropertyChanged("IsSelectedWorkItemNotSelected", "WorkItems", "ObservableWorkItems");
+                    break;
+            }
+        }
+        /// <summary>
+        /// Poormans NotifyPropertyChanged Bubbler. Classes that impl ICanDirty can subscribe to this event to
+        /// send IsDirty flag and in turn notify up to singleton NotifyIconViewModel.Current.Manager.IsDirty.
+        /// MainWindow will check this flag before closing and prompt user to save/dicard changes.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SelectedWorkItemViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "IsDirty")
+            {
+                ICanDirty item = (sender as ICanDirty);
+                if (item.IsDirty)
+                    IsDirty = item.IsDirty;
+                UpdateSelectedWorkItem(this.selectedWorkItemViewModel);
+            }
         }
         #endregion
 
@@ -113,6 +247,7 @@ namespace PunchIn.ViewModels
                                 this.Client.SaveWorkItem(item);
                             DirtyWorkItems.Clear();
                             IsDirty = false;
+                            SetObservableWorkItems();
                         }
                     };
                 }
@@ -135,9 +270,10 @@ namespace PunchIn.ViewModels
                             {
                                 this.Client.DeleteWorkItem(CurrentWorkItem.Id);
                                 this.WorkItems.Remove(CurrentWorkItem);
-                                OnPropertyChanged("WorkItems");
                                 CurrentWorkItem = null;
                                 SetCurrentWorkItem();
+                                SetObservableWorkItems();
+                                OnPropertyChanged("WorkItems", "ObservableWorkItems");
                             }
                             catch (Exception ex)
                             {
@@ -148,6 +284,23 @@ namespace PunchIn.ViewModels
                 }
                 return this._deleteWorkItemCommand;
             }
+        }
+        #endregion
+
+        #region Exit/Cleanup
+        public void CleanUp()
+        {
+            try
+            {
+                NotifyIconViewModel.Current.PropertyChanged -= NotifyIcon_PropertyChanged;
+                if (this.selectedWorkItemViewModel != null)
+                    this.selectedWorkItemViewModel.PropertyChanged -= SelectedWorkItemViewModel_PropertyChanged;
+                if (this.selectedEntryViewModel != null)
+                    this.selectedEntryViewModel.PropertyChanged -= SelectedWorkItemViewModel_PropertyChanged;
+                if (NotifyIconViewModel.Current.Manager == this)
+                    NotifyIconViewModel.Current.Manager = null;
+            }
+            catch { }
         }
         #endregion
     }

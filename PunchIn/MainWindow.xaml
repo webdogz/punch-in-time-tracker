@@ -36,7 +36,8 @@
         <wui:LinkGroup DisplayName="Reports">
             <wui:LinkGroup.Links>
                 <wui:Link DisplayName="Weekly" Source="/Pages/ReportsWeekly.xaml" />
-                <wui:Link DisplayName="Export" Source="/Pages/ReportsExport.xaml" />
+                <!--<wui:Link DisplayName="Stats" Source="/Pages/ReportsStatistics.xaml" />-->
+                <!--<wui:Link DisplayName="Export" Source="/Pages/ReportsExport.xaml" />-->
             </wui:LinkGroup.Links>
         </wui:LinkGroup>
         <wui:LinkGroup DisplayName="Settings" GroupKey="settings">
