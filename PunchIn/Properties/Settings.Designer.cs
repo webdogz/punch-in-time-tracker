@@ -150,5 +150,17 @@ namespace PunchIn.Properties {
                 this["SharePointEnabled"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Normal")]
+        public global::System.Windows.WindowState MainWindowWindowState {
+            get {
+                return ((global::System.Windows.WindowState)(this["MainWindowWindowState"]));
+            }
+            set {
+                this["MainWindowWindowState"] = value;
+            }
+        }
     }
 }

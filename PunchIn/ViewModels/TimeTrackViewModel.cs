@@ -164,6 +164,8 @@ namespace PunchIn.ViewModels
                                 this.CurrentWorkItem = o as WorkItem;
                             else
                                 this.CurrentWorkItem = new WorkItem();
+                            WorkItems.Add(this.CurrentWorkItem);
+                            OnPropertyChanged("WorkItems");
                             IsDirty = true;
                         }
                     };

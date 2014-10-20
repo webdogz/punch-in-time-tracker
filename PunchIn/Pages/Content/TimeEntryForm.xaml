@@ -11,15 +11,22 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="3*" />
             <ColumnDefinition Width="7*" />
         </Grid.ColumnDefinitions>
 
+        <ComboBox Margin="5" Grid.ColumnSpan="2"
+                  ItemsSource="{Binding Path=WorkItems}"
+                  DisplayMemberPath="Title"
+                  SelectedItem="{Binding Path=SelectedWorkItem, Mode=TwoWay}">
+        </ComboBox>
+
         <wui:WatermarkTextBox x:Name="titleTextBox" Text="{Binding Path=CurrentEntry.Description, Mode=TwoWay}" 
                                IsEnabled="{Binding Path=CanModifyEntry}"
-                               Grid.Column="0" Grid.ColumnSpan="2" Margin="5">
+                               Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Margin="5">
             <wui:WatermarkTextBox.Watermark>
                 <StackPanel Orientation="Horizontal">
                     <Rectangle Width="16" Height="16" VerticalAlignment="Center"
@@ -29,7 +36,7 @@
             </wui:WatermarkTextBox.Watermark>
         </wui:WatermarkTextBox>
 
-        <TextBlock Text="Start:" Margin="5" Grid.Row="1" />
+        <TextBlock Text="Start:" Margin="5" Grid.Row="2" />
         <wui:DateTimePicker x:Name="StartDate" 
                             Value="{Binding Path=CurrentEntry.StartDate, Mode=TwoWay}"
                             Format="Custom"
@@ -39,9 +46,9 @@
                             Watermark="Start (yyyy.MM.dd HH:mm)"
                             ShowButtonSpinner="False"
                             IsEnabled="{Binding Path=CanModifyEntry}"
-                            Grid.Column="1" Grid.Row="1" Margin="5" />
+                            Grid.Column="1" Grid.Row="2" Margin="5" />
 
-        <TextBlock Text="End:" Margin="5" Grid.Row="2" />
+        <TextBlock Text="End:" Margin="5" Grid.Row="3" />
         <wui:DateTimePicker Value="{Binding Path=CurrentEntry.EndDate, Mode=TwoWay}"
                             Format="Custom"
                             FormatString="yyyy.MM.dd HH:mm"
@@ -51,6 +58,6 @@
                             ShowButtonSpinner="False"
                             IsEnabled="{Binding Path=CanModifyEntry}"
                             Minimum="{Binding ElementName=StartDate, Path=Value}"
-                            Grid.Column="1" Grid.Row="2" Margin="5" />
+                            Grid.Column="1" Grid.Row="3" Margin="5" />
     </Grid>
 </UserControl>

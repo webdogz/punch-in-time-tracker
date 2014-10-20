@@ -28,6 +28,7 @@ namespace PunchIn
                     this.Width = location.Width;
                     this.Height = location.Height;
                 }
+                this.WindowState = Properties.Settings.Default.MainWindowWindowState;
             }
             catch { }
         }
@@ -60,6 +61,10 @@ namespace PunchIn
             {
                 Properties.Settings.Default.MainWindowLocation =
                     new Rect(this.Left, this.Top, this.ActualWidth, this.ActualHeight);
+                Properties.Settings.Default.MainWindowWindowState =
+                    (this.WindowState == System.Windows.WindowState.Minimized) ?
+                    System.Windows.WindowState.Normal :
+                    this.WindowState;
                 Properties.Settings.Default.Save();
             }
             finally

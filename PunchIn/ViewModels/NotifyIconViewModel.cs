@@ -71,14 +71,14 @@ namespace PunchIn.ViewModels
         {
             await Task.Run(() =>
             {
-                var menu = GetWorkItemMenuItems();
-                menu.Text = "Work Items";
+                PunchMenuItemViewModel menu = new PunchMenuItemViewModel() { Text = "Work Items", Icon = "list" };
+                GetWorkItemMenuItems(menu);
                 WorkItemMenus = menu;
             });
         }
-        private PunchMenuItemViewModel GetWorkItemMenuItems()
+        private void GetWorkItemMenuItems(PunchMenuItemViewModel menu)
         {
-            PunchMenuItemViewModel menu = new PunchMenuItemViewModel() { Text = "Work Items", Icon = "list" };
+            menu.Children.Clear();
             menu.Children.Add(new PunchMenuItemViewModel
             {
                 Text = "New Work Item...",
@@ -90,7 +90,6 @@ namespace PunchIn.ViewModels
             {
                 menu.Children.Add(NewPunchMenuItem(item));
             }
-            return menu;
         }
 
         private PunchMenuItemViewModel NewPunchMenuItem(WorkItem item)
@@ -133,6 +132,11 @@ namespace PunchIn.ViewModels
             }
         }
         private PunchMenuItemViewModel workItemMenus;
+
+        public void RefreshWorkItemMenus()
+        {
+            GetWorkItemMenuItems(WorkItemMenus);
+        }
 
         #region Punch Menu Item
         public string PunchMenuText
@@ -366,8 +370,7 @@ namespace PunchIn.ViewModels
                                     {
                                         Title = "New Time Entry",
                                         Content = new TimeEntryForm(),
-                                        WindowStartupLocation = WindowStartupLocation.Manual,
-                                        IsTrayWindow = true,
+                                        IsTrayWindow = (o == null),
                                         DataContext = new CurrentEntryViewModel(ViewModel)
                                     };
                                     dialog.Buttons = new Button[] { dialog.OkButton, dialog.CancelButton };
@@ -415,8 +418,7 @@ namespace PunchIn.ViewModels
                             {
                                 Title = "New Work Item",
                                 Content = new WorkItemForm(),
-                                WindowStartupLocation = WindowStartupLocation.Manual,
-                                IsTrayWindow = true,
+                                IsTrayWindow = (o == null),
                                 SizeToContent = System.Windows.SizeToContent.Height,
                                 DataContext = new WorkItemViewModel()
                             };
@@ -430,6 +432,7 @@ namespace PunchIn.ViewModels
                                 ViewModel.AddWorkItemCommand.Execute(model);
                                 ViewModel.SaveWorkItemCommand.Execute(null);
                                 WorkItemMenus.Children.Add(NewPunchMenuItem(model));
+                                OnPropertyChanged("CurrentWorkItem", "NewWorkItem");
                             }
                         }
                     };

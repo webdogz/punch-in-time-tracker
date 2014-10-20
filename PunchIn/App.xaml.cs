@@ -1,12 +1,5 @@
 ﻿using PunchIn.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
-using Webdogz.UI.Presentation;
 using Webdogz.UI.TaskbarNotification;
 
 namespace PunchIn
@@ -17,6 +10,7 @@ namespace PunchIn
     public partial class App : Application
     {
         private TaskbarIcon notifyIcon;
+        private GlobalHotkeyManager hotkeyManager;
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -26,12 +20,15 @@ namespace PunchIn
             //create the notifyicon (it's a resource declared in NotifyIconResources.xaml
             notifyIcon = (TaskbarIcon)FindResource("NotifyIcon");
             notifyIcon.DataContext = NotifyIconViewModel.Current;
+            //add global hotkey support
+            hotkeyManager = new GlobalHotkeyManager(notifyIcon);
         }
 
         protected override void OnExit(ExitEventArgs e)
         {
             NotifyIconViewModel.Current.CleanUp();
             notifyIcon.Dispose(); //the icon would clean up automatically, but this is cleaner
+            hotkeyManager.Dispose();
             base.OnExit(e);
         }
     }

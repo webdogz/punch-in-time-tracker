@@ -55,6 +55,9 @@
         <!-- Commands -->
         <StackPanel Orientation="Horizontal" Background="{DynamicResource ButtonBackgroundHover}"
                     Grid.Row="1" Grid.ColumnSpan="3">
+            <wui:ModernButton Margin="4,2" Content="New" 
+                              Command="{Binding Path=NewCommand}"
+                              IconData="{StaticResource ListCreateGeometry}" />
             <wui:ModernButton Margin="4,2" Content="Save" 
                               Command="{Binding Path=SaveCommand}"
                               IconData="{StaticResource SaveGeometry}" />

@@ -18,6 +18,22 @@ namespace PunchIn.ViewModels
         }
 
         #region TimeTracker Overrides
+        public override List<WorkItem> WorkItems
+        {
+            get
+            {
+                return base.WorkItems;
+            }
+            set
+            {
+                base.WorkItems = value;
+                if (base.WorkItems != null)
+                {
+                    SetObservableWorkItems();
+                }
+            }
+        }
+
         public override WorkItem CurrentWorkItem
         {
             get
@@ -37,22 +53,6 @@ namespace PunchIn.ViewModels
         #endregion
 
         #region Properties
-        public override List<WorkItem> WorkItems
-        {
-            get
-            {
-                return base.WorkItems;
-            }
-            set
-            {
-                base.WorkItems = value;
-                if (base.WorkItems != null)
-                {
-                    SetObservableWorkItems();
-                }
-            }
-        }
-
         private ObservableCollection<WorkItemViewModel> observableWorkItems;
         public ObservableCollection<WorkItemViewModel> ObservableWorkItems
         {
@@ -218,6 +218,7 @@ namespace PunchIn.ViewModels
                 case "PunchIn":
                 case "PunchOut":
                 case "SaveWorkItem":
+                case "NewWorkItem":
                     UpdateWorkItemsWithCurrentWorkItem();
                     break;
                 case "CurrentTimeEntry":
@@ -246,6 +247,25 @@ namespace PunchIn.ViewModels
         #endregion
 
         #region Commands
+        private ICommand _newCommand;
+        public ICommand NewCommand
+        {
+            get
+            {
+                if (this._newCommand == null)
+                {
+                    this._newCommand = new DelegateCommand
+                    {
+                        CanExecuteFunc = (o) => NotifyIconViewModel.Current.NewWorkItemCommand.CanExecute(true),
+                        CommandAction = (o) =>
+                        {
+                            NotifyIconViewModel.Current.NewWorkItemCommand.Execute(true);
+                        }
+                    };
+                }
+                return this._newCommand;
+            }
+        }
         private ICommand _saveCommand;
         public ICommand SaveCommand
         {
@@ -291,6 +311,7 @@ namespace PunchIn.ViewModels
                                 {
                                     this.Client.DeleteWorkItem(CurrentWorkItem.Id);
                                     this.WorkItems.Remove(CurrentWorkItem);
+                                    NotifyIconViewModel.Current.RefreshWorkItemMenus();
                                     CurrentWorkItem = null;
                                     SetCurrentWorkItem();
                                     SetObservableWorkItems();

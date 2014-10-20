@@ -31,6 +31,7 @@ namespace PunchIn.Controls
         {
             if (IsTrayWindow)
             {
+                WindowStartupLocation = WindowStartupLocation.Manual;
                 SetTrayPosition();
             }
         }

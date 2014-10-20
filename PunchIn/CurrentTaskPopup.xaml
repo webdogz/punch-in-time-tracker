@@ -48,11 +48,22 @@
                        Text="There is no current time entry so I can't show you any details. Click 'Punch In Now!' button below to start."
                        TextWrapping="Wrap"
                        Visibility="{Binding Path=IsTimerActive, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=inverse, FallbackValue=Visible}" />
-            <ctrl:ImageButton Style="{StaticResource ImageButtonStyle}" Grid.Row="3" Grid.ColumnSpan="2"
+            <ContentControl Grid.Row="3" Grid.ColumnSpan="2" 
+                            Visibility="{Binding Path=CurrentWorkItem, Converter={StaticResource NullToVisibilityConverter}, FallbackValue=Hidden}">
+                <ctrl:ImageButton Style="{StaticResource ImageButtonStyle}"
+                              Content="Create Work Item" ImageBrush="{DynamicResource punchin}"
+                              ImageHeight="32" ImageWidth="32" FontSize="18" CornerRadius="10" BorderBrush="{DynamicResource Accent}"
+                              Command="{Binding Path=NewWorkItemCommand}" />
+            </ContentControl>
+            <ContentControl Grid.Row="3" Grid.ColumnSpan="2" 
+                            Visibility="{Binding Path=CurrentWorkItem, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=inverse, FallbackValue=Visible}">
+                <ctrl:ImageButton Style="{StaticResource ImageButtonStyle}"
                               Content="Punch In Now!" ImageBrush="{DynamicResource punchin}"
                               ImageHeight="32" ImageWidth="32" FontSize="18" CornerRadius="10" BorderBrush="{DynamicResource Accent}"
                               Command="{Binding Path=PunchInCommand}"
                               Visibility="{Binding Path=IsTimerActive, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=inverse, FallbackValue=Visible}" />
+            </ContentControl>
+            
             <Grid x:Name="propsTable" Grid.Row="2" Grid.ColumnSpan="2" 
                   Visibility="{Binding Path=IsTimerActive, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Hidden}">
                 <Grid.ColumnDefinitions>

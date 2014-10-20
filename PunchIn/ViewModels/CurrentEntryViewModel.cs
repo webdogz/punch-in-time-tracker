@@ -1,14 +1,14 @@
 ﻿using System;
 using PunchIn.Models;
+using System.Collections.Generic;
 
 namespace PunchIn.ViewModels
 {
     public class CurrentEntryViewModel : ViewModelBase
     {
         private readonly TimeTrackViewModel parent;
-        public CurrentEntryViewModel(TimeTrackViewModel parent/*, TimeEntry currentEntry = null*/)
+        public CurrentEntryViewModel(TimeTrackViewModel parent)
         {
-            //TODO: Refactor all this if/else/then crap code to something a little more elegant :)
             this.parent = parent;
             CurrentWorkItem = this.parent.CurrentWorkItem;
             if (this.parent.CurrentEntry != null)
@@ -34,13 +34,21 @@ namespace PunchIn.ViewModels
         #endregion
 
         #region Properties
+        public List<WorkItem> WorkItems
+        {
+            get { return this.parent.WorkItems; }
+        }
+
         public TimeEntry CurrentEntry
         {
             get { return currentEntry; }
             set
             {
-                currentEntry = value;
-                OnPropertyChanged("CurrentEntry");
+                if (this.currentEntry != value)
+                {
+                    this.currentEntry = value;
+                    OnPropertyChanged("CurrentEntry");
+                }
             }
         }
         private TimeEntry currentEntry;
@@ -50,11 +58,29 @@ namespace PunchIn.ViewModels
             get { return currentWorkItem; }
             set
             {
-                currentWorkItem = value;
-                OnPropertyChanged("CurrentWorkItem");
+                if (this.currentWorkItem != value)
+                {
+                    this.currentWorkItem = value;
+                    OnPropertyChanged("CurrentWorkItem", "SelectedWorkItem");
+                }
             }
         }
         private WorkItem currentWorkItem;
+
+        public WorkItem SelectedWorkItem
+        {
+            get { return this.currentWorkItem; }
+            set
+            {
+                if (this.currentWorkItem != value)
+                {
+                    // set the global selection as well
+                    // and let CurrentWorkItem do notifications
+                    this.parent.CurrentWorkItem =
+                    CurrentWorkItem = value;
+                }
+            }
+        }
 
         public bool CanModifyEntry
         {
