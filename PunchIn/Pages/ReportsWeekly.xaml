@@ -97,6 +97,9 @@
                                   CommandParameter="true"/>
                 <wui:ModernButton Margin="0,0,4,0" Content="Export All to Excel" IconData="{StaticResource OfficeExcelGeometry}"
                                   Command="{Binding Path=ExportToExcelCommand, UpdateSourceTrigger=PropertyChanged}" />
+                <CheckBox Margin="0,0,4,0" 
+                          Content="Summary report"
+                          IsChecked="{Binding Path=IsSummaryReportSelected}"/>
             </StackPanel>
         </StackPanel>
         <ContentControl Grid.ColumnSpan="3" Template="{StaticResource ErrorsBlock}" Margin="0"

@@ -15,16 +15,22 @@ namespace PunchIn.ViewModels
         public ReportsWeeklyViewModel()
         {
             this.service = new PunchInService();
-            reportList = this.service.GetReportExportItems();
             try
             {
-                int week = DateTime.Now.GetWeekOfYear();
+                RefreshItems();
                 WeekOfYearFilter = WeekOfYearList.LastOrDefault().WeekOfYear;
+                IsSummaryReportSelected = true;
             }
             catch (Exception ex)
             {
                 Errors = ex.Message;
             }
+        }
+
+        private void RefreshItems()
+        {
+            this.reportList = this.service.GetReportExportItems();
+            OnPropertyChanged("ReportItems");
         }
 
         #region Properties
@@ -115,11 +121,24 @@ namespace PunchIn.ViewModels
                 }
             }
         }
+        
+        private bool isSummaryReportSelected;
+        public bool IsSummaryReportSelected
+        {
+            get { return this.isSummaryReportSelected; }
+            set
+            {
+                if (this.isSummaryReportSelected != value)
+                {
+                    this.isSummaryReportSelected = value;
+                    OnPropertyChanged("IsSummaryReportSelected");
+                }
+            }
+        }
         #endregion
 
         #region List Properties
-        private readonly List<ReportExportItem> reportList;
-        private ObservableCollection<ReportExportItem> reportItems;
+        private List<ReportExportItem> reportList;
         public ObservableCollection<ReportExportItem> ReportItems
         {
             get 
@@ -127,19 +146,8 @@ namespace PunchIn.ViewModels
                 WorkTypes[] workTypes = this.workTypesFilter.Where(w => w.IsSelected == true).Select(w => w.WorkType).ToArray();
                 List<ReportExportItem> list = this.reportList.Where(r => workTypes.Contains(r.WorkType) &&
                     r.WeekOfYear == this.weekOfYearFilter).ToList();
-                this.reportItems = new ObservableCollection<ReportExportItem>(list);
-
                 WeeklyHoursCompleted = list.Sum(w => w.HoursCompleted);
-
-                return this.reportItems;
-            }
-            set
-            {
-                if (this.reportItems != value)
-                {
-                    this.reportItems = value;
-                    OnPropertyChanged("ReportItems");
-                }
+                return new ObservableCollection<ReportExportItem>(list);
             }
         }
         private ICommand checkedCommand;
@@ -175,7 +183,86 @@ namespace PunchIn.ViewModels
         }
         #endregion
 
+        #region Methods
+        private List<ReportExportItem> GetReportExportItems(bool allItems)
+        {
+            PunchInService dbService = new PunchInService();
+            if (allItems)
+                return dbService.GetReportExportItems();
+            else
+                return dbService.GetReportExportItems(WeekOfYearFilter);
+        }
+        private List<ReportExportItem> GetSummaryReportExportItems(bool allItems)
+        {
+            PunchInService service = new PunchInService();
+            List<ReportExportItem> exportItems = new List<ReportExportItem>();
+            IEnumerable<ReportByWeekGroup> items;
+            if (allItems)
+                items = service.GetItemsGroupedByWeek();
+            else
+                items = service.GetItemsGroupedByWeek(WeekOfYearFilter);
+
+            foreach (var item in items)
+            {
+                ReportByWeekItem wit = item.ReportItems.FirstOrDefault();
+                double effort = item.Effort * 8;
+
+                TimeSpan completed = new TimeSpan();
+                item.ReportItems.ForEach(new Action<ReportByWeekItem>(e =>
+                {
+                    DateTime end = e.EndDate ?? e.StartDate;
+                    completed = completed.Add(end - e.StartDate);
+                }));
+
+                double hoursRemain = effort - completed.TotalHours;
+
+                exportItems.Add(new ReportExportItem
+                {
+                    ItemGuid = wit.ItemGuid,
+                    TfsId = wit.TfsId,
+                    ServiceCall = wit.ServiceCall,
+                    Change = wit.Change,
+                    Title = item.Title,
+                    Effort = item.Effort,
+                    HoursCompleted = completed.TotalHours,
+                    HoursRemaining = (hoursRemain > 0 ? hoursRemain : 0),
+                    StartDate = wit.StartDate,
+                    EndDate = wit.EndDate,
+                    State = wit.State,
+                    Status = wit.Status,
+                    WorkType = wit.WorkType,
+                    WeekOfYear = item.WeekOfYear,
+                    WeekStarting = item.WeekOfYear.GetWeekOfYearDate()
+                });
+
+            }
+            return exportItems;
+        }
+        #endregion
+
         #region Commands
+        private ICommand refreshReportItems;
+        /// <summary>
+        /// Refresh the view
+        /// </summary>
+        public ICommand RefreshReportItems
+        {
+            get
+            {
+                if (this.refreshReportItems == null)
+                {
+                    this.refreshReportItems = new DelegateCommand
+                    {
+                        CanExecuteFunc = (o) => true,
+                        CommandAction = (o) =>
+                            {
+                                RefreshItems();
+                            }
+                    };
+                }
+                return this.refreshReportItems;
+            }
+        }
         private ICommand exportToExcelCommand;
         /// <summary>
         /// Export the currently selected weeks items to csv
@@ -198,16 +285,20 @@ namespace PunchIn.ViewModels
                                     System.Environment.UserName,
                                     System.DateTime.Now.ToString("yyyyMMddHHmm"));
                                 string exportPath = System.IO.Path.Combine(Properties.Settings.Default.DefaultUserDatabaseFolderLocation, exportFilename);
-                                PunchInService dbService = new PunchInService();
                                 CsvExportService csv = new CsvExportService();
                                 List<ReportExportItem> exportItems;
-                                if (o == null)
-                                    exportItems = dbService.GetReportExportItems();
+                                string[] columns;
+                                if (IsSummaryReportSelected)
+                                {
+                                    columns = new string[] { "TfsId", "ServiceCall", "Change", "Title", "HoursCompleted", "HoursRemaining", "State", "WorkType", "WeekOfYear", "WeekStarting" };
+                                    exportItems = GetSummaryReportExportItems(o == null);
+                                }
                                 else
-                                    exportItems = dbService.GetReportExportItems(this.weekOfYearFilter);
-                                csv.ExportCollection(exportItems,
-                                    new string[] { "TfsId", "ServiceCall", "Change", "Title", "HoursCompleted", "HoursRemaining", "Description", "State", "Status", "WorkType" },
-                                    true, exportPath);
+                                {
+                                    columns = new string[] { "TfsId", "ServiceCall", "Change", "Title", "HoursCompleted", "HoursRemaining", "Description", "State", "Status", "WorkType", "WeekOfYear", "WeekStarting" };
+                                    exportItems = GetReportExportItems(o == null);
+                                }
+                                csv.ExportCollection(exportItems, columns, true, exportPath);
                             }
                             catch (Exception ex)
                             {

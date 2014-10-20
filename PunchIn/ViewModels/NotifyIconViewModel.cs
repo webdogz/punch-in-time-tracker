@@ -428,6 +428,8 @@ namespace PunchIn.ViewModels
                             if (dialog.DialogResult.HasValue &&
                                 dialog.DialogResult.Value)
                             {
+                                if (this.CurrentTimeEntry != null)
+                                    this.PunchInCommand.Execute(null);
                                 WorkItem model = ((WorkItemViewModel)dialog.DataContext).WorkItem;
                                 ViewModel.AddWorkItemCommand.Execute(model);
                                 ViewModel.SaveWorkItemCommand.Execute(null);

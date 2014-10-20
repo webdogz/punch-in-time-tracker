@@ -27,7 +27,7 @@ namespace PunchIn
 
             hotkeyWorkItemId = typeof(WorkItemViewModel).GetHashCode();
             hotkeyTimeEntryId = typeof(TimeEntryViewModel).GetHashCode();
-
+            //todo:add settings page for user defined hotkeys
             RegisterHotKey(Handle, hotkeyWorkItemId, 
                 HotKeyConstants.CTRL + HotKeyConstants.ALT, 
                 (int)Keys.N);

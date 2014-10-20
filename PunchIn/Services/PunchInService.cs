@@ -81,7 +81,18 @@ namespace PunchIn.Services
             }
         }
         #region Reporting
-        public IOrderedQueryable<ReportByWeekGroup> GetItemsGroupedByWeek(NDatabase.Api.IOdb db)
+        public IEnumerable<ReportByWeekGroup> GetItemsGroupedByWeek()
+        {
+            using (var db = OdbFactory.Open(this.DbName))
+                return GetItemsGroupedByWeek(db).ToList();
+        }
+        public IEnumerable<ReportByWeekGroup> GetItemsGroupedByWeek(int weekOfYear)
+        {
+            var predicate = new Predicate<ReportByWeekGroup>(g => g.WeekOfYear == weekOfYear);
+            using (var db = OdbFactory.Open(this.DbName))
+                return GetItemsGroupedByWeek(db).Where(g => predicate(g));
+        }
+        private IOrderedQueryable<ReportByWeekGroup> GetItemsGroupedByWeek(NDatabase.Api.IOdb db)
         {
             var reportItems = db.AsQueryable<WorkItem>().SelectMany(item => item.Entries.Select(e => new ReportByWeekItem
                 {
