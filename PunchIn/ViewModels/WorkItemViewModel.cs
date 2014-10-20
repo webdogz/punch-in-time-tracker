@@ -183,5 +183,17 @@ namespace PunchIn.ViewModels
             }
         }
         #endregion
+
+        public override string ToString()
+        {
+            string ids = "";
+            if (TfsId.HasValue)
+                ids += string.Format("TfsId: {0}\n", TfsId);
+            if (ServiceCall.HasValue)
+                ids += string.Format("SC: {0}\n", ServiceCall);
+            if (Change.HasValue)
+                ids += string.Format("CH: {0}\n", Change);
+            return string.Format("{0}{1}", ids, this.Title);
+        }
     }
 }

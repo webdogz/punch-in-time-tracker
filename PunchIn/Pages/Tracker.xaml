@@ -40,9 +40,11 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
+        <!-- Errors -->
         <ContentControl Template="{StaticResource ErrorsBlock}" Margin="0" Grid.ColumnSpan="3"
                         Visibility="{Binding Path=Errors, Converter={StaticResource NullOrEmptyStringToVisibilityConverter}, ConverterParameter=inverse}">
             <StackPanel>
@@ -50,6 +52,7 @@
             </StackPanel>
         </ContentControl>
 
+        <!-- Commands -->
         <StackPanel Orientation="Horizontal" Background="{DynamicResource ButtonBackgroundHover}"
                     Grid.Row="1" Grid.ColumnSpan="3">
             <wui:ModernButton Margin="4,2" Content="Save" 
@@ -60,12 +63,14 @@
                               IconData="{StaticResource DeleteGeometry}"/>
         </StackPanel>
 
-        <GridSplitter Width="5" Grid.Column="1" Grid.Row="2" Grid.RowSpan="2"
+        <!-- Main Vertical Grid Splitter between List and Details -->
+        <GridSplitter Width="5" Grid.Column="1" Grid.Row="2" Grid.RowSpan="3"
                       VerticalAlignment="Stretch"
                       HorizontalAlignment="Center"
                       ResizeDirection="Columns"/>
 
-        <ListView Grid.RowSpan="2" Grid.Row="2" SelectionMode="Single" 
+        <!-- Work Item List -->
+        <ListView Grid.RowSpan="3" Grid.Row="2" SelectionMode="Single" 
                   SelectedItem="{Binding Path=SelectedWorkItemViewModel}"
                   ItemsSource="{Binding Path=ObservableWorkItems}">
             <ListView.ItemContainerStyle>
@@ -97,10 +102,20 @@
             </ListView.View>
         </ListView>
 
+        <!-- Work Item Details -->
         <content:WorkItemForm Grid.Column="2" Grid.Row="2" DataContext="{Binding Path=SelectedWorkItemViewModel}" 
                               IsEnabled="{Binding Path=DataContext.IsSelectedWorkItemNotSelected, RelativeSource={RelativeSource AncestorType=UserControl}}" />
         
-        <DataGrid Grid.Column="2" Grid.Row="3" Margin="5" AutoGenerateColumns="False"
+        <!-- Hourly Summary -->
+        <StackPanel Orientation="Horizontal" Grid.Column="2" Grid.Row="3" 
+                    Background="{DynamicResource ButtonBackgroundHover}">
+            <TextBlock Text="{Binding Path=WorkItemSummaryHoursCompleted, StringFormat=Hours Completed: {0:F}}" 
+                       Padding="5" Margin="5,0" FontWeight="SemiBold"
+                       HorizontalAlignment="Right" />
+        </StackPanel>
+        
+        <!-- Time Entries grid -->
+        <DataGrid Grid.Column="2" Grid.Row="4" Margin="5" AutoGenerateColumns="False"
                   ItemsSource="{Binding Path=SelectedWorkItemViewModel.Entries}"
                   SelectedItem="{Binding Path=SelectedEntryViewModel}"
                   CanUserAddRows="False"
@@ -112,7 +127,7 @@
                 <DataGridTemplateColumn Header="Start Time">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Path=StartDate}"/>
+                            <TextBlock Text="{Binding Path=StartDate, StringFormat=dd/MM/yyyy HH:mm}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                     <DataGridTemplateColumn.CellEditingTemplate>
@@ -127,7 +142,7 @@
                 <DataGridTemplateColumn Header="End Time">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Path=EndDate}"/>
+                            <TextBlock Text="{Binding Path=EndDate, StringFormat=dd/MM/yyyy HH:mm}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                     <DataGridTemplateColumn.CellEditingTemplate>
@@ -135,7 +150,8 @@
                             <wui:DateTimePicker Value="{Binding Path=EndDate, Mode=TwoWay}"
                                                 Watermark="End (yyyy.MM.dd HH:mm)"
                                                 Format="Custom"
-                                                FormatString="{Binding Source={x:Static props:Settings.Default}, Path=DefaultDateTimePickerFormatString}"/>
+                                                FormatString="{Binding Source={x:Static props:Settings.Default}, Path=DefaultDateTimePickerFormatString}"
+                                                Minimum="{Binding Path=StartDate}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellEditingTemplate>
                 </DataGridTemplateColumn>

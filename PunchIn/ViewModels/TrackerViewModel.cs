@@ -83,7 +83,7 @@ namespace PunchIn.ViewModels
                     this.selectedWorkItemViewModel = value;
                     if (this.selectedWorkItemViewModel != null)
                         this.selectedWorkItemViewModel.PropertyChanged += SelectedWorkItemViewModel_PropertyChanged;
-                    OnPropertyChanged("SelectedWorkItemViewModel", "IsSelectedWorkItemNotSelected");
+                    OnPropertyChanged("SelectedWorkItemViewModel", "IsSelectedWorkItemNotSelected", "WorkItemSummaryHoursCompleted");
                 }
             }
         }
@@ -107,6 +107,21 @@ namespace PunchIn.ViewModels
                     OnPropertyChanged("SelectedEntryViewModel");
                     base.CurrentEntry = value == null ? null : this.selectedEntryViewModel.TimeEntry;
                 }
+            }
+        }
+
+        public double WorkItemSummaryHoursCompleted
+        {
+            get 
+            {
+                if (this.selectedWorkItemViewModel == null) return 0;
+                TimeSpan span = new TimeSpan();
+                this.selectedWorkItemViewModel.Entries.ForEach(new Action<TimeEntryViewModel>(e =>
+                {
+                    DateTime end = e.EndDate ?? e.StartDate;
+                    span = span.Add(end - e.StartDate);
+                }));
+                return span.TotalHours;
             }
         }
 
@@ -268,12 +283,19 @@ namespace PunchIn.ViewModels
                         {
                             try
                             {
-                                this.Client.DeleteWorkItem(CurrentWorkItem.Id);
-                                this.WorkItems.Remove(CurrentWorkItem);
-                                CurrentWorkItem = null;
-                                SetCurrentWorkItem();
-                                SetObservableWorkItems();
-                                OnPropertyChanged("WorkItems", "ObservableWorkItems");
+                                string confirmMsg = string.Format("Delete the following WorkItem?\n{0}", 
+                                    SelectedWorkItemViewModel.ToString());
+                                if (Webdogz.UI.Controls.ModernDialog.ShowMessage(
+                                    confirmMsg, "Are you sure?", 
+                                    System.Windows.MessageBoxButton.YesNo) == System.Windows.MessageBoxResult.Yes)
+                                {
+                                    this.Client.DeleteWorkItem(CurrentWorkItem.Id);
+                                    this.WorkItems.Remove(CurrentWorkItem);
+                                    CurrentWorkItem = null;
+                                    SetCurrentWorkItem();
+                                    SetObservableWorkItems();
+                                    OnPropertyChanged("WorkItems", "ObservableWorkItems");
+                                }
                             }
                             catch (Exception ex)
                             {

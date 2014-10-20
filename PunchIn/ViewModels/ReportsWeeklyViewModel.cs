@@ -41,6 +41,19 @@ namespace PunchIn.ViewModels
                 }
             }
         }
+        private double weeklyHoursCompleted;
+        public double WeeklyHoursCompleted
+        {
+            get { return this.weeklyHoursCompleted; }
+            set
+            {
+                if (this.weeklyHoursCompleted != value)
+                {
+                    this.weeklyHoursCompleted = value;
+                    OnPropertyChanged("WeeklyHoursCompleted");
+                }
+            }
+        }
         #endregion
 
         #region Filter Propterties
@@ -115,6 +128,9 @@ namespace PunchIn.ViewModels
                 List<ReportExportItem> list = this.reportList.Where(r => workTypes.Contains(r.WorkType) &&
                     r.WeekOfYear == this.weekOfYearFilter).ToList();
                 this.reportItems = new ObservableCollection<ReportExportItem>(list);
+
+                WeeklyHoursCompleted = list.Sum(w => w.HoursCompleted);
+
                 return this.reportItems;
             }
             set
