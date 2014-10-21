@@ -313,10 +313,13 @@ namespace PunchIn.ViewModels
                                     confirmMsg, "Are you sure?", 
                                     System.Windows.MessageBoxButton.YesNo) == System.Windows.MessageBoxResult.Yes)
                                 {
-                                    this.Client.DeleteWorkItem(CurrentWorkItem.Id);
-                                    this.WorkItems.Remove(CurrentWorkItem);
+                                    WorkItem wi = SelectedWorkItemViewModel.WorkItem;
+                                    this.Client.DeleteWorkItem(wi.Id);
+                                    this.WorkItems.Remove(wi);
+                                    NotifyIconViewModel.Current.ViewModel.WorkItems.Remove(wi);
                                     NotifyIconViewModel.Current.RefreshWorkItemMenus();
-                                    CurrentWorkItem = null;
+                                    if (CurrentWorkItem != null && CurrentWorkItem.Id == wi.Id)
+                                        CurrentWorkItem = null;
                                     SetCurrentWorkItem();
                                     SetObservableWorkItems();
                                     OnPropertyChanged("WorkItems", "ObservableWorkItems");
