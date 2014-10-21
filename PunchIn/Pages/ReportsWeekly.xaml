@@ -92,6 +92,8 @@
                 <TextBlock Text="My Weekly Times" Style="{StaticResource Heading2}" VerticalAlignment="Center" />
             </StackPanel>
             <StackPanel Orientation="Horizontal" Background="{DynamicResource ButtonBackgroundHover}">
+                <wui:ModernButton Margin="0,0,4,0" Content="Refresh" IconData="{StaticResource RefreshGeometry}"
+                                  Command="{Binding Path=RefreshReportItemsCommand, UpdateSourceTrigger=PropertyChanged}" />
                 <wui:ModernButton Margin="0,0,4,0" Content="Export Selected Week to Excel" IconData="{StaticResource OfficeExcelGeometry}"
                                   Command="{Binding Path=ExportToExcelCommand, UpdateSourceTrigger=PropertyChanged}"
                                   CommandParameter="true"/>

@@ -192,7 +192,6 @@ namespace PunchIn.ViewModels
             {
                 foreach (var item in ObservableWorkItems.Where(w => w.IsDirty))
                 {
-                    System.Diagnostics.Debug.WriteLine(string.Format("Dirty Item:TfsId:{0}:{1}", item.TfsId, item.Id));
                     int dirtyIdx = DirtyWorkItems.FindIndex(w => w.Id == item.Id);
                     if (dirtyIdx > -1)
                         DirtyWorkItems[dirtyIdx] = item.WorkItem;
@@ -200,6 +199,7 @@ namespace PunchIn.ViewModels
                         DirtyWorkItems.Add(item.WorkItem);
                 }
                 UpdateWorkItemCollection(workItem, false);
+                OnPropertyChanged("WorkItemSummaryHoursCompleted");
             }
         }
         #endregion
@@ -240,7 +240,11 @@ namespace PunchIn.ViewModels
             {
                 ICanDirty item = (sender as ICanDirty);
                 if (item.IsDirty)
-                    IsDirty = item.IsDirty;
+                {
+                    if (!this.selectedWorkItemViewModel.IsDirty)
+                        this.selectedWorkItemViewModel.ForceIsDirty(true, false); // no notify
+                    IsDirty = true;
+                }
                 UpdateSelectedWorkItem(this.selectedWorkItemViewModel);
             }
         }

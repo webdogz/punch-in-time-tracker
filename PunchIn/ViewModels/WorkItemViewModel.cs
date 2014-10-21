@@ -125,8 +125,7 @@ namespace PunchIn.ViewModels
             get { return this.isDirty; }
             set
             {
-                this.isDirty = value;
-                OnPropertyChanged("IsDirty");
+                ForceIsDirty(value, true);
             }
         }
         private bool isDirty = false;
@@ -154,6 +153,12 @@ namespace PunchIn.ViewModels
         #endregion
 
         #region Methods
+        public void ForceIsDirty(bool dirty, bool notify)
+        {
+            this.isDirty = dirty;
+            if (notify)
+                OnPropertyChanged("IsDirty");
+        }
         /// <summary>
         /// New up a WorkItemViewModel based on the workItem
         /// </summary>

@@ -241,17 +241,17 @@ namespace PunchIn.ViewModels
         #endregion
 
         #region Commands
-        private ICommand refreshReportItems;
+        private ICommand refreshReportItemsCommand;
         /// <summary>
         /// Refresh the view
         /// </summary>
-        public ICommand RefreshReportItems
+        public ICommand RefreshReportItemsCommand
         {
             get
             {
-                if (this.refreshReportItems == null)
+                if (this.refreshReportItemsCommand == null)
                 {
-                    this.refreshReportItems = new DelegateCommand
+                    this.refreshReportItemsCommand = new DelegateCommand
                     {
                         CanExecuteFunc = (o) => true,
                         CommandAction = (o) =>
@@ -260,7 +260,7 @@ namespace PunchIn.ViewModels
                             }
                     };
                 }
-                return this.refreshReportItems;
+                return this.refreshReportItemsCommand;
             }
         }
         private ICommand exportToExcelCommand;
