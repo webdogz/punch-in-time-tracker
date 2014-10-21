@@ -10,7 +10,7 @@ namespace PunchIn.ViewModels
 {
     public class TrackerViewModel : TimeTrackViewModel, ICleanUp
     {
-        public TrackerViewModel() : base()
+        public TrackerViewModel() : base(NotifyIconViewModel.Current.ViewModel.WorkItems)
         {
             this.dirtyWorkItems = new List<WorkItem>();
             NotifyIconViewModel.Current.PropertyChanged += NotifyIcon_PropertyChanged;
@@ -174,6 +174,16 @@ namespace PunchIn.ViewModels
                 SetObservableWorkItems();
         }
 
+        private void RemoveWorkItem(WorkItemViewModel viewModel)
+        {
+            int index = WorkItems.FindIndex(w => w.Id == viewModel.Id);
+            if (index > -1)
+            {
+                WorkItems.RemoveAt(index);
+                OnPropertyChanged("WorkItems");
+            }
+        }
+
         private void SetObservableWorkItems()
         {
             var selected = this.selectedWorkItemViewModel;
@@ -313,13 +323,12 @@ namespace PunchIn.ViewModels
                                     confirmMsg, "Are you sure?", 
                                     System.Windows.MessageBoxButton.YesNo) == System.Windows.MessageBoxResult.Yes)
                                 {
-                                    WorkItem wi = SelectedWorkItemViewModel.WorkItem;
-                                    this.Client.DeleteWorkItem(wi.Id);
-                                    this.WorkItems.Remove(wi);
-                                    NotifyIconViewModel.Current.ViewModel.WorkItems.Remove(wi);
-                                    NotifyIconViewModel.Current.RefreshWorkItemMenus();
-                                    if (CurrentWorkItem != null && CurrentWorkItem.Id == wi.Id)
+                                    this.Client.DeleteWorkItem(SelectedWorkItemViewModel.Id);
+                                    this.RemoveWorkItem(SelectedWorkItemViewModel);
+                                    if (CurrentWorkItem != null && CurrentWorkItem.Id == SelectedWorkItemViewModel.Id)
                                         CurrentWorkItem = null;
+                                    SelectedWorkItemViewModel = null;
+                                    NotifyIconViewModel.Current.RefreshWorkItemMenus();
                                     SetCurrentWorkItem();
                                     SetObservableWorkItems();
                                     OnPropertyChanged("WorkItems", "ObservableWorkItems");

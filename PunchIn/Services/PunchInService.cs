@@ -81,17 +81,6 @@ namespace PunchIn.Services
             }
         }
         #region Reporting
-        public IEnumerable<ReportByWeekGroup> GetItemsGroupedByWeek()
-        {
-            using (var db = OdbFactory.Open(this.DbName))
-                return GetItemsGroupedByWeek(db).ToList();
-        }
-        public IEnumerable<ReportByWeekGroup> GetItemsGroupedByWeek(int weekOfYear)
-        {
-            var predicate = new Predicate<ReportByWeekGroup>(g => g.WeekOfYear == weekOfYear);
-            using (var db = OdbFactory.Open(this.DbName))
-                return GetItemsGroupedByWeek(db).Where(g => predicate(g));
-        }
         private IOrderedQueryable<ReportByWeekGroup> GetItemsGroupedByWeek(NDatabase.Api.IOdb db)
         {
             var reportItems = db.AsQueryable<WorkItem>().SelectMany(item => item.Entries.Select(e => new ReportByWeekItem
@@ -123,6 +112,59 @@ namespace PunchIn.Services
                     ReportItems = g.Select(e => e).ToList()
                 }).OrderBy(r => r.WeekOfYear).ThenBy(r => r.Title);
             return reportItems;
+        }
+
+        public List<ReportExportItem> GetSummaryReportExportItems()
+        {
+            return GetSummaryReportExportItems(new Predicate<ReportByWeekGroup>(g => true));
+        }
+        public List<ReportExportItem> GetSummaryReportExportItems(int weekOfYear)
+        {
+            var predicate = new Predicate<ReportByWeekGroup>(g => g.WeekOfYear == weekOfYear);
+            return GetSummaryReportExportItems(predicate);
+        }
+        
+        public List<ReportExportItem> GetSummaryReportExportItems(Predicate<ReportByWeekGroup> predicate)
+        {
+            List<ReportExportItem> exportItems = new List<ReportExportItem>();
+            using (var db = OdbFactory.Open(this.DbName))
+            {
+                foreach (var item in GetItemsGroupedByWeek(db).Where(g => predicate(g)))
+                {
+                    ReportByWeekItem wit = item.ReportItems.FirstOrDefault();
+                    double effort = item.Effort * 8;
+
+                    TimeSpan completed = new TimeSpan();
+                    item.ReportItems.ForEach(new Action<ReportByWeekItem>(e =>
+                    {
+                        DateTime end = e.EndDate ?? e.StartDate;
+                        completed = completed.Add(end - e.StartDate);
+                    }));
+
+                    double hoursRemain = effort - completed.TotalHours;
+
+                    exportItems.Add(new ReportExportItem
+                    {
+                        ItemGuid = wit.ItemGuid,
+                        TfsId = wit.TfsId,
+                        ServiceCall = wit.ServiceCall,
+                        Change = wit.Change,
+                        Title = item.Title,
+                        Effort = item.Effort,
+                        HoursCompleted = completed.TotalHours,
+                        HoursRemaining = (hoursRemain > 0 ? hoursRemain : 0),
+                        StartDate = wit.StartDate,
+                        EndDate = wit.EndDate,
+                        State = wit.State,
+                        Status = wit.Status,
+                        WorkType = wit.WorkType,
+                        WeekOfYear = item.WeekOfYear,
+                        WeekStarting = item.WeekOfYear.GetWeekOfYearDate()
+                    });
+
+                }
+            }
+            return exportItems;
         }
         /// <summary>
         /// Gets a list of all <see cref="ReportExportItem"/>

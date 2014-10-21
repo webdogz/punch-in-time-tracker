@@ -19,6 +19,11 @@ namespace PunchIn.ViewModels
             client = new PunchInService();
             this.Refresh();
         }
+        public TimeTrackViewModel(List<WorkItem> items)
+        {
+            client = new PunchInService();
+            WorkItems = items;
+        }
         private void Refresh()
         {
             Task.Run(async () =>

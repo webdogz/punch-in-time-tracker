@@ -194,49 +194,11 @@ namespace PunchIn.ViewModels
         }
         private List<ReportExportItem> GetSummaryReportExportItems(bool allItems)
         {
-            PunchInService service = new PunchInService();
-            List<ReportExportItem> exportItems = new List<ReportExportItem>();
-            IEnumerable<ReportByWeekGroup> items;
+            PunchInService dbService = new PunchInService();
             if (allItems)
-                items = service.GetItemsGroupedByWeek();
+                return dbService.GetSummaryReportExportItems();
             else
-                items = service.GetItemsGroupedByWeek(WeekOfYearFilter);
-
-            foreach (var item in items)
-            {
-                ReportByWeekItem wit = item.ReportItems.FirstOrDefault();
-                double effort = item.Effort * 8;
-
-                TimeSpan completed = new TimeSpan();
-                item.ReportItems.ForEach(new Action<ReportByWeekItem>(e =>
-                {
-                    DateTime end = e.EndDate ?? e.StartDate;
-                    completed = completed.Add(end - e.StartDate);
-                }));
-
-                double hoursRemain = effort - completed.TotalHours;
-
-                exportItems.Add(new ReportExportItem
-                {
-                    ItemGuid = wit.ItemGuid,
-                    TfsId = wit.TfsId,
-                    ServiceCall = wit.ServiceCall,
-                    Change = wit.Change,
-                    Title = item.Title,
-                    Effort = item.Effort,
-                    HoursCompleted = completed.TotalHours,
-                    HoursRemaining = (hoursRemain > 0 ? hoursRemain : 0),
-                    StartDate = wit.StartDate,
-                    EndDate = wit.EndDate,
-                    State = wit.State,
-                    Status = wit.Status,
-                    WorkType = wit.WorkType,
-                    WeekOfYear = item.WeekOfYear,
-                    WeekStarting = item.WeekOfYear.GetWeekOfYearDate()
-                });
-
-            }
-            return exportItems;
+                return dbService.GetSummaryReportExportItems(WeekOfYearFilter);
         }
         #endregion
 
