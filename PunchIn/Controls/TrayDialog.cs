@@ -25,6 +25,15 @@ namespace PunchIn.Controls
         public TrayDialog() : base()
         {
             this.Loaded += ModernDialog_Loaded;
+            this.SizeChanged += TrayDialog_SizeChanged;
+        }
+
+        void TrayDialog_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (IsTrayWindow)
+            {
+                SetTrayPosition();
+            }
         }
 
         void ModernDialog_Loaded(object sender, RoutedEventArgs e)

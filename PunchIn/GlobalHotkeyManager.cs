@@ -34,6 +34,9 @@ namespace PunchIn
             RegisterHotKey(Handle, hotkeyTimeEntryId,
                 HotKeyConstants.CTRL + HotKeyConstants.ALT,
                 (int)Keys.P);
+
+            string msg = "Registering HotKeys. Ctrl+Alt+P to Punch In/Out. Ctrl+Alt+N for new Work Item.";
+            this.notifyIcon.ShowBalloonTip("Punch Time Tracker", msg, BalloonIcon.Info);
         }
 
         private void DoWorkItemHotkey()
