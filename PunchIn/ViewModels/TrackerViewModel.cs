@@ -114,14 +114,48 @@ namespace PunchIn.ViewModels
         {
             get 
             {
-                if (this.selectedWorkItemViewModel == null) return 0;
+                if (this.selectedWorkItemViewModel == null)
+                {
+                    WorkItemSummaryHoursRemaining = 0;
+                    WorkItemSummaryEffort = 0;
+                    return 0;
+                }
                 TimeSpan span = new TimeSpan();
                 this.selectedWorkItemViewModel.Entries.ForEach(new Action<TimeEntryViewModel>(e =>
                 {
                     DateTime end = e.EndDate ?? e.StartDate;
                     span = span.Add(end - e.StartDate);
                 }));
+                WorkItemSummaryEffort = this.selectedWorkItemViewModel.Effort * 8;
+                WorkItemSummaryHoursRemaining = WorkItemSummaryEffort - span.TotalHours;
                 return span.TotalHours;
+            }
+        }
+        
+        private double workItemSummaryEffort;
+        public double WorkItemSummaryEffort
+        {
+            get { return this.workItemSummaryEffort; }
+            set
+            {
+                if (this.workItemSummaryEffort != value)
+                {
+                    this.workItemSummaryEffort = value;
+                    OnPropertyChanged("WorkItemSummaryEffort");
+                }
+            }
+        }
+        private double workItemSummaryHoursRemaining;
+        public double WorkItemSummaryHoursRemaining
+        {
+            get { return this.workItemSummaryHoursRemaining; }
+            set
+            {
+                if (this.workItemSummaryHoursRemaining != value)
+                {
+                    this.workItemSummaryHoursRemaining = value;
+                    OnPropertyChanged("WorkItemSummaryHoursRemaining");
+                }
             }
         }
 
@@ -246,6 +280,10 @@ namespace PunchIn.ViewModels
         /// <param name="e"></param>
         private void SelectedWorkItemViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
+            if (e.PropertyName == "StartDate" || e.PropertyName == "EndDate" || e.PropertyName == "Effort")
+            {
+                OnPropertyChanged("WorkItemSummaryHoursCompleted");
+            }
             if (e.PropertyName == "IsDirty")
             {
                 ICanDirty item = (sender as ICanDirty);
