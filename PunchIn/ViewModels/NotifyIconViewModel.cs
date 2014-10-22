@@ -349,6 +349,22 @@ namespace PunchIn.ViewModels
         }
         #endregion
 
+        #region Properties
+        private bool isBusy;
+        public bool IsBusy
+        {
+            get { return this.isBusy; }
+            set
+            {
+                if (this.isBusy != value)
+                {
+                    this.isBusy = value;
+                    OnPropertyChanged("IsBusy");
+                }
+            }
+        }
+        #endregion
+
         #region Commands
         private ICommand punchInCommand;
         /// <summary>
@@ -361,39 +377,47 @@ namespace PunchIn.ViewModels
                 if (this.punchInCommand == null)
                     this.punchInCommand = new DelegateCommand
                     {
-                        CanExecuteFunc = (o) => this.ViewModel.CurrentWorkItem != null,
+                        CanExecuteFunc = (o) => this.ViewModel.CurrentWorkItem != null && !IsBusy,
                         CommandAction = (o) =>
                             {
-                                if (CurrentTimeEntry == null)
+                                IsBusy = true;
+                                try
                                 {
-                                    var dialog = new TrayDialog
+                                    if (CurrentTimeEntry == null)
                                     {
-                                        Title = "New Time Entry",
-                                        Content = new TimeEntryForm(),
-                                        IsTrayWindow = (o == null),
-                                        DataContext = new CurrentEntryViewModel(ViewModel)
-                                    };
-                                    dialog.Buttons = new Button[] { dialog.OkButton, dialog.CancelButton };
-                                    dialog.ShowDialog();
+                                        var dialog = new TrayDialog
+                                        {
+                                            Title = "New Time Entry",
+                                            Content = new TimeEntryForm(),
+                                            IsTrayWindow = (o == null),
+                                            DataContext = new CurrentEntryViewModel(ViewModel)
+                                        };
+                                        dialog.Buttons = new Button[] { dialog.OkButton, dialog.CancelButton };
+                                        dialog.ShowDialog();
 
-                                    if (dialog.DialogResult.HasValue &&
-                                        dialog.DialogResult.Value)
-                                    {
-                                        var tmpCurrentTimeEntry = (dialog.DataContext as CurrentEntryViewModel);
-                                        tmpCurrentTimeEntry.PunchIn();
-                                        currentTimeEntry = tmpCurrentTimeEntry;
-                                        IsTimerActive = true;
-                                        OnPropertyChanged("PunchIn");
+                                        if (dialog.DialogResult.HasValue &&
+                                            dialog.DialogResult.Value)
+                                        {
+                                            var tmpCurrentTimeEntry = (dialog.DataContext as CurrentEntryViewModel);
+                                            tmpCurrentTimeEntry.PunchIn();
+                                            currentTimeEntry = tmpCurrentTimeEntry;
+                                            IsTimerActive = true;
+                                            OnPropertyChanged("PunchIn");
+                                        }
+                                        dialog.DataContext = null;
+                                        dialog = null;
                                     }
-                                    dialog.DataContext = null;
-                                    dialog = null;
+                                    else
+                                    {
+                                        CurrentTimeEntry.PunchOut();
+                                        IsTimerActive = false;
+                                        OnPropertyChanged("PunchOut");
+                                        CurrentTimeEntry = null;
+                                    }
                                 }
-                                else
+                                finally
                                 {
-                                    CurrentTimeEntry.PunchOut();
-                                    IsTimerActive = false;
-                                    OnPropertyChanged("PunchOut");
-                                    CurrentTimeEntry = null;
+                                    IsBusy = false;
                                 }
                             }
                     };
@@ -411,30 +435,38 @@ namespace PunchIn.ViewModels
                 if (this.newWorkItemCommand == null)
                     this.newWorkItemCommand = new DelegateCommand
                     {
-                        CanExecuteFunc = (o) => ViewModel != null,
+                        CanExecuteFunc = (o) => ViewModel != null && !IsBusy,
                         CommandAction = (o) =>
                         {
-                            var dialog = new TrayDialog
+                            IsBusy = true;
+                            try
                             {
-                                Title = "New Work Item",
-                                Content = new WorkItemForm(),
-                                IsTrayWindow = (o == null),
-                                SizeToContent = System.Windows.SizeToContent.Height,
-                                DataContext = new WorkItemViewModel()
-                            };
-                            dialog.Buttons = new Button[] { dialog.OkButton, dialog.CancelButton };
-                            dialog.ShowDialog();
+                                var dialog = new TrayDialog
+                                {
+                                    Title = "New Work Item",
+                                    Content = new WorkItemForm(),
+                                    IsTrayWindow = (o == null),
+                                    SizeToContent = System.Windows.SizeToContent.Height,
+                                    DataContext = new WorkItemViewModel()
+                                };
+                                dialog.Buttons = new Button[] { dialog.OkButton, dialog.CancelButton };
+                                dialog.ShowDialog();
 
-                            if (dialog.DialogResult.HasValue &&
-                                dialog.DialogResult.Value)
+                                if (dialog.DialogResult.HasValue &&
+                                    dialog.DialogResult.Value)
+                                {
+                                    if (this.CurrentTimeEntry != null)
+                                        this.PunchInCommand.Execute(null);
+                                    WorkItem model = ((WorkItemViewModel)dialog.DataContext).WorkItem;
+                                    ViewModel.AddWorkItemCommand.Execute(model);
+                                    ViewModel.SaveWorkItemCommand.Execute(null);
+                                    WorkItemMenus.Children.Add(NewPunchMenuItem(model));
+                                    OnPropertyChanged("CurrentWorkItem", "NewWorkItem");
+                                }
+                            }
+                            finally
                             {
-                                if (this.CurrentTimeEntry != null)
-                                    this.PunchInCommand.Execute(null);
-                                WorkItem model = ((WorkItemViewModel)dialog.DataContext).WorkItem;
-                                ViewModel.AddWorkItemCommand.Execute(model);
-                                ViewModel.SaveWorkItemCommand.Execute(null);
-                                WorkItemMenus.Children.Add(NewPunchMenuItem(model));
-                                OnPropertyChanged("CurrentWorkItem", "NewWorkItem");
+                                IsBusy = false;
                             }
                         }
                     };

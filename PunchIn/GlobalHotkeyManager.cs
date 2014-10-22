@@ -49,7 +49,7 @@ namespace PunchIn
         {
             if (NotifyIconViewModel.Current.PunchInCommand.CanExecute(null))
             {
-                string msg = "Item was punched out";
+                string msg = string.Empty;
                 if (NotifyIconViewModel.Current.CurrentTimeEntry != null)
                 {
                     TimeSpan span = DateTime.Now - NotifyIconViewModel.Current.CurrentTimeEntry.CurrentEntry.StartDate;
@@ -58,7 +58,7 @@ namespace PunchIn
                         span.TotalHours);
                 }
                 NotifyIconViewModel.Current.PunchInCommand.Execute(null);
-                if (NotifyIconViewModel.Current.CurrentTimeEntry == null)
+                if (NotifyIconViewModel.Current.CurrentTimeEntry == null && !string.IsNullOrWhiteSpace(msg))
                     this.notifyIcon.ShowBalloonTip("Punched Out", msg, BalloonIcon.Info);
             }
         }

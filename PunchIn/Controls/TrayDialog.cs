@@ -40,6 +40,7 @@ namespace PunchIn.Controls
         {
             if (IsTrayWindow)
             {
+                Topmost = true;
                 WindowStartupLocation = WindowStartupLocation.Manual;
                 SetTrayPosition();
             }
