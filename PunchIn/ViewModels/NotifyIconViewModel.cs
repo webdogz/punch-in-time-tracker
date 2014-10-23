@@ -22,24 +22,13 @@ namespace PunchIn.ViewModels
         private NotifyIconViewModel()
         {
             this.viewModel = new TimeTrackViewModel();
-            this.viewModel.PropertyChanged += (s, e) =>
-            {
-                if (e.PropertyName == "WorkItems")
-                    BuildWorkItemMenusAsync();
-                if (e.PropertyName == "CurrentEntry" && CurrentTimeEntry == null)
-                {
-                    if (this.viewModel.CurrentEntry != null)
-                    {
-                        CurrentTimeEntry = new CurrentEntryViewModel(this.ViewModel);
-                        IsTimerActive = true;
-                    }
-                }
-            };
+            this.viewModel.PropertyChanged += TimeTrackViewModel_PropertyChanged;
             BuildShortcutMenusAsync();
             SyncThemeSettings();
             IsTimerActive = false;
             timer = GetUITimer(TimeSpan.FromSeconds(1), OnTimerTick);
         }
+
         private static NotifyIconViewModel current = new NotifyIconViewModel();
         /// <summary>
         /// Gets the current <see cref="NotifyIconViewModel"/> instance
@@ -365,6 +354,32 @@ namespace PunchIn.ViewModels
         }
         #endregion
 
+        #region Event Handlers
+        private void TimeTrackViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            switch(e.PropertyName)
+            {
+                case "WorkItems":
+                    BuildWorkItemMenusAsync();
+                    break;
+                case "CurrentEntry":
+                    if (CurrentTimeEntry == null)
+                    {
+                        if (this.viewModel.CurrentEntry != null)
+                        {
+                            CurrentTimeEntry = new CurrentEntryViewModel(this.ViewModel);
+                            IsTimerActive = true;
+                        }
+                    }
+                    break;
+                // bubble notifications - add more when needed
+                case "CurrentWorkItem":
+                    OnPropertyChanged(e.PropertyName);
+                    break;
+            }
+        }
+        #endregion
+
         #region Commands
         private ICommand punchInCommand;
         /// <summary>
@@ -580,6 +595,12 @@ namespace PunchIn.ViewModels
         public void CleanUp()
         {
             // do clean up here
+            try
+            {
+                if (this.viewModel != null)
+                    this.viewModel.PropertyChanged -= TimeTrackViewModel_PropertyChanged;
+            }
+            catch { /* gulp */ }
             try
             {
                 if (timer.IsEnabled)
