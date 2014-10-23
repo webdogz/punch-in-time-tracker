@@ -75,9 +75,9 @@ namespace PunchIn.ViewModels
                 if (this.currentWorkItem != value)
                 {
                     // set the global selection as well
-                    // and let CurrentWorkItem do notifications
                     this.parent.CurrentWorkItem =
                     CurrentWorkItem = value;
+                    OnPropertyChanged("SelectedWorkItem");
                 }
             }
         }
