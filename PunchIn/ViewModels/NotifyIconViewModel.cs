@@ -306,9 +306,11 @@ namespace PunchIn.ViewModels
         {
             get 
             {
-                if (CurrentTimeEntry != null && CurrentTimeEntry.CurrentWorkItem != null)
+                if (CurrentTimeEntry != null && CurrentTimeEntry.CurrentWorkItem != null &&
+                    (this.currentWorkItem == null || (this.currentWorkItem != null && !CurrentTimeEntry.CurrentWorkItem.Id.Equals(this.currentWorkItem.Id))))
                     this.currentWorkItem = WorkItemViewModel.ConvertFrom(CurrentTimeEntry.CurrentWorkItem);
-                else
+                else if (this.viewModel != null && this.viewModel.CurrentWorkItem != null && 
+                    (this.currentWorkItem == null || (this.currentWorkItem != null && !this.viewModel.CurrentWorkItem.Id.Equals(this.currentWorkItem.Id))))
                     this.currentWorkItem = WorkItemViewModel.ConvertFrom(viewModel.CurrentWorkItem);
                 return this.currentWorkItem;
             }
@@ -475,7 +477,7 @@ namespace PunchIn.ViewModels
                                     WorkItem model = ((WorkItemViewModel)dialog.DataContext).WorkItem;
                                     ViewModel.AddWorkItemCommand.Execute(model);
                                     ViewModel.SaveWorkItemCommand.Execute(null);
-                                    WorkItemMenus.Children.Add(NewPunchMenuItem(model));
+                                    RefreshWorkItemMenus();
                                     OnPropertyChanged("CurrentWorkItem", "NewWorkItem");
                                 }
                             }

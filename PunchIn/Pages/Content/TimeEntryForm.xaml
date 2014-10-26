@@ -21,7 +21,7 @@
         <ComboBox Margin="5" Grid.ColumnSpan="2"
                   ItemsSource="{Binding Path=WorkItems}"
                   DisplayMemberPath="Title"
-                  SelectedItem="{Binding Path=SelectedWorkItem, Mode=TwoWay}">
+                  SelectedItem="{Binding Path=SelectedWorkItem, UpdateSourceTrigger=PropertyChanged}">
         </ComboBox>
 
         <wui:WatermarkTextBox x:Name="titleTextBox" Text="{Binding Path=CurrentEntry.Description, Mode=TwoWay}" 
