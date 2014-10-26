@@ -35,7 +35,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <Image Source="/Resources/stopwatch.ico" Width="48" Height="48" Grid.RowSpan="2" />
+            <Image Source="/Resources/punch.ico" Width="48" Height="48" Grid.RowSpan="2" />
             <TextBlock Grid.Column="1"
                        Text="{Binding Path=ViewModel.CurrentWorkItem.Title, TargetNullValue='Error: Target is null', FallbackValue='! Select a work item'}"
                        ToolTip="{Binding Path=CurrentTimeEntry.CurrentWorkItem.Title}"

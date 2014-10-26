@@ -143,6 +143,10 @@ namespace PunchIn.ViewModels
             if (o != null) return o.Id.Equals(this.Id);
             return base.Equals(obj);
         }
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
         public override string ToString()
         {
             string df = "d-MMM-yyyy HH:mm";

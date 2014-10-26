@@ -15,7 +15,7 @@ namespace PunchIn
         {
             get
             {
-                return string.Format("{0}_punchin.ndb", Environment.UserName);
+                return string.Format("{0}_punchin.punch", Environment.UserName);
             }
         }
         public static string DatabaseFolder
@@ -29,8 +29,18 @@ namespace PunchIn
         {
             get
             {
+                if (!string.IsNullOrWhiteSpace(Properties.Settings.Default.CurrentUserDatabaseLocation) && 
+                    File.Exists(Properties.Settings.Default.CurrentUserDatabaseLocation))
+                    return Properties.Settings.Default.CurrentUserDatabaseLocation;
                 return Path.Combine(DatabaseFolder, DatabaseName);
             }
+        }
+        #endregion
+
+        #region > Static Private Methods
+        private static string GetDefaultUserDatabasePath()
+        {
+            return System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), ApplicationName);
         }
         #endregion
 
@@ -41,7 +51,7 @@ namespace PunchIn
             string userSettingsPath = Properties.Settings.Default.DefaultUserDatabaseFolderLocation;
             if (string.IsNullOrWhiteSpace(userSettingsPath))
             {
-                userSettingsPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), ApplicationName);
+                userSettingsPath = GetDefaultUserDatabasePath();
             }
             if (!System.IO.Directory.Exists(userSettingsPath))
                 System.IO.Directory.CreateDirectory(userSettingsPath);
@@ -71,5 +81,11 @@ namespace PunchIn
             Properties.Settings.Default.Save();
         }
         #endregion // Static Methods
+
+        internal static void SetCurrentDatabaseLocation(string path)
+        {
+            Properties.Settings.Default.CurrentUserDatabaseLocation = path;
+            Properties.Settings.Default.Save();
+        }
     }
 }

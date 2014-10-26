@@ -200,6 +200,22 @@ namespace PunchIn.ViewModels
             else
                 return dbService.GetSummaryReportExportItems(WeekOfYearFilter);
         }
+        private string GetSaveAsLocation()
+        {
+            string exportFilename = string.Format("{0}-{1}-{2}.csv",
+                                    "times",
+                                    System.Environment.UserName,
+                                    System.DateTime.Now.ToString("yyyyMMddHHmm"));
+            Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
+            dlg.FileName = exportFilename;
+            dlg.InitialDirectory = GlobalConfig.DatabaseFolder;
+            dlg.DefaultExt = ".csv";
+            dlg.Filter = "CSV (Comma Delimited) (*.csv)|*.csv";
+            Nullable<bool> result = dlg.ShowDialog();
+            if (result == true)
+                return dlg.FileName;
+            else return string.Empty;
+        }
         #endregion
 
         #region Commands
@@ -242,25 +258,24 @@ namespace PunchIn.ViewModels
                             IsBusy = true;
                             try
                             {
-                                string exportFilename = string.Format("{0}-{1}-{2}.csv",
-                                    "times",
-                                    System.Environment.UserName,
-                                    System.DateTime.Now.ToString("yyyyMMddHHmm"));
-                                string exportPath = System.IO.Path.Combine(Properties.Settings.Default.DefaultUserDatabaseFolderLocation, exportFilename);
-                                CsvExportService csv = new CsvExportService();
-                                List<ReportExportItem> exportItems;
-                                string[] columns;
-                                if (IsSummaryReportSelected)
+                                string exportPath = GetSaveAsLocation();
+                                if (!string.IsNullOrWhiteSpace(exportPath))
                                 {
-                                    columns = new string[] { "TfsId", "ServiceCall", "Change", "Title", "HoursCompleted", "HoursRemaining", "State", "WorkType", "WeekOfYear", "WeekStarting" };
-                                    exportItems = GetSummaryReportExportItems(o == null);
+                                    CsvExportService csv = new CsvExportService();
+                                    List<ReportExportItem> exportItems;
+                                    string[] columns;
+                                    if (IsSummaryReportSelected)
+                                    {
+                                        columns = new string[] { "TfsId", "ServiceCall", "Change", "Title", "HoursCompleted", "HoursRemaining", "State", "WorkType", "WeekOfYear", "WeekStarting" };
+                                        exportItems = GetSummaryReportExportItems(o == null);
+                                    }
+                                    else
+                                    {
+                                        columns = new string[] { "TfsId", "ServiceCall", "Change", "Title", "HoursCompleted", "HoursRemaining", "Description", "State", "Status", "WorkType", "WeekOfYear", "WeekStarting" };
+                                        exportItems = GetReportExportItems(o == null);
+                                    }
+                                    csv.ExportCollection(exportItems, columns, true, exportPath);
                                 }
-                                else
-                                {
-                                    columns = new string[] { "TfsId", "ServiceCall", "Change", "Title", "HoursCompleted", "HoursRemaining", "Description", "State", "Status", "WorkType", "WeekOfYear", "WeekStarting" };
-                                    exportItems = GetReportExportItems(o == null);
-                                }
-                                csv.ExportCollection(exportItems, columns, true, exportPath);
                             }
                             catch (Exception ex)
                             {

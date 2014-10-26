@@ -63,9 +63,9 @@ namespace PunchIn.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Icon stopwatch {
+        internal static System.Drawing.Icon punch {
             get {
-                object obj = ResourceManager.GetObject("stopwatch", resourceCulture);
+                object obj = ResourceManager.GetObject("punch", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }
@@ -73,9 +73,9 @@ namespace PunchIn.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Icon tasks {
+        internal static System.Drawing.Icon punchdb {
             get {
-                object obj = ResourceManager.GetObject("tasks", resourceCulture);
+                object obj = ResourceManager.GetObject("punchdb", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }

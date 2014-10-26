@@ -22,6 +22,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{F440581E-5
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Design", "Design", "{20EC1747-AAC0-4EE4-AE31-14C364F15068}"
 	ProjectSection(SolutionItems) = preProject
+		Design\application.icons.design = Design\application.icons.design
 		Design\menu.icons.design = Design\menu.icons.design
 		Design\task.icons.design = Design\task.icons.design
 		Design\time.icons.design = Design\time.icons.design
@@ -40,10 +41,12 @@ Global
 		{75A4431D-D36C-42F1-AC60-E63545D651AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{75A4431D-D36C-42F1-AC60-E63545D651AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{75A4431D-D36C-42F1-AC60-E63545D651AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75A4431D-D36C-42F1-AC60-E63545D651AA}.Release|Any CPU.Deploy.0 = Release|Any CPU
 		{F4D26B03-4BDD-48B7-9B50-1AB5EE4FC3CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F4D26B03-4BDD-48B7-9B50-1AB5EE4FC3CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F4D26B03-4BDD-48B7-9B50-1AB5EE4FC3CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F4D26B03-4BDD-48B7-9B50-1AB5EE4FC3CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F4D26B03-4BDD-48B7-9B50-1AB5EE4FC3CE}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

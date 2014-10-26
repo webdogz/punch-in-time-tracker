@@ -29,13 +29,17 @@ namespace PunchIn.ViewModels
             timer = GetUITimer(TimeSpan.FromSeconds(1), OnTimerTick);
         }
 
-        private static NotifyIconViewModel current = new NotifyIconViewModel();
+        private static NotifyIconViewModel current;
         /// <summary>
         /// Gets the current <see cref="NotifyIconViewModel"/> instance
         /// </summary>
         public static NotifyIconViewModel Current
         {
-            get { return current; }
+            get
+            {
+                if (current == null) current = new NotifyIconViewModel();
+                return current;
+            }
         }
         #endregion
 
@@ -286,7 +290,7 @@ namespace PunchIn.ViewModels
 
         #region Time Tracker ViewModels
         public TimeTrackViewModel ViewModel { get { return viewModel; } }
-        private readonly TimeTrackViewModel viewModel;
+        private TimeTrackViewModel viewModel;
 
         public CurrentEntryViewModel CurrentTimeEntry
         {
@@ -603,6 +607,10 @@ namespace PunchIn.ViewModels
                     this.viewModel.PropertyChanged -= TimeTrackViewModel_PropertyChanged;
             }
             catch { /* gulp */ }
+            finally
+            {
+                this.viewModel = null;
+            }
             try
             {
                 if (timer.IsEnabled)
@@ -630,6 +638,11 @@ namespace PunchIn.ViewModels
             {
                 this.shortcutWatcher = null;
             }
+            try
+            {
+                current = null;
+            }
+            catch { }
         }
         #endregion
     }

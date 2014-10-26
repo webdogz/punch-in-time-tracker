@@ -14,8 +14,6 @@ namespace PunchIn.Services
 {
     internal class PunchInService
     {
-        private readonly ConcurrentDictionary<string, string> _dbNamesCache = new ConcurrentDictionary<string, string>();
-        
         /// <summary>
         /// Retrieve all WorkItems from the database
         /// </summary>

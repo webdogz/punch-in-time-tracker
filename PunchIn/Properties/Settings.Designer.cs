@@ -162,5 +162,17 @@ namespace PunchIn.Properties {
                 this["MainWindowWindowState"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string CurrentUserDatabaseLocation {
+            get {
+                return ((string)(this["CurrentUserDatabaseLocation"]));
+            }
+            set {
+                this["CurrentUserDatabaseLocation"] = value;
+            }
+        }
     }
 }

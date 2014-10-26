@@ -106,7 +106,7 @@
 
     <!--#region the application's NotifyIcon -->
     <wui:TaskbarIcon x:Key="NotifyIcon"
-                    IconSource="/Resources/stopwatch.ico"
+                    IconSource="/Resources/punch.ico"
                     Visibility="Visible"
                     VerticalAlignment="Top"
                     ToolTipText="{Binding Path=ElapsedTime}"

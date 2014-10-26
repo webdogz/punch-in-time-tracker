@@ -12,7 +12,7 @@
         </Grid.RowDefinitions>
         <TextBlock Text="Splash User Control" Padding="5"
                    Background="{DynamicResource Accent}" Foreground="{DynamicResource WindowText}" FontWeight="Bold" />
-        <Image Source="/PunchIn;component/Resources/stopwatch.ico" Stretch="None" Grid.Row="1" />
+        <Image Source="/PunchIn;component/Resources/punchdb.ico" Stretch="None" Grid.Row="1" />
         <!--<Grid Grid.Row="1" Background="AliceBlue">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>

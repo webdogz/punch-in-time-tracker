@@ -5,7 +5,7 @@
                   IsTitleVisible="True"
                   Title="Manage My Time" Width="760" Height="480"
                   LogoData="{DynamicResource StopwatchGeometry}"
-                  Icon="/PunchIn;component/Resources/stopwatch.ico"
+                  Icon="/PunchIn;component/Resources/punch.ico"
                   ContentSource="/Pages/Tracker.xaml">
     <wui:ModernWindow.TaskbarItemInfo>
         <TaskbarItemInfo x:Name="taskBarItemInfoPunchIn" 
