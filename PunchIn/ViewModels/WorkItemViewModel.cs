@@ -189,6 +189,13 @@ namespace PunchIn.ViewModels
         }
         #endregion
 
+        #region Overrides
+        public override bool Equals(object obj)
+        {
+            WorkItemViewModel o = (obj as WorkItemViewModel);
+            if (o != null) return o.Id.Equals(this.Id);
+            return base.Equals(obj);
+        }
         public override string ToString()
         {
             string ids = "";
@@ -200,5 +207,6 @@ namespace PunchIn.ViewModels
                 ids += string.Format("CH: {0}\n", Change);
             return string.Format("{0}{1}", ids, this.Title);
         }
+        #endregion
     }
 }

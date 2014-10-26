@@ -384,6 +384,33 @@ namespace PunchIn.ViewModels
                 return this._deleteWorkItemCommand;
             }
         }
+        private ICommand _selectedCurrentWorkItemCommand;
+        public ICommand SelectedCurrentWorkItemCommand
+        {
+            get
+            {
+                if (this._selectedCurrentWorkItemCommand == null)
+                {
+                    this._selectedCurrentWorkItemCommand = new DelegateCommand
+                    {
+                        CanExecuteFunc = (o) => IsSelectedWorkItemNotSelected,
+                        CommandAction = (o) =>
+                        {
+                            WorkItem wi = this.selectedWorkItemViewModel.WorkItem;
+                            if (CurrentWorkItem != wi)
+                            {
+                                if (NotifyIconViewModel.Current.CurrentTimeEntry != null)
+                                    NotifyIconViewModel.Current.PunchInCommand.Execute(null);
+                                // set the global selected current work item
+                                NotifyIconViewModel.Current.ViewModel.CurrentWorkItem = wi;
+                                SetObservableWorkItems();
+                            }
+                        }
+                    };
+                }
+                return this._selectedCurrentWorkItemCommand;
+            }
+        }
         #endregion
 
         #region Exit/Cleanup

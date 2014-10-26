@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:wui="http://schema.webdogz/wui"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:props="clr-namespace:PunchIn.Properties"
              xmlns:controls="clr-namespace:PunchIn.Controls"
              xmlns:content="clr-namespace:PunchIn.Pages.Content"
@@ -76,6 +77,11 @@
         <ListView Grid.RowSpan="3" Grid.Row="2" SelectionMode="Single" 
                   SelectedItem="{Binding Path=SelectedWorkItemViewModel}"
                   ItemsSource="{Binding Path=ObservableWorkItems}">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseDoubleClick">
+                    <i:InvokeCommandAction Command="{Binding SelectedCurrentWorkItemCommand}" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
             <ListView.ItemContainerStyle>
                 <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource ListViewItemDefaultStyle}">
                     <Setter Property="Background" 
@@ -92,7 +98,7 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="TFSID" Width="40">
+                    <GridViewColumn Header="TFSID" Width="50">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Path=TfsId}" TextAlignment="Right"/>

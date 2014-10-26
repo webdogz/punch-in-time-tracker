@@ -38,6 +38,15 @@ namespace PunchIn.ViewModels
         {
             get { return this.parent.WorkItems; }
         }
+        public List<WorkItemViewModel> ObservableWorkItems
+        {
+            get
+            {
+                Converters.ModelListToViewModelListConverter<WorkItem, WorkItemViewModel> converter =
+                        new Converters.ModelListToViewModelListConverter<WorkItem, WorkItemViewModel>();
+                return new List<WorkItemViewModel>(converter.Convert(WorkItems, null));
+            }
+        }
 
         public TimeEntry CurrentEntry
         {
@@ -67,16 +76,23 @@ namespace PunchIn.ViewModels
         }
         private WorkItem currentWorkItem;
 
-        public WorkItem SelectedWorkItem
+        private WorkItemViewModel selectedWorkItem;
+        public WorkItemViewModel SelectedWorkItem
         {
-            get { return this.currentWorkItem; }
+            get 
+            {
+                if (this.selectedWorkItem == null && this.currentWorkItem != null)
+                    this.selectedWorkItem = WorkItemViewModel.ConvertFrom(this.currentWorkItem);
+                return this.selectedWorkItem; }
             set
             {
-                if (this.currentWorkItem != value)
+                if (!this.selectedWorkItem.Equals(value))
                 {
+                    this.selectedWorkItem = value;
+                    WorkItem wi = value.WorkItem;
                     // set the global selection as well
                     this.parent.CurrentWorkItem =
-                    CurrentWorkItem = value;
+                    CurrentWorkItem = wi;
                     OnPropertyChanged("SelectedWorkItem");
                 }
             }

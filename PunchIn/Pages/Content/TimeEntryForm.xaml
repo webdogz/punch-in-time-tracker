@@ -19,7 +19,7 @@
         </Grid.ColumnDefinitions>
 
         <ComboBox Margin="5" Grid.ColumnSpan="2"
-                  ItemsSource="{Binding Path=WorkItems}"
+                  ItemsSource="{Binding Path=ObservableWorkItems}"
                   DisplayMemberPath="Title"
                   SelectedItem="{Binding Path=SelectedWorkItem, UpdateSourceTrigger=PropertyChanged}">
         </ComboBox>

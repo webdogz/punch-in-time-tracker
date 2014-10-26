@@ -135,5 +135,20 @@ namespace PunchIn.ViewModels
             }
         }
         #endregion
+
+        #region Overrides
+        public override bool Equals(object obj)
+        {
+            TimeEntryViewModel o = (obj as TimeEntryViewModel);
+            if (o != null) return o.Id.Equals(this.Id);
+            return base.Equals(obj);
+        }
+        public override string ToString()
+        {
+            string df = "d-MMM-yyyy HH:mm";
+            string end = EndDate.HasValue ? (EndDate??DateTime.Now).ToString(df) : "Not Complete";
+            return string.Format("{0} ({1} - {2})", Description, StartDate.ToString(df), end);
+        }
+        #endregion
     }
 }
