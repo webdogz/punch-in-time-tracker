@@ -165,8 +165,8 @@ namespace PunchIn.ViewModels
             {
                 if (this.selectedWorkItemViewModel != null)
                 {
-                    return (NotifyIconViewModel.Current.CurrentWorkItem != null &&
-                            NotifyIconViewModel.Current.CurrentWorkItem.Id != this.selectedWorkItemViewModel.Id);
+                    return (!Guid.Empty.Equals(NotifyIconViewModel.Current.CurrentWorkItemId) &&
+                            NotifyIconViewModel.Current.CurrentWorkItemId != this.selectedWorkItemViewModel.Id);
                 }
                 return true;
             }
@@ -267,7 +267,7 @@ namespace PunchIn.ViewModels
                     break;
                 case "CurrentTimeEntry":
                 case "CurrentWorkItem":
-                    if (!CurrentWorkItem.Id.Equals(NotifyIconViewModel.Current.CurrentWorkItem.Id))
+                    if (!CurrentWorkItem.Id.Equals(NotifyIconViewModel.Current.CurrentWorkItemId))
                         SetObservableWorkItems();
                     OnPropertyChanged("IsSelectedWorkItemNotSelected", "WorkItems", "ObservableWorkItems");
                     break;

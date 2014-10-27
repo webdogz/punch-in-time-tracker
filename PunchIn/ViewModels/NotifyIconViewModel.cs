@@ -306,15 +306,18 @@ namespace PunchIn.ViewModels
         }
         private CurrentEntryViewModel currentTimeEntry = null;
 
+        
+        public Guid CurrentWorkItemId
+        {
+            get { return this.currentWorkItem != null ? this.currentWorkItem.Id : Guid.Empty; }
+        }
         public WorkItemViewModel CurrentWorkItem
         {
             get 
             {
-                if (CurrentTimeEntry != null && CurrentTimeEntry.CurrentWorkItem != null &&
-                    (this.currentWorkItem == null || (this.currentWorkItem != null && !CurrentTimeEntry.CurrentWorkItem.Id.Equals(this.currentWorkItem.Id))))
+                if (CurrentTimeEntry != null && CurrentTimeEntry.CurrentWorkItem != null)
                     this.currentWorkItem = WorkItemViewModel.ConvertFrom(CurrentTimeEntry.CurrentWorkItem);
-                else if (this.viewModel != null && this.viewModel.CurrentWorkItem != null && 
-                    (this.currentWorkItem == null || (this.currentWorkItem != null && !this.viewModel.CurrentWorkItem.Id.Equals(this.currentWorkItem.Id))))
+                else
                     this.currentWorkItem = WorkItemViewModel.ConvertFrom(viewModel.CurrentWorkItem);
                 return this.currentWorkItem;
             }

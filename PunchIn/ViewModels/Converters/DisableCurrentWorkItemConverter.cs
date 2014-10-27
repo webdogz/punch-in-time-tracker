@@ -6,10 +6,10 @@ namespace PunchIn.ViewModels.Converters
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            if (NotifyIconViewModel.Current.CurrentWorkItem != null)
+            if (!Guid.Empty.Equals(NotifyIconViewModel.Current.CurrentWorkItemId))
             {
                 Guid workItemId = (Guid)value;
-                return workItemId != NotifyIconViewModel.Current.CurrentWorkItem.Id;
+                return workItemId != NotifyIconViewModel.Current.CurrentWorkItemId;
             }
             else
             {
