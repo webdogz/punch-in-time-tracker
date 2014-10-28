@@ -26,11 +26,13 @@ namespace PunchIn
         }
         private void ResetApplication(string arg)
         {
+            bool openMainWindow = false;
             if (_initialised)
             {
                 if (Application.Current.MainWindow != null)
                 {
                     Application.Current.MainWindow.Close();
+                    openMainWindow = true;
                 }
 
                 NotifyIconViewModel.Current.CleanUp();
@@ -39,6 +41,9 @@ namespace PunchIn
             }
             SetCurrentArg(arg);
             Initilise();
+
+            if (openMainWindow)
+                NotifyIconViewModel.Current.ShowWindowCommand.Execute(null);
         }
         private void Initilise()
         {
