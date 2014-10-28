@@ -10,7 +10,7 @@ namespace PunchIn
 {
     public static class WpfSingleInstance
     {
-        internal static void Make(String name, Application app)
+        internal static void Make(string name, Application app)
         {
             EventWaitHandle eventWaitHandle = null;
             String eventName = Environment.MachineName + "-" + name;
@@ -59,12 +59,7 @@ namespace PunchIn
             );
         }
 
-        // Args functionality for test purpose and not developed carefuly
-        #region Args
-
-        internal static readonly object StartArgKey = "StartArg";
-
-        private static readonly String isolatedStorageFileName = "SomeFileInTheRoot.txt";
+        #region Application Startup Args
 
         private static string GetActivationData()
         {
@@ -82,6 +77,9 @@ namespace PunchIn
             }
             return string.Empty;
         }
+
+        #region Store Application Startup Args - TODO: Remove this shit
+        private static readonly String isolatedStorageFileName = "PunchStartupArgs.tmp";
 
         private static void SaveActivationData()
         {
@@ -117,6 +115,7 @@ namespace PunchIn
             isoStore.DeleteFile(isolatedStorageFileName);
             App.ProcessArg(arg);
         }
+        #endregion
 
         #endregion
 
