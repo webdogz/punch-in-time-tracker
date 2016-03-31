@@ -33,15 +33,16 @@ Shows tracking activity detail, reports and user settings.
   - File Locations
     - Shortcuts folder location
     - SharePoint list location and name
-* Messages
-  - Playing around with Lync ;)
 
 ####Tracker
 Displays the list of work items and their individual time entries.
 
 ####Reports
 View weekly reports from last week and this week. I will add user filtering when I get around to it.
-Export weekly timesheet to SharePoint. If the list doesn't exist, we try to create it.
+
+###Future Features
+Plugin architecture (MEF etc.)
+Export weekly timesheet to SharePoint plugin. If the list doesn't exist, we try to create it.
 
 ##Credit where credit is due
 NotifyIcon for WPF from [hardcodet.net][4] by Philipp Sumi was used for all NotifyIcon activities.
