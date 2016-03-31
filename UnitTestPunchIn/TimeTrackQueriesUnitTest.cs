@@ -2,11 +2,10 @@
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Concurrent;
-using NDatabase;
+using LiteDB;
 using System.IO;
 using System.Collections.Generic;
 using System.Diagnostics;
-using EmitMapper;
 using PunchIn.Models;
 
 namespace UnitTestPunchIn
@@ -33,7 +32,7 @@ namespace UnitTestPunchIn
             var rangeStart = now.AddDays(-((now.DayOfWeek - System.Threading.Thread.CurrentThread.CurrentCulture.DateTimeFormat.FirstDayOfWeek + 7) % 7));
             var rangeEnded = rangeStart.AddDays(7);
             Predicate<TimeEntry> predicate = new Predicate<TimeEntry>(e => e.StartDate > rangeStart && e.StartDate < rangeEnded);
-            using (var db = OdbFactory.Open(GetDbName()))
+            using (var db = new LiteDatabase(Helpers.GetDbName()))
             {
                 //var reps = db.AsQueryable<WorkItem>().Where(w => w.Entries.Any(e => predicate(e)))
                 //    .Select(w => new WorkItem(w.Id)
@@ -47,7 +46,8 @@ namespace UnitTestPunchIn
                 //        WorkType = w.WorkType,
                 //        Entries = w.Entries.Where(e => predicate(e)).ToList()
                 //    });
-                var reps = db.AsQueryable<WorkItem>().Where(w => w.Entries.Any(e => predicate(e)))
+                var reps = db.GetCollection<WorkItem>(CollectionNames.WorkItems).FindAll().AsQueryable<WorkItem>()
+                    .Where(w => w.Entries.Any(e => predicate(e)))
                     .Select(w => new ReportWorkItem(w.Id)
                     {
                         TfsId = w.TfsId,
@@ -82,9 +82,9 @@ namespace UnitTestPunchIn
         [TestMethod]
         public void ReportAllItemsGroupedByWeekFragmented()
         {
-            using (var db = OdbFactory.Open(GetDbName()))
+            using (var db = new LiteDatabase(Helpers.GetDbName()))
             {
-                var items = db.AsQueryable<WorkItem>();
+                var items = db.GetCollection<WorkItem>(CollectionNames.WorkItems).FindAll().AsQueryable<WorkItem>();
 
                 var reportItems = new List<ReportByWeekItem>();
                 foreach (var item in items)
@@ -137,36 +137,37 @@ namespace UnitTestPunchIn
         [TestMethod]
         public void ReportAllItemsGroupedByWeek()
         {
-            using (var db = OdbFactory.Open(GetDbName()))
+            using (var db = new LiteDatabase(Helpers.GetDbName()))
             {
-                var reportItems = db.AsQueryable<WorkItem>().SelectMany(item => item.Entries.Select(e => new ReportByWeekItem
-                {
-                    ItemGuid = item.Id,
-                    TfsId = item.TfsId,
-                    ServiceCall = item.ServiceCall,
-                    Change = item.Change,
-                    Title = item.Title,
-                    Description = e.Description,
-                    Effort = item.Effort,
-                    StartDate = e.StartDate,
-                    EndDate = e.EndDate,
-                    State = item.Status,
-                    Status = e.Status,
-                    WorkType = item.WorkType
-                })).GroupBy(r => new
-                {
-                    WeekOfYear = GetWeekOfYear(r.StartDate),
-                    Title = r.Title,
-                    Effort = r.Effort
-                }).Select(g => new ReportByWeekGroup
-                {
-                    WeekOfYear = g.Key.WeekOfYear,
-                    Title = g.Key.Title,
-                    Effort = g.Key.Effort,
-                    MinDate = g.Min(e => e.StartDate),
-                    MaxDate = g.Max(e => e.EndDate ?? DateTime.Now),
-                    ReportItems = g.Select(e => e).ToList()
-                }).OrderBy(r => r.WeekOfYear).ThenBy(r => r.Title);
+                var reportItems = db.GetCollection<WorkItem>(CollectionNames.WorkItems).FindAll().AsQueryable<WorkItem>()
+                    .SelectMany(item => item.Entries.Select(e => new ReportByWeekItem
+                    {
+                        ItemGuid = item.Id,
+                        TfsId = item.TfsId,
+                        ServiceCall = item.ServiceCall,
+                        Change = item.Change,
+                        Title = item.Title,
+                        Description = e.Description,
+                        Effort = item.Effort,
+                        StartDate = e.StartDate,
+                        EndDate = e.EndDate,
+                        State = item.Status,
+                        Status = e.Status,
+                        WorkType = item.WorkType
+                    })).GroupBy(r => new
+                    {
+                        WeekOfYear = GetWeekOfYear(r.StartDate),
+                        Title = r.Title,
+                        Effort = r.Effort
+                    }).Select(g => new ReportByWeekGroup
+                    {
+                        WeekOfYear = g.Key.WeekOfYear,
+                        Title = g.Key.Title,
+                        Effort = g.Key.Effort,
+                        MinDate = g.Min(e => e.StartDate),
+                        MaxDate = g.Max(e => e.EndDate ?? DateTime.Now),
+                        ReportItems = g.Select(e => e).ToList()
+                    }).OrderBy(r => r.WeekOfYear).ThenBy(r => r.Title);
                 var exportItems = new List<ReportExportItem>();
                 foreach (var item in reportItems)
                 {
@@ -221,9 +222,9 @@ namespace UnitTestPunchIn
         [TestMethod]
         public void ReportAllItemsGroupedByMonth()
         {
-            using (var db = OdbFactory.Open(GetDbName()))
+            using (var db = new LiteDatabase(Helpers.GetDbName()))
             {
-                var items = db.AsQueryable<WorkItem>();
+                var items = db.GetCollection<WorkItem>(CollectionNames.WorkItems).FindAll().AsQueryable<WorkItem>();
 
                 var reportItems = new List<ReportItem>();
                 foreach (var item in items)
@@ -275,13 +276,15 @@ namespace UnitTestPunchIn
         [TestMethod]
         public void GroupByMonthAndYear()
         {
+            var dayRange = Helpers.MaxWorkItemDaysRange / 2;
             var today = DateTime.Now;
-            var thisMonth = new DateTime(today.Year, today.Month, 6);
-            var lastMonth = thisMonth.AddDays(-2);//.AddMonths(-1);
-            Predicate<TimeEntry> predicate = new Predicate<TimeEntry>(e => e.StartDate > lastMonth && e.StartDate < thisMonth);
-            using (var db = OdbFactory.Open(GetDbName()))
+            var endRange = today.AddDays(dayRange);
+            var startRange = today.AddDays(-dayRange);
+            Predicate<TimeEntry> predicate = new Predicate<TimeEntry>(e => e.StartDate > startRange && e.StartDate < endRange);
+            using (var db = new LiteDatabase(Helpers.GetDbName()))
             {
-                var items = db.AsQueryable<WorkItem>().Where(w => w.Entries.Any(e => predicate(e)));
+                var col = db.GetCollection<WorkItem>(CollectionNames.WorkItems);
+                var items = col.FindAll().AsQueryable().Where(w => w.Entries.Any(e => predicate(e)));
 
                 var reportItems = new List<ReportItem>();
                 foreach(var item in items)
@@ -351,15 +354,16 @@ namespace UnitTestPunchIn
         [TestMethod]
         public void QueryWhereTimeEntriesAreInCurrentMonthOnly()
         {
+            var dayRange = Helpers.MaxWorkItemDaysRange / 2;
             var today = DateTime.Now;
-            var thisMonth = new DateTime(today.Year, today.Month, 6);
-            var lastMonth = thisMonth.AddDays(-2);//.AddMonths(-1);
-            using (var db = OdbFactory.Open(GetDbName()))
+            var endRange = today.AddDays(dayRange);
+            var startRange = today.AddDays(-dayRange);
+            using (var db = new LiteDatabase(Helpers.GetDbName()))
             {
-                var items = from wi in db.AsQueryable<WorkItem>()
-                            where wi.Entries.Any(e => e.StartDate > lastMonth && e.StartDate < thisMonth)
+                var items = from wi in db.GetCollection<WorkItem>(CollectionNames.WorkItems).FindAll().AsQueryable<WorkItem>()
+                            where wi.Entries.Any(e => e.StartDate > startRange && e.StartDate < endRange)
                             select wi;
-                Debug.WriteLine("Entries between {0} and {1}", lastMonth, thisMonth);
+                Debug.WriteLine("Entries between {0} and {1}", startRange.ToString(), endRange.ToString());
                 foreach(var item in items)
                 {
                     Debug.WriteLine("==========");
@@ -368,7 +372,7 @@ namespace UnitTestPunchIn
                         "TFS:{0}, ServiceCall:{1}\nTitle:{2}",
                         item.TfsId, item.ServiceCall, item.Title);
                     TimeSpan span = new TimeSpan();
-                    foreach (var entry in item.Entries.Where(e => e.StartDate > lastMonth && e.StartDate < thisMonth))
+                    foreach (var entry in item.Entries.Where(e => e.StartDate > startRange && e.StartDate < endRange))
                     {
                         span = PrintTimeEntryAdnReturnSpan(entry, span);
                     }
@@ -402,21 +406,5 @@ namespace UnitTestPunchIn
             DateTime end = entry.EndDate ?? entry.StartDate;
             return span.Add(end - entry.StartDate);
         }
-
-        #region Helpers
-        private string GetDbName()
-        {
-            return _dbNamesCache.GetOrAdd(Environment.UserName, ProduceDbName);
-        }
-
-        private static string ProduceDbName(string login)
-        {
-            var dbName = string.Format("{0}_punchin-test.ndb", login);
-
-            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "My Time");
-
-            return Path.Combine(path, dbName);
-        }
-        #endregion
     }
 }

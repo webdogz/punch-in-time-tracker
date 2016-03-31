@@ -1,6 +1,4 @@
-﻿using EmitMapper;
-using EmitMapper.MappingConfiguration;
-using NDatabase;
+﻿using LiteDB;
 using PunchIn.Extensions;
 using PunchIn.Models;
 using System;
@@ -20,10 +18,15 @@ namespace PunchIn.Services
         /// <returns>List of all WorkItems</returns>
         public List<WorkItem> GetWorkItems()
         {
-            using (var db = OdbFactory.Open(this.DbName))
+            List<WorkItem> list;
+            using (var db = new LiteDatabase(this.DbName))
             {
-                return db.QueryAndExecute<WorkItem>().ToList();
+                list = db.GetCollection<WorkItem>(CollectionNames.WorkItems).FindAll().ToList();
             }
+            if (list != null)
+                return list;
+            else
+                return new List<WorkItem>();
         }
         
         /// <summary>
@@ -33,14 +36,14 @@ namespace PunchIn.Services
         /// <returns>The WorkItem</returns>
         public WorkItem GetItemById(Guid id)
         {
-            using (var db = OdbFactory.Open(this.DbName))
+            using (var db = new LiteDatabase(this.DbName))
             {
                 return GetItemById(id, db);
             }
         }
-        private WorkItem GetItemById(Guid id, NDatabase.Api.IOdb db)
+        private WorkItem GetItemById(Guid id, LiteDatabase db)
         {
-            return db.QueryAndExecute<WorkItem>().FirstOrDefault(w => w.Id == id);
+            return db.GetCollection<WorkItem>(CollectionNames.WorkItems).FindOne(w => w.Id == id);
         }
 
         /// <summary>
@@ -49,39 +52,32 @@ namespace PunchIn.Services
         /// <param name="workItem">WorkItem to be saved</param>
         public void SaveWorkItem(WorkItem workItem)
         {
-            using (var db = OdbFactory.Open(this.DbName))
+            using (var db = new LiteDatabase(this.DbName))
             {
-                WorkItem toWorkItem = GetItemById(workItem.Id, db);
-                if (toWorkItem == null)
-                    db.Store<WorkItem>(workItem);
+                //WorkItem toWorkItem = GetItemById(workItem.Id, db);
+                var col = db.GetCollection<WorkItem>(CollectionNames.WorkItems);
+                //if (toWorkItem == null)
+                if (col.FindById(new BsonValue(workItem.Id)) == null)
+                    col.Insert(workItem);
                 else
                 {
-                    UpdateWorkItem(workItem, toWorkItem, db);
+                    col.Update(workItem);
                 }
             }
         }
 
-        private void UpdateWorkItem(WorkItem fromWorkItem, WorkItem toWorkItem, NDatabase.Api.IOdb db)
-        {
-            var mapper = ObjectMapperManager.DefaultInstance.GetMapper<WorkItem, WorkItem>(
-                    new DefaultMapConfig().ConstructBy<WorkItem>(() => new WorkItem(fromWorkItem.Id))
-                );
-            WorkItem wi = mapper.Map(fromWorkItem, toWorkItem);
-            db.Store<WorkItem>(wi);
-        }
-
         public void DeleteWorkItem(Guid workItemId)
         {
-            using (var db = OdbFactory.Open(this.DbName))
+            using (var db = new LiteDatabase(this.DbName))
             {
-                WorkItem item = GetItemById(workItemId, db);
-                db.Delete<WorkItem>(item);
+                db.GetCollection<WorkItem>(CollectionNames.WorkItems).Delete(wi => wi.Id == workItemId);
             }
         }
         #region Reporting
-        private IOrderedQueryable<ReportByWeekGroup> GetItemsGroupedByWeek(NDatabase.Api.IOdb db)
+        private IOrderedQueryable<ReportByWeekGroup> GetItemsGroupedByWeek(LiteDatabase db)
         {
-            var reportItems = db.AsQueryable<WorkItem>().SelectMany(item => item.Entries.Select(e => new ReportByWeekItem
+            var reportItems = db.GetCollection<WorkItem>(CollectionNames.WorkItems).FindAll().AsQueryable<WorkItem>()
+                .SelectMany(item => item.Entries.Select(e => new ReportByWeekItem
                 {
                     ItemGuid = item.Id,
                     TfsId = item.TfsId,
@@ -125,7 +121,7 @@ namespace PunchIn.Services
         public List<ReportExportItem> GetSummaryReportExportItems(Predicate<ReportByWeekGroup> predicate)
         {
             List<ReportExportItem> exportItems = new List<ReportExportItem>();
-            using (var db = OdbFactory.Open(this.DbName))
+            using (var db = new LiteDatabase(this.DbName))
             {
                 foreach (var item in GetItemsGroupedByWeek(db).Where(g => predicate(g)))
                 {
@@ -199,10 +195,11 @@ namespace PunchIn.Services
         /// <returns>List of <see cref="ReportExportItem"/></returns>
         public List<ReportExportItem> GetReportExportItems(Predicate<ReportByWeekGroup> predicate)
         {
-            using (var db = OdbFactory.Open(this.DbName))
+            using (var db = new LiteDatabase(this.DbName))
             {
                 var exportItems = new List<ReportExportItem>();
-                foreach (var item in GetItemsGroupedByWeek(db).Where(g => predicate(g)))
+                var items = GetItemsGroupedByWeek(db).Where(g => predicate(g));
+                foreach (var item in items)
                 {
                     double effort = item.Effort * 8;
                     foreach (var time in item.ReportItems.OrderBy(t => t.StartDate))
@@ -264,6 +261,11 @@ namespace PunchIn.Services
                     _dbName = GlobalConfig.DatabaseLocation;
                 return _dbName;
             }
+        }
+        class CollectionNames
+        {
+            public const string WorkItems = "workitems";
+            public const string TimeEntries = "times";
         }
         #endregion
     }

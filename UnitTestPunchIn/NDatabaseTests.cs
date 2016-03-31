@@ -2,36 +2,31 @@
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Concurrent;
-using NDatabase;
+using LiteDB;
 using System.IO;
 using System.Collections.Generic;
 using System.Diagnostics;
-using EmitMapper;
 using PunchIn.Models;
-using EmitMapper.MappingConfiguration;
 
 namespace UnitTestPunchIn
 {
     [TestClass]
     public class NDatabaseTests
     {
-        private readonly ConcurrentDictionary<string, string> _dbNamesCache = new ConcurrentDictionary<string, string>();
-        const int MaxWorkItemsToCreate = 20; // number of workitems to create
-        const int MaxWorkItemHoursPerDayRange = 8; // max hours per time entry
-        const int MaxWorkItemDaysRange = 14; // 2 weeks worth of workitems
-
         [TestMethod]
         public void CreateWorkItemAndTimeEntries()
         {
-            DateTime StartPointDate = DateTime.Now.AddDays(-MaxWorkItemDaysRange); // starting point
-            string dbPath = GetDbName();
+            DateTime StartPointDate = DateTime.Now.AddDays(-Helpers.MaxWorkItemDaysRange); // starting point
+            string dbPath = Helpers.GetDbName();
             if (File.Exists(dbPath))
                 File.Delete(dbPath);
 
-            using (var db = OdbFactory.Open(GetDbName()))
+            using (var db = new LiteDatabase(Helpers.GetDbName()))
             {
+                var col = db.GetCollection<WorkItem>(CollectionNames.WorkItems);
                 var rnd = new Random();
-                for (int i = 0; i < MaxWorkItemsToCreate; i++)
+                var items = new List<WorkItem>();
+                for (int i = 0; i < Helpers.MaxWorkItemsToCreate; i++)
                 {
                     WorkItem item = new WorkItem()
                     {
@@ -45,8 +40,8 @@ namespace UnitTestPunchIn
                     foreach (var name in new string[] { "First entry", "Second entry", "Third entry" })
                     {
                         DateTime startDate = StartPointDate
-                            .AddDays(rnd.NextDouble() * MaxWorkItemDaysRange)
-                            .AddHours(rnd.NextDouble() * MaxWorkItemHoursPerDayRange);
+                            .AddDays(rnd.NextDouble() * Helpers.MaxWorkItemDaysRange)
+                            .AddHours(rnd.NextDouble() * Helpers.MaxWorkItemHoursPerDayRange);
                         TimeEntry entry = new TimeEntry()
                         {
                             Description = name,
@@ -55,11 +50,12 @@ namespace UnitTestPunchIn
                             EndDate = startDate.AddHours(rnd.NextDouble() * 4)
                         };
                         item.Entries.Add(entry);
-                        db.Store<WorkItem>(item);
                     }
+                    items.Add(item);
                 }
-                int cnt = db.QueryAndExecute<WorkItem>().Count;
-                Assert.AreEqual(MaxWorkItemsToCreate, cnt);
+                col.InsertBulk(items);
+                int cnt = col.Count();
+                Assert.AreEqual(Helpers.MaxWorkItemsToCreate, cnt);
             }
         }
 
@@ -68,9 +64,9 @@ namespace UnitTestPunchIn
         {
             WorkItem item = null;
             int beforeCount, afterCount;
-            using (var db = OdbFactory.Open(GetDbName()))
+            using (var db = new LiteDatabase(Helpers.GetDbName()))
             {
-                item = db.QueryAndExecute<WorkItem>().FirstOrDefault();
+                item = db.GetCollection<WorkItem>(CollectionNames.WorkItems).FindAll().FirstOrDefault();
                 beforeCount = item.Entries.Count;
             }
             item.Entries.Add(new TimeEntry
@@ -79,21 +75,16 @@ namespace UnitTestPunchIn
                 StartDate = DateTime.Now,
                 Status = States.InProgress
             });
-            using (var db = OdbFactory.Open(GetDbName()))
+            using (var db = new LiteDatabase(Helpers.GetDbName()))
             {
-                //var mapper = ObjectMapperManager.DefaultInstance.GetMapper<WorkItem, WorkItem>();
-                var mapper = ObjectMapperManager.DefaultInstance.GetMapper<WorkItem, WorkItem>(
-                    new DefaultMapConfig().ConstructBy<WorkItem>(() => new WorkItem(item.Id))
-                );
-
-
-                WorkItem wi = mapper.Map(item, db.QueryAndExecute<WorkItem>().FirstOrDefault(w => w.Id == item.Id));
+                var col = db.GetCollection<WorkItem>(CollectionNames.WorkItems);
+                WorkItem wi = col.FindOne(w => w.Id == item.Id);
 
                 Assert.AreEqual(wi.Id, item.Id);
                 
-                db.Store<WorkItem>(wi);
+                col.Update(item);
 
-                var first = db.QueryAndExecute<WorkItem>().FirstOrDefault();
+                var first = col.FindAll().FirstOrDefault();
                 var items = new List<WorkItem>();
                 items.Add(item);
                 items.Add(wi);
@@ -108,13 +99,13 @@ namespace UnitTestPunchIn
         public void QueryWorkItemAndTimeEntries()
         {
             List<WorkItem> items;
-            using (var db = OdbFactory.Open(GetDbName()))
+            using (var db = new LiteDatabase(Helpers.GetDbName()))
             {
-                items = db.QueryAndExecute<WorkItem>().ToList();
-                Assert.AreEqual(MaxWorkItemsToCreate, items.Count());
+                items = db.GetCollection<WorkItem>(CollectionNames.WorkItems).FindAll().ToList();
+                Assert.AreEqual(Helpers.MaxWorkItemsToCreate, items.Count());
                 WorkItem item = items.FirstOrDefault();
-                Assert.AreEqual("Work item #1", item.Title);
-                Assert.AreEqual(3, item.Entries.Count);
+                Assert.IsNotNull(item);
+                Assert.IsInstanceOfType(item, typeof(WorkItem));
             }
         }
 
@@ -122,18 +113,20 @@ namespace UnitTestPunchIn
         public void ModifyWorkItemAndTimeEntriesAndSave()
         {
             List<WorkItem> items;
-            using (var db = OdbFactory.Open(GetDbName()))
+            using (var db = new LiteDatabase(Helpers.GetDbName()))
             {
-                items = db.QueryAndExecute<WorkItem>().ToList();
+                var col = db.GetCollection<WorkItem>(CollectionNames.WorkItems);
+                items = col.FindAll().ToList();
                 PrintWorkItems(items);
                 WorkItem item2 = items.FirstOrDefault(w => w.TfsId == 2);
                 Assert.AreEqual(200, item2.ServiceCall);
                 item2.WorkType = WorkTypes.Datafix;
-                db.Store<WorkItem>(item2);
+                col.Update(item2);
             }
-            using(var db = OdbFactory.Open(GetDbName()))
+            using(var db = new LiteDatabase(Helpers.GetDbName()))
             {
-                items = db.QueryAndExecute<WorkItem>()
+                var col = db.GetCollection<WorkItem>(CollectionNames.WorkItems);
+                items = col.FindAll()
                     .Where(w => w.TfsId == 2).ToList();
                 Assert.IsTrue(items.Count == 1);
                 WorkItem wit = items.First();
@@ -146,20 +139,21 @@ namespace UnitTestPunchIn
         {
             
             int count, afterCount;
-            using(var db = OdbFactory.Open(GetDbName()))
+            using(var db = new LiteDatabase(Helpers.GetDbName()))
             {
-                count = db.QueryAndExecute<WorkItem>().Count();
+                count = db.GetCollection<WorkItem>(CollectionNames.WorkItems).Count();
             }
-            using (var db = OdbFactory.Open(GetDbName()))
+            using (var db = new LiteDatabase(Helpers.GetDbName()))
             {
-                db.Store<WorkItem>(new WorkItem()
+                var col = db.GetCollection<WorkItem>(CollectionNames.WorkItems);
+                col.Insert(new WorkItem()
                 {
                     TfsId = 1000,
                     ServiceCall = 100000,
                     Title = "TEST: Can Add WorkItem With No Entries",
                     WorkType = WorkTypes.Bug
                 });
-                afterCount = db.QueryAndExecute<WorkItem>().Count;
+                afterCount = col.Count();
             }
             Assert.AreNotEqual(count, afterCount);
         }
@@ -169,9 +163,10 @@ namespace UnitTestPunchIn
         {
             WorkItem item = null;
             int beforeCount, afterCount;
-            using(var db = OdbFactory.Open(GetDbName()))
+            using(var db = new LiteDatabase(Helpers.GetDbName()))
             {
-                item = db.QueryAndExecute<WorkItem>().FirstOrDefault();
+                var col = db.GetCollection<WorkItem>(CollectionNames.WorkItems);
+                item = col.FindAll().FirstOrDefault();
                 beforeCount = item.Entries.Count;
             }
             item.Entries.Add(new TimeEntry
@@ -180,13 +175,16 @@ namespace UnitTestPunchIn
                     StartDate = DateTime.Now,
                     Status = States.InProgress
                 });
-            using (var db = OdbFactory.Open(GetDbName()))
+            using (var db = new LiteDatabase(Helpers.GetDbName()))
             {
-                var mapper = ObjectMapperManager.DefaultInstance.GetMapper<WorkItem, WorkItem>();
-                WorkItem wi = mapper.Map(item, db.QueryAndExecute<WorkItem>().FirstOrDefault(w => w.Id == item.Id));
-                db.Store<WorkItem>(wi);
-                item = db.QueryAndExecute<WorkItem>().FirstOrDefault();
-                afterCount = item.Entries.Count;
+                var col = db.GetCollection<WorkItem>(CollectionNames.WorkItems);
+                col.Update(item);
+            }
+            using (var db = new LiteDatabase(Helpers.GetDbName()))
+            {
+                var col = db.GetCollection<WorkItem>(CollectionNames.WorkItems);
+                var wi = col.FindAll().FirstOrDefault();
+                afterCount = wi.Entries.Count;
             }
             Assert.AreNotEqual(beforeCount, afterCount);
         }
@@ -194,13 +192,14 @@ namespace UnitTestPunchIn
         [TestMethod]
         public void QueryByOidAndAddEntryWithNoEndDate()
         {
-            NDatabase.Api.OID oid;
+            BsonValue oid;
             WorkItem item = null;
             int beforeCount, afterCount;
-            using (var db = OdbFactory.Open(GetDbName()))
+            using (var db = new LiteDatabase(Helpers.GetDbName()))
             {
-                item = db.QueryAndExecute<WorkItem>().FirstOrDefault();
-                oid = db.GetObjectId(item);
+                var col = db.GetCollection<WorkItem>(CollectionNames.WorkItems);
+                item = col.FindAll().FirstOrDefault();
+                oid = new BsonValue(item.Id);
                 beforeCount = item.Entries.Count;
             }
             item.Entries.Add(new TimeEntry
@@ -210,16 +209,15 @@ namespace UnitTestPunchIn
                 EndDate = DateTime.Now.AddHours(1.25),
                 Status = States.Analysis
             });
-            using (var db = OdbFactory.Open(GetDbName()))
+            using (var db = new LiteDatabase(Helpers.GetDbName()))
             {
-                var mapper = ObjectMapperManager.DefaultInstance.GetMapper<WorkItem, WorkItem>();
-                WorkItem wi = mapper.Map(item, db.QueryAndExecute<WorkItem>().FirstOrDefault(w => w.Id == item.Id));
-                db.Store<WorkItem>(wi);
+                var col = db.GetCollection<WorkItem>(CollectionNames.WorkItems);
+                col.Update(item);
             }
-            using(var db = OdbFactory.Open(GetDbName()))
+            using(var db = new LiteDatabase(Helpers.GetDbName()))
             {
-                item = (WorkItem)db.GetObjectFromId(oid);
-                //item = db.QueryAndExecute<WorkItem>().FirstOrDefault();
+                var col = db.GetCollection<WorkItem>(CollectionNames.WorkItems);
+                item = col.FindById(oid);
                 afterCount = item.Entries.Count;
             }
             Assert.AreNotEqual(beforeCount, afterCount);
@@ -228,9 +226,10 @@ namespace UnitTestPunchIn
         [TestMethod]
         public void QueryUsingLinq()
         {
-            using (var db = OdbFactory.Open(GetDbName()))
+            using (var db = new LiteDatabase(Helpers.GetDbName()))
             {
-                var items = from wi in db.AsQueryable<WorkItem>()
+                var col = db.GetCollection<WorkItem>(CollectionNames.WorkItems);
+                var items = from wi in col.FindAll().AsQueryable()
                             where wi.WorkType.Equals(WorkTypes.Datafix)
                             select wi;
                 var item = items.First();
@@ -243,9 +242,10 @@ namespace UnitTestPunchIn
         [TestMethod]
         public void QueryByTfsIdUsingLinq()
         {
-            using (var db = OdbFactory.Open(GetDbName()))
+            using (var db = new LiteDatabase(Helpers.GetDbName()))
             {
-                var items = from wi in db.AsQueryable<WorkItem>()
+                var col = db.GetCollection<WorkItem>(CollectionNames.WorkItems);
+                var items = from wi in col.FindAll().AsQueryable()
                             where wi.TfsId.Value == 2
                             select wi;
                 var item = items.First();
@@ -280,20 +280,5 @@ namespace UnitTestPunchIn
             return span.Add(end - entry.StartDate);
         }
 
-        #region Helpers
-        private string GetDbName()
-        {
-            return _dbNamesCache.GetOrAdd(Environment.UserName, ProduceDbName);
-        }
-
-        private static string ProduceDbName(string login)
-        {
-            var dbName = string.Format("{0}_punchin-test.ndb", login);
-
-            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "My Time");
-
-            return Path.Combine(path, dbName);
-        }
-        #endregion
     }
 }

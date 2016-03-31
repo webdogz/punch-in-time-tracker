@@ -18,7 +18,7 @@ namespace PunchIn.Models
                 id = Guid.NewGuid();
             this.Id = id;
         }
-        public Guid Id { get; private set; }
+        public Guid Id { get; set; }
         public Nullable<int> TfsId { get; set; }
         public Nullable<int> ServiceCall { get; set; }
         public Nullable<int> Change { get; set; }

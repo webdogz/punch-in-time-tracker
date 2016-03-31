@@ -267,7 +267,7 @@ namespace PunchIn.ViewModels
                     break;
                 case "CurrentTimeEntry":
                 case "CurrentWorkItem":
-                    if (!CurrentWorkItem.Id.Equals(NotifyIconViewModel.Current.CurrentWorkItemId))
+                    if (CurrentWorkItem != null && !CurrentWorkItem.Id.Equals(NotifyIconViewModel.Current.CurrentWorkItemId))
                         SetObservableWorkItems();
                     OnPropertyChanged("IsSelectedWorkItemNotSelected", "WorkItems", "ObservableWorkItems");
                     break;

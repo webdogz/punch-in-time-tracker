@@ -48,7 +48,7 @@ namespace PunchIn.ViewModels
         private List<WorkItem> workItems;
         protected void SetCurrentWorkItem()
         {
-            if (CurrentWorkItem == null)
+            if (CurrentWorkItem == null && (workItems != null && workItems.Count > 0))
                 CurrentWorkItem = workItems.Where(w => w.Entries.Any(e => e.EndDate == null)).LastOrDefault() ?? workItems.LastOrDefault();
         }
 

@@ -14,7 +14,8 @@
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <PublishUrl>c:\deploy\punch\</PublishUrl>
+    <TargetFrameworkProfile />
+    <PublishUrl>D:\Shares\Apps\Punch\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
     <UpdateEnabled>false</UpdateEnabled>
@@ -27,7 +28,8 @@
     <ProductName>Punch</ProductName>
     <PublisherName>webdog</PublisherName>
     <SuiteName>Punch Time Tracker</SuiteName>
-    <ApplicationRevision>4</ApplicationRevision>
+    <AutorunEnabled>true</AutorunEnabled>
+    <ApplicationRevision>8</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -43,6 +45,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -52,12 +55,13 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>punch.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>6FAE5BD8364F29F92F56124453903CE74CAA92E8</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>A3FABFB7D22FFA217E77898DA3D8A9C278CE22A5</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestKeyFile>PunchIn_TemporaryKey.pfx</ManifestKeyFile>
@@ -66,30 +70,30 @@
     <GenerateManifests>true</GenerateManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <SignManifests>true</SignManifests>
+    <SignManifests>false</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>
     </StartupObject>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>PunchIn_TemporaryKey.pfx</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <PropertyGroup>
+    <TargetZone>LocalIntranet</TargetZone>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="EmitMapper">
-      <HintPath>..\packages\EmitMapper.1.0.0\lib\EmitMapper.dll</HintPath>
+      <HintPath>..\Assemblies\EmitMapper.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.SharePoint.Client, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Assemblies\Microsoft.SharePoint.Client.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.SharePoint.Client.Runtime, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Assemblies\Microsoft.SharePoint.Client.Runtime.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.SharePoint.Client.UserProfiles, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Assemblies\Microsoft.SharePoint.Client.UserProfiles.dll</HintPath>
-    </Reference>
-    <Reference Include="NDatabase3">
-      <HintPath>..\packages\NDatabase.3.8.0\lib\net45\NDatabase3.dll</HintPath>
+    <Reference Include="LiteDB">
+      <HintPath>..\packages\LiteDB.1.0.4\lib\net40\LiteDB.dll</HintPath>
     </Reference>
     <Reference Include="PresentationFramework.Aero2" />
     <Reference Include="System" />
@@ -123,7 +127,6 @@
     <Compile Include="Controls\TrayDialog.cs" />
     <Compile Include="Extensions\BindableStaticResourceExtension.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
-    <Compile Include="Extensions\SharePointExtensions.cs" />
     <Compile Include="GlobalConfig.cs" />
     <Compile Include="GlobalHotkeyManager.cs" />
     <Compile Include="MainWindow.xaml.cs">
@@ -137,9 +140,6 @@
     <Compile Include="Pages\Content\SettingsFileLocations.xaml.cs">
       <DependentUpon>SettingsFileLocations.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\ReportsExport.xaml.cs">
-      <DependentUpon>ReportsExport.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Pages\ReportsWeekly.xaml.cs">
       <DependentUpon>ReportsWeekly.xaml</DependentUpon>
     </Compile>
@@ -149,7 +149,6 @@
     <Compile Include="Services\CsvExporter.cs" />
     <Compile Include="Services\CsvExportService.cs" />
     <Compile Include="Services\IExporter.cs" />
-    <Compile Include="Services\SharePointService.cs" />
     <Compile Include="ViewModels\Common\DbViewModelBase.cs" />
     <Compile Include="ViewModels\Common\ICanDirty.cs" />
     <Compile Include="ViewModels\Common\ICleanUp.cs" />
@@ -185,7 +184,6 @@
     <Compile Include="ViewModels\ReportsWeeklyViewModel.cs" />
     <Compile Include="ViewModels\SettingsAppearanceViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
-    <Compile Include="ViewModels\SharePointExportViewModel.cs" />
     <Compile Include="ViewModels\ShortcutMenuItemViewModel.cs" />
     <Compile Include="ViewModels\CurrentEntryViewModel.cs" />
     <Compile Include="ViewModels\Common\ViewModelBase.cs" />
@@ -219,6 +217,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="packages.config" />
+    <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -359,10 +358,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\Content\SettingsAppearance.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Pages\ReportsExport.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
