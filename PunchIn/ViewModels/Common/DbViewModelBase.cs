@@ -1,7 +1,6 @@
 ﻿using EmitMapper;
-using EmitMapper.MappingConfiguration;
+using PunchIn.Core.Contracts;
 using System;
-using System.Collections.Generic;
 
 namespace PunchIn.ViewModels
 {

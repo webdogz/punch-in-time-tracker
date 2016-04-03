@@ -337,8 +337,8 @@ namespace UnitTestPunchIn
         {
             public Guid WorkItemId { get; set; }
             public string Title { get; set; }
-            public WorkTypes WorkType { get; set; }
-            public States State { get; set; }
+            public WorkType WorkType { get; set; }
+            public Status State { get; set; }
         }
         public class ReportTime
         {

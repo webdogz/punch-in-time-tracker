@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using PunchIn.Core.Contracts;
+using System.Collections.ObjectModel;
 using System.Windows.Input;
 
 namespace PunchIn.ViewModels
@@ -7,7 +8,7 @@ namespace PunchIn.ViewModels
     {
         public MenuItemViewModel()
         {
-            this.Children = new MenuItemViewModelCollection();
+            Children = new MenuItemViewModelCollection();
         }
         /// <summary>
         /// Text of menu item to display. I.e. Header, Text etc
@@ -52,7 +53,7 @@ namespace PunchIn.ViewModels
         /// <summary>
         /// Children for hierarchical menus
         /// </summary>
-        public MenuItemViewModelCollection Children
+        public IMenuItemViewModelCollection Children
         {
             get { return children; }
             private set
@@ -61,9 +62,9 @@ namespace PunchIn.ViewModels
                 OnPropertyChanged("Children");
             }
         }
-        private MenuItemViewModelCollection children;
+        private IMenuItemViewModelCollection children;
     }
-    public class MenuItemViewModelCollection : ObservableCollection<MenuItemViewModel>
+    public class MenuItemViewModelCollection : ObservableCollection<IMenuItemViewModel>, IMenuItemViewModelCollection
     {
         public MenuItemViewModelCollection() { }
     }

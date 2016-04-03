@@ -1,7 +1,6 @@
 ﻿using System;
 using PunchIn.Models;
-using EmitMapper;
-using EmitMapper.MappingConfiguration;
+using PunchIn.Core.Contracts;
 
 namespace PunchIn.ViewModels
 {
@@ -22,12 +21,12 @@ namespace PunchIn.ViewModels
         private string description;
         public string Description
         {
-            get { return this.description; }
+            get { return description; }
             set
             { 
-                if (this.description != value)
+                if (description != value)
                 {
-                    this.description = value;
+                    description = value;
                     EnsurePropertyChanged(value, "Description");
                 }
             }
@@ -35,39 +34,39 @@ namespace PunchIn.ViewModels
 
         private DateTime startDate;
         public DateTime StartDate
-        { get { return this.startDate; }
+        { get { return startDate; }
             set
             {
-                if (this.startDate != value)
+                if (startDate != value)
                 {
-                    this.startDate = value;
+                    startDate = value;
                     EnsurePropertyChanged(value, "StartDate");
                 }
             }
         }
 
-        private Nullable<DateTime> endDate;
-        public Nullable<DateTime> EndDate {
-            get { return this.endDate; }
+        private DateTime? endDate;
+        public DateTime? EndDate {
+            get { return endDate; }
             set
             {
-                if(this.endDate != value)
+                if(endDate != value)
                 {
-                    this.endDate = value;
+                    endDate = value;
                     EnsurePropertyChanged(value, "EndDate");
                 }
             }
         }
 
-        private States status;
-        public States Status
+        private Status status;
+        public Status Status
         {
-            get { return this.status; }
+            get { return status; }
             set
             {
-                if(this.status != value)
+                if(status != value)
                 {
-                    this.status = value;
+                    status = value;
                     EnsurePropertyChanged(value, "Status");
                 }
             }
@@ -87,10 +86,10 @@ namespace PunchIn.ViewModels
         #region Bubble Properties
         public bool IsDirty
         {
-            get { return this.isDirty; }
+            get { return isDirty; }
             set
             {
-                this.isDirty = value;
+                isDirty = value;
                 OnPropertyChanged("IsDirty");
             }
         }
@@ -114,7 +113,7 @@ namespace PunchIn.ViewModels
         /// <returns>New TimeEntryViewModel mapped from TimeEntry</returns>
         public static TimeEntryViewModel ConvertFrom(TimeEntry timeEntry)
         {
-            return ToViewModel<TimeEntry, TimeEntryViewModel>(timeEntry, EmitMapper.ObjectMapperManager.DefaultInstance
+            return ToViewModel(timeEntry, EmitMapper.ObjectMapperManager.DefaultInstance
                         .GetMapper<TimeEntry, TimeEntryViewModel>(
                             new EmitMapper.MappingConfiguration.DefaultMapConfig()
                             .PostProcess<TimeEntryViewModel>((vm, state) =>

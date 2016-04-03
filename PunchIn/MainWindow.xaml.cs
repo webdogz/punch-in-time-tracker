@@ -23,12 +23,12 @@ namespace PunchIn
                 Rect location = Properties.Settings.Default.MainWindowLocation;
                 if (SystemParameters.WorkArea.Contains(location))
                 {
-                    this.Top = location.Top;
-                    this.Left = location.Left;
-                    this.Width = location.Width;
-                    this.Height = location.Height;
+                    Top = location.Top;
+                    Left = location.Left;
+                    Width = location.Width;
+                    Height = location.Height;
                 }
-                this.WindowState = Properties.Settings.Default.MainWindowWindowState;
+                WindowState = Properties.Settings.Default.MainWindowWindowState;
             }
             catch { }
         }
@@ -60,11 +60,11 @@ namespace PunchIn
             try
             {
                 Properties.Settings.Default.MainWindowLocation =
-                    new Rect(this.Left, this.Top, this.ActualWidth, this.ActualHeight);
+                    new Rect(Left, Top, ActualWidth, ActualHeight);
                 Properties.Settings.Default.MainWindowWindowState =
-                    (this.WindowState == System.Windows.WindowState.Minimized) ?
-                    System.Windows.WindowState.Normal :
-                    this.WindowState;
+                    (WindowState == WindowState.Minimized) ?
+                    WindowState.Normal :
+                    WindowState;
                 Properties.Settings.Default.Save();
             }
             finally

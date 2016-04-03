@@ -1,4 +1,4 @@
-﻿namespace PunchIn.Services
+﻿namespace PunchIn.Core.Contracts
 {
     public interface IExporter
     {

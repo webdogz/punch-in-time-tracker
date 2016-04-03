@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PunchIn
 {
@@ -40,7 +36,7 @@ namespace PunchIn
         #region > Static Private Methods
         private static string GetDefaultUserDatabasePath()
         {
-            return System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), ApplicationName);
+            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), ApplicationName);
         }
         #endregion
 
@@ -53,14 +49,14 @@ namespace PunchIn
             {
                 userSettingsPath = GetDefaultUserDatabasePath();
             }
-            if (!System.IO.Directory.Exists(userSettingsPath))
-                System.IO.Directory.CreateDirectory(userSettingsPath);
+            if (!Directory.Exists(userSettingsPath))
+                Directory.CreateDirectory(userSettingsPath);
             Properties.Settings.Default.DefaultUserDatabaseFolderLocation = userSettingsPath;
             // Shortcuts folder
             if (string.IsNullOrWhiteSpace(Properties.Settings.Default.DefaultUserShortcutFolderLocation))
             {
                 Properties.Settings.Default.DefaultUserShortcutFolderLocation =
-                    System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Favorites), ApplicationName); ;
+                    Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Favorites), ApplicationName); ;
             }
             // SharePoint Uri
             if (Properties.Settings.Default.SharePointSiteUri == null ||

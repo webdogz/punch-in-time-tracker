@@ -24,8 +24,8 @@ namespace PunchIn.Models
         public int? Change { get; set; }
         public string Title { get; set; }
         public double Effort { get; set; }
-        public States State { get; set; }
-        public WorkTypes WorkType { get; set; }
+        public Status State { get; set; }
+        public WorkType WorkType { get; set; }
     }
     public class ReportExportItem : ReportByWeekItem
     {

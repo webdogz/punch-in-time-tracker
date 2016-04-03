@@ -14,7 +14,7 @@ namespace PunchIn.ViewModels
             if (this.parent.CurrentEntry != null)
                 CurrentEntry = this.parent.CurrentEntry;
             else
-                CurrentEntry = new TimeEntry { StartDate = DateTime.Now, Status = States.Analysis };
+                CurrentEntry = new TimeEntry { StartDate = DateTime.Now, Status = Status.Analysis };
         }
 
         #region Methods
@@ -28,7 +28,7 @@ namespace PunchIn.ViewModels
         public void PunchOut()
         {
             CurrentEntry.EndDate = DateTime.Now;
-            CurrentEntry.Status = States.Done;
+            CurrentEntry.Status = Status.Done;
             parent.SaveWorkItemCommand.Execute(new Action(() => this.parent.CurrentEntry = null));
         }
         #endregion

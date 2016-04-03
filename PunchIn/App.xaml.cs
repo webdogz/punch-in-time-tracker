@@ -17,7 +17,7 @@ namespace PunchIn
         private GlobalHotkeyManager hotkeyManager;
         private bool _initialised = false;
 
-        internal delegate void ProcessArgDelegate(String arg);
+        internal delegate void ProcessArgDelegate(string arg);
         internal static ProcessArgDelegate ProcessArg;
 
         private void SetCurrentArg(string arg)
@@ -29,9 +29,9 @@ namespace PunchIn
             bool openMainWindow = false;
             if (_initialised)
             {
-                if (Application.Current.MainWindow != null)
+                if (Current.MainWindow != null)
                 {
-                    Application.Current.MainWindow.Close();
+                    Current.MainWindow.Close();
                     openMainWindow = true;
                 }
 

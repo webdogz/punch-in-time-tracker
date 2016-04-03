@@ -1,4 +1,5 @@
-﻿using PunchIn.Controls;
+﻿using PunchIn.Core.Contracts;
+using PunchIn.Controls;
 using PunchIn.Models;
 using PunchIn.Pages.Content;
 using System;
@@ -21,8 +22,8 @@ namespace PunchIn.ViewModels
         #region Ctor and Instance Accessor
         private NotifyIconViewModel()
         {
-            this.viewModel = new TimeTrackViewModel();
-            this.viewModel.PropertyChanged += TimeTrackViewModel_PropertyChanged;
+            viewModel = new TimeTrackViewModel();
+            viewModel.PropertyChanged += TimeTrackViewModel_PropertyChanged;
             BuildShortcutMenusAsync();
             SyncThemeSettings();
             IsTimerActive = false;
@@ -79,7 +80,7 @@ namespace PunchIn.ViewModels
                 Command = NewWorkItemCommand
             });
             menu.Children.Add(null); // add a seperator
-            foreach (WorkItem item in this.viewModel.WorkItems.Where(w => w.Status != States.Done))
+            foreach (WorkItem item in viewModel.WorkItems.Where(w => w.Status != Status.Done))
             {
                 menu.Children.Add(NewPunchMenuItem(item));
             }
@@ -87,19 +88,19 @@ namespace PunchIn.ViewModels
 
         private PunchMenuItemViewModel NewPunchMenuItem(WorkItem item)
         {
-            string icon = (item.WorkType.ToString() ?? WorkTypes.Task.ToString()).ToLower();
+            string icon = (item.WorkType.ToString() ?? WorkType.Task.ToString()).ToLower();
             int id = 0;
             switch (item.WorkType)
             {
-                case WorkTypes.BacklogItem:
-                case WorkTypes.Datafix:
-                case WorkTypes.Bug:
+                case WorkType.BacklogItem:
+                case WorkType.Datafix:
+                case WorkType.Bug:
                     id = item.TfsId ?? 0;
                     break;
-                case WorkTypes.Change:
+                case WorkType.Change:
                     id = item.Change ?? 0;
                     break;
-                case WorkTypes.ServiceCall:
+                case WorkType.ServiceCall:
                     id = item.ServiceCall ?? 0;
                     break;
             }
@@ -117,9 +118,9 @@ namespace PunchIn.ViewModels
             get { return workItemMenus; }
             set
             {
-                if (this.workItemMenus != value)
+                if (workItemMenus != value)
                 {
-                    this.workItemMenus = value;
+                    workItemMenus = value;
                     OnPropertyChanged("WorkItemMenus");
                 }
             }
@@ -137,9 +138,9 @@ namespace PunchIn.ViewModels
             get { return punchMenuText; }
             set
             {
-                if (this.punchMenuText != value)
+                if (punchMenuText != value)
                 {
-                    this.punchMenuText = value;
+                    punchMenuText = value;
                     OnPropertyChanged("PunchMenuText");
                 }
             }
@@ -151,9 +152,9 @@ namespace PunchIn.ViewModels
             get { return punchMenuIcon; }
             set
             {
-                if (this.punchMenuIcon != value)
+                if (punchMenuIcon != value)
                 {
-                    this.punchMenuIcon = value;
+                    punchMenuIcon = value;
                     OnPropertyChanged("PunchMenuIcon");
                 }
             }
@@ -165,9 +166,9 @@ namespace PunchIn.ViewModels
             get { return isTimerActive; }
             set
             {
-                this.isTimerActive = value;
+                isTimerActive = value;
                 OnPropertyChanged("IsTimerActive");
-                if (this.isTimerActive)
+                if (isTimerActive)
                 {
                     PunchMenuIcon = "punchout";
                     PunchMenuText = "Punch Out";
@@ -224,15 +225,15 @@ namespace PunchIn.ViewModels
         private DispatcherTimer shortcutTimer;
         private void InitShortcutWatcher(DirectoryInfo rootPath)
         {
-            if (this.shortcutWatcher != null) return;
-            this.shortcutWatcher = new FileSystemWatcher(rootPath.FullName);
-            this.shortcutWatcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.LastAccess | NotifyFilters.DirectoryName | NotifyFilters.FileName;
-            this.shortcutWatcher.IncludeSubdirectories = true;
-            this.shortcutWatcher.Changed += OnShortcutWatcher_Changed;
-            this.shortcutWatcher.Created += OnShortcutWatcher_Changed;
-            this.shortcutWatcher.Deleted += OnShortcutWatcher_Changed;
-            this.shortcutWatcher.Renamed += OnShortcutWatcher_Renamed;
-            this.shortcutWatcher.EnableRaisingEvents = true;
+            if (shortcutWatcher != null) return;
+            shortcutWatcher = new FileSystemWatcher(rootPath.FullName);
+            shortcutWatcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.LastAccess | NotifyFilters.DirectoryName | NotifyFilters.FileName;
+            shortcutWatcher.IncludeSubdirectories = true;
+            shortcutWatcher.Changed += OnShortcutWatcher_Changed;
+            shortcutWatcher.Created += OnShortcutWatcher_Changed;
+            shortcutWatcher.Deleted += OnShortcutWatcher_Changed;
+            shortcutWatcher.Renamed += OnShortcutWatcher_Renamed;
+            shortcutWatcher.EnableRaisingEvents = true;
         }
         private void RebuildShortcutMenusHandler(object sender, EventArgs e)
         {
@@ -240,20 +241,20 @@ namespace PunchIn.ViewModels
             {
                 ShortcutMenus = null;
                 BuildShortcutMenusAsync();
-                this.shortcutTimer.Tick -= RebuildShortcutMenusHandler;
-                this.shortcutTimer = null;
+                shortcutTimer.Tick -= RebuildShortcutMenusHandler;
+                shortcutTimer = null;
             }));
         }
         void OnShortcutWatcher_Renamed(object sender, RenamedEventArgs e)
         {
-            if (this.shortcutTimer != null) return;
-            this.shortcutTimer = GetUITimer(TimeSpan.FromMilliseconds(900), RebuildShortcutMenusHandler);
+            if (shortcutTimer != null) return;
+            shortcutTimer = GetUITimer(TimeSpan.FromMilliseconds(900), RebuildShortcutMenusHandler);
         }
 
         void OnShortcutWatcher_Changed(object sender, FileSystemEventArgs e)
         {
-            if (this.shortcutTimer != null) return;
-            this.shortcutTimer = GetUITimer(TimeSpan.FromMilliseconds(900), RebuildShortcutMenusHandler);
+            if (shortcutTimer != null) return;
+            shortcutTimer = GetUITimer(TimeSpan.FromMilliseconds(900), RebuildShortcutMenusHandler);
         }
         #endregion
         private ShortcutMenuItemViewModel GetShortcutMenu(DirectoryInfo root, string name)
@@ -297,9 +298,9 @@ namespace PunchIn.ViewModels
             get { return currentTimeEntry; }
             set
             {
-                if (this.currentTimeEntry != value)
+                if (currentTimeEntry != value)
                 {
-                    this.currentTimeEntry = value;
+                    currentTimeEntry = value;
                     OnPropertyChanged("CurrentTimeEntry");
                 }
             }
@@ -309,23 +310,23 @@ namespace PunchIn.ViewModels
         
         public Guid CurrentWorkItemId
         {
-            get { return this.currentWorkItem != null ? this.currentWorkItem.Id : Guid.Empty; }
+            get { return currentWorkItem != null ? currentWorkItem.Id : Guid.Empty; }
         }
         public WorkItemViewModel CurrentWorkItem
         {
             get 
             {
                 if (CurrentTimeEntry != null && CurrentTimeEntry.CurrentWorkItem != null)
-                    this.currentWorkItem = WorkItemViewModel.ConvertFrom(CurrentTimeEntry.CurrentWorkItem);
+                    currentWorkItem = WorkItemViewModel.ConvertFrom(CurrentTimeEntry.CurrentWorkItem);
                 else
-                    this.currentWorkItem = WorkItemViewModel.ConvertFrom(viewModel.CurrentWorkItem);
-                return this.currentWorkItem;
+                    currentWorkItem = WorkItemViewModel.ConvertFrom(viewModel.CurrentWorkItem);
+                return currentWorkItem;
             }
             set
             {
-                if (this.currentWorkItem != value)
+                if (currentWorkItem != value)
                 {
-                    this.currentWorkItem = value;
+                    currentWorkItem = value;
                     OnPropertyChanged("CurrentWorkItem");
                 }
             }
@@ -335,12 +336,12 @@ namespace PunchIn.ViewModels
         private TrackerViewModel manager;
         public TrackerViewModel Manager
         {
-            get { return this.manager; }
+            get { return manager; }
             set
             {
-                if (this.manager != value)
+                if (manager != value)
                 {
-                    this.manager = value;
+                    manager = value;
                     OnPropertyChanged("Manager");
                 }
             }
@@ -351,12 +352,12 @@ namespace PunchIn.ViewModels
         private bool isBusy;
         public bool IsBusy
         {
-            get { return this.isBusy; }
+            get { return isBusy; }
             set
             {
-                if (this.isBusy != value)
+                if (isBusy != value)
                 {
-                    this.isBusy = value;
+                    isBusy = value;
                     OnPropertyChanged("IsBusy");
                 }
             }
@@ -374,9 +375,9 @@ namespace PunchIn.ViewModels
                 case "CurrentEntry":
                     if (CurrentTimeEntry == null)
                     {
-                        if (this.viewModel.CurrentEntry != null)
+                        if (viewModel.CurrentEntry != null)
                         {
-                            CurrentTimeEntry = new CurrentEntryViewModel(this.ViewModel);
+                            CurrentTimeEntry = new CurrentEntryViewModel(ViewModel);
                             IsTimerActive = true;
                         }
                     }
@@ -398,10 +399,10 @@ namespace PunchIn.ViewModels
         {
             get
             {
-                if (this.punchInCommand == null)
-                    this.punchInCommand = new DelegateCommand
+                if (punchInCommand == null)
+                    punchInCommand = new DelegateCommand
                     {
-                        CanExecuteFunc = (o) => this.ViewModel.CurrentWorkItem != null && !IsBusy,
+                        CanExecuteFunc = (o) => ViewModel.CurrentWorkItem != null && !IsBusy,
                         CommandAction = (o) =>
                             {
                                 IsBusy = true;
@@ -445,7 +446,7 @@ namespace PunchIn.ViewModels
                                 }
                             }
                     };
-                return this.punchInCommand;
+                return punchInCommand;
             }
         }
         private ICommand newWorkItemCommand;
@@ -456,8 +457,8 @@ namespace PunchIn.ViewModels
         {
             get
             {
-                if (this.newWorkItemCommand == null)
-                    this.newWorkItemCommand = new DelegateCommand
+                if (newWorkItemCommand == null)
+                    newWorkItemCommand = new DelegateCommand
                     {
                         CanExecuteFunc = (o) => ViewModel != null && !IsBusy,
                         CommandAction = (o) =>
@@ -479,8 +480,8 @@ namespace PunchIn.ViewModels
                                 if (dialog.DialogResult.HasValue &&
                                     dialog.DialogResult.Value)
                                 {
-                                    if (this.CurrentTimeEntry != null)
-                                        this.PunchInCommand.Execute(null);
+                                    if (CurrentTimeEntry != null)
+                                        PunchInCommand.Execute(null);
                                     WorkItem model = ((WorkItemViewModel)dialog.DataContext).WorkItem;
                                     ViewModel.AddWorkItemCommand.Execute(model);
                                     ViewModel.SaveWorkItemCommand.Execute(null);
@@ -494,7 +495,7 @@ namespace PunchIn.ViewModels
                             }
                         }
                     };
-                return this.newWorkItemCommand;
+                return newWorkItemCommand;
             }
         }
         private ICommand selectWorkItemCommand;
@@ -505,15 +506,15 @@ namespace PunchIn.ViewModels
         {
             get
             {
-                if (this.selectWorkItemCommand == null)
-                    this.selectWorkItemCommand = new DelegateCommand
+                if (selectWorkItemCommand == null)
+                    selectWorkItemCommand = new DelegateCommand
                     {
                         CanExecuteFunc = (idParam) => 
                             {
                                 try
                                 {
                                     Guid id = (Guid)idParam;
-                                    return this.ViewModel.CurrentWorkItem != null && !id.Equals(this.ViewModel.CurrentWorkItem.Id);
+                                    return ViewModel.CurrentWorkItem != null && !id.Equals(ViewModel.CurrentWorkItem.Id);
                                 }
                                 catch { return true; }
                             },
@@ -522,20 +523,20 @@ namespace PunchIn.ViewModels
                                 Guid id = (Guid)idParam;
                             
                                 // are we already punched in?
-                                if (this.CurrentTimeEntry != null)
+                                if (CurrentTimeEntry != null)
                                 {
                                     // since we have a current time entry, this will punch out and clean up timer
-                                    this.PunchInCommand.Execute(null);
+                                    PunchInCommand.Execute(null);
                                 }
-                                this.ViewModel.SelectWorkItemById(id);
+                                ViewModel.SelectWorkItemById(id);
                                 // punch back in with new time entry
-                                if (this.ViewModel.CurrentWorkItem != null && this.CurrentTimeEntry == null)
+                                if (ViewModel.CurrentWorkItem != null && CurrentTimeEntry == null)
                                 {
-                                    this.PunchInCommand.Execute(null);
+                                    PunchInCommand.Execute(null);
                                 }
                             }
                     };
-                return this.selectWorkItemCommand;
+                return selectWorkItemCommand;
             }
         }
         private ICommand shortcutActionCommand;
@@ -546,8 +547,8 @@ namespace PunchIn.ViewModels
         {
             get
             {
-                if (this.shortcutActionCommand == null)
-                    this.shortcutActionCommand = new DelegateCommand
+                if (shortcutActionCommand == null)
+                    shortcutActionCommand = new DelegateCommand
                     {
                         CanExecuteFunc = (o) => true,
                         CommandAction = (filePath) =>
@@ -558,7 +559,7 @@ namespace PunchIn.ViewModels
                             }
                         }
                     };
-                return this.shortcutActionCommand;
+                return shortcutActionCommand;
             }
         }
         private ICommand showWindowCommand;
@@ -569,8 +570,8 @@ namespace PunchIn.ViewModels
         {
             get
             {
-                if (this.showWindowCommand == null)
-                    this.showWindowCommand = new DelegateCommand
+                if (showWindowCommand == null)
+                    showWindowCommand = new DelegateCommand
                     {
                         CanExecuteFunc = (o) => true,
                         CommandAction = (o) =>
@@ -584,7 +585,7 @@ namespace PunchIn.ViewModels
                                 Application.Current.MainWindow.Activate();
                         }
                     };
-                return this.showWindowCommand;
+                return showWindowCommand;
             }
         }
 
@@ -606,13 +607,13 @@ namespace PunchIn.ViewModels
             // do clean up here
             try
             {
-                if (this.viewModel != null)
-                    this.viewModel.PropertyChanged -= TimeTrackViewModel_PropertyChanged;
+                if (viewModel != null)
+                    viewModel.PropertyChanged -= TimeTrackViewModel_PropertyChanged;
             }
             catch { /* gulp */ }
             finally
             {
-                this.viewModel = null;
+                viewModel = null;
             }
             try
             {
@@ -628,18 +629,18 @@ namespace PunchIn.ViewModels
             }
             try
             {
-                if (this.shortcutWatcher != null)
+                if (shortcutWatcher != null)
                 {
-                    this.shortcutWatcher.Changed -= OnShortcutWatcher_Changed;
-                    this.shortcutWatcher.Created -= OnShortcutWatcher_Changed;
-                    this.shortcutWatcher.Deleted -= OnShortcutWatcher_Changed;
-                    this.shortcutWatcher.Renamed -= OnShortcutWatcher_Renamed;
+                    shortcutWatcher.Changed -= OnShortcutWatcher_Changed;
+                    shortcutWatcher.Created -= OnShortcutWatcher_Changed;
+                    shortcutWatcher.Deleted -= OnShortcutWatcher_Changed;
+                    shortcutWatcher.Renamed -= OnShortcutWatcher_Renamed;
                 }
-                this.shortcutWatcher.Dispose();
+                shortcutWatcher.Dispose();
             }
             finally
             {
-                this.shortcutWatcher = null;
+                shortcutWatcher = null;
             }
             try
             {

@@ -34,8 +34,8 @@ namespace UnitTestPunchIn
                         ServiceCall = (i + 1) * 100,
                         Effort = rnd.NextDouble() * 3,
                         Title = string.Format("Work item #{0}", (i + 1)),
-                        WorkType = WorkTypes.BacklogItem,
-                        Status = States.Analysis
+                        WorkType = WorkType.BacklogItem,
+                        Status = Status.Analysis
                     };
                     foreach (var name in new string[] { "First entry", "Second entry", "Third entry" })
                     {
@@ -45,7 +45,7 @@ namespace UnitTestPunchIn
                         TimeEntry entry = new TimeEntry()
                         {
                             Description = name,
-                            Status = States.InProgress,
+                            Status = Status.InProgress,
                             StartDate = startDate,
                             EndDate = startDate.AddHours(rnd.NextDouble() * 4)
                         };
@@ -73,7 +73,7 @@ namespace UnitTestPunchIn
             {
                 Description = "New Entry for first item",
                 StartDate = DateTime.Now,
-                Status = States.InProgress
+                Status = Status.InProgress
             });
             using (var db = new LiteDatabase(Helpers.GetDbName()))
             {
@@ -120,7 +120,7 @@ namespace UnitTestPunchIn
                 PrintWorkItems(items);
                 WorkItem item2 = items.FirstOrDefault(w => w.TfsId == 2);
                 Assert.AreEqual(200, item2.ServiceCall);
-                item2.WorkType = WorkTypes.Datafix;
+                item2.WorkType = WorkType.Datafix;
                 col.Update(item2);
             }
             using(var db = new LiteDatabase(Helpers.GetDbName()))
@@ -130,7 +130,7 @@ namespace UnitTestPunchIn
                     .Where(w => w.TfsId == 2).ToList();
                 Assert.IsTrue(items.Count == 1);
                 WorkItem wit = items.First();
-                Assert.AreEqual(WorkTypes.Datafix, wit.WorkType);
+                Assert.AreEqual(WorkType.Datafix, wit.WorkType);
             }
         }
 
@@ -151,7 +151,7 @@ namespace UnitTestPunchIn
                     TfsId = 1000,
                     ServiceCall = 100000,
                     Title = "TEST: Can Add WorkItem With No Entries",
-                    WorkType = WorkTypes.Bug
+                    WorkType = WorkType.Bug
                 });
                 afterCount = col.Count();
             }
@@ -173,7 +173,7 @@ namespace UnitTestPunchIn
                 {
                     Description = "New Entry for first item",
                     StartDate = DateTime.Now,
-                    Status = States.InProgress
+                    Status = Status.InProgress
                 });
             using (var db = new LiteDatabase(Helpers.GetDbName()))
             {
@@ -207,7 +207,7 @@ namespace UnitTestPunchIn
                 Description = "New Entry for first item",
                 StartDate = DateTime.Now,
                 EndDate = DateTime.Now.AddHours(1.25),
-                Status = States.Analysis
+                Status = Status.Analysis
             });
             using (var db = new LiteDatabase(Helpers.GetDbName()))
             {
@@ -230,7 +230,7 @@ namespace UnitTestPunchIn
             {
                 var col = db.GetCollection<WorkItem>(CollectionNames.WorkItems);
                 var items = from wi in col.FindAll().AsQueryable()
-                            where wi.WorkType.Equals(WorkTypes.Datafix)
+                            where wi.WorkType.Equals(WorkType.Datafix)
                             select wi;
                 var item = items.First();
                 Assert.IsTrue(item.TfsId == 2);
@@ -249,7 +249,7 @@ namespace UnitTestPunchIn
                             where wi.TfsId.Value == 2
                             select wi;
                 var item = items.First();
-                Assert.IsTrue(item.WorkType.Equals(WorkTypes.Datafix));
+                Assert.IsTrue(item.WorkType.Equals(WorkType.Datafix));
                 Assert.IsTrue(items.Count() == 1);
 
             }

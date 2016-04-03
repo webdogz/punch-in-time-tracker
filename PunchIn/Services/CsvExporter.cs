@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PunchIn.Core.Contracts;
+using System;
 using System.IO;
 using System.Text;
 

@@ -1,4 +1,5 @@
 ﻿using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace PunchIn.Pages.Content
 {
@@ -10,9 +11,11 @@ namespace PunchIn.Pages.Content
         public WorkItemForm()
         {
             InitializeComponent();
-            this.Loaded += delegate
+            Loaded += delegate
             {
-                this.titleTextBox.Focus();
+                titleTextBox.Focus();
+                //titleTextBox.Focusable = true;
+                //Keyboard.Focus(titleTextBox);
             };
         }
     }

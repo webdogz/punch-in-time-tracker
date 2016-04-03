@@ -14,7 +14,7 @@ namespace PunchIn.ViewModels
         private readonly PunchInService service;
         public ReportsWeeklyViewModel()
         {
-            this.service = new PunchInService();
+            service = new PunchInService();
             try
             {
                 RefreshItems();
@@ -29,7 +29,7 @@ namespace PunchIn.ViewModels
 
         private void RefreshItems()
         {
-            this.reportList = this.service.GetReportExportItems();
+            reportList = service.GetReportExportItems();
             OnPropertyChanged("ReportItems");
         }
 
@@ -37,12 +37,12 @@ namespace PunchIn.ViewModels
         private bool isBusy = false;
         public bool IsBusy
         {
-            get { return this.isBusy; }
+            get { return isBusy; }
             set
             {
-                if (this.isBusy != value)
+                if (isBusy != value)
                 {
-                    this.isBusy = value;
+                    isBusy = value;
                     OnPropertyChanged("IsBusy");
                 }
             }
@@ -50,12 +50,12 @@ namespace PunchIn.ViewModels
         private double weeklyHoursCompleted;
         public double WeeklyHoursCompleted
         {
-            get { return this.weeklyHoursCompleted; }
+            get { return weeklyHoursCompleted; }
             set
             {
-                if (this.weeklyHoursCompleted != value)
+                if (weeklyHoursCompleted != value)
                 {
-                    this.weeklyHoursCompleted = value;
+                    weeklyHoursCompleted = value;
                     OnPropertyChanged("WeeklyHoursCompleted");
                 }
             }
@@ -68,9 +68,9 @@ namespace PunchIn.ViewModels
         {
             get 
             {
-                if (this.workTypesFilter == null)
-                    this.workTypesFilter = new ObservableCollection<WorkTypesListCheckbox>(
-                        Enum.GetValues(typeof(WorkTypes)).Cast<WorkTypes>()
+                if (workTypesFilter == null)
+                    workTypesFilter = new ObservableCollection<WorkTypesListCheckbox>(
+                        Enum.GetValues(typeof(WorkType)).Cast<WorkType>()
                         .Select(wt => new WorkTypesListCheckbox
                         {
                             WorkType = wt,
@@ -78,13 +78,13 @@ namespace PunchIn.ViewModels
                             IsSelected = true,
                             Command = CheckedCommand
                         }));
-                return this.workTypesFilter; 
+                return workTypesFilter; 
             }
             set
             {
-                if (this.workTypesFilter != value)
+                if (workTypesFilter != value)
                 {
-                    this.workTypesFilter = value;
+                    workTypesFilter = value;
                     OnPropertyChanged("WorkTypesFilter");
                     OnPropertyChanged("ReportItems");
                 }
@@ -110,12 +110,12 @@ namespace PunchIn.ViewModels
         private int weekOfYearFilter;
         public int WeekOfYearFilter
         {
-            get { return this.weekOfYearFilter; }
+            get { return weekOfYearFilter; }
             set
             {
-                if (this.weekOfYearFilter != value)
+                if (weekOfYearFilter != value)
                 {
-                    this.weekOfYearFilter = value;
+                    weekOfYearFilter = value;
                     OnPropertyChanged("WeekOfYearFilter");
                     OnPropertyChanged("ReportItems");
                 }
@@ -125,12 +125,12 @@ namespace PunchIn.ViewModels
         private bool isSummaryReportSelected;
         public bool IsSummaryReportSelected
         {
-            get { return this.isSummaryReportSelected; }
+            get { return isSummaryReportSelected; }
             set
             {
-                if (this.isSummaryReportSelected != value)
+                if (isSummaryReportSelected != value)
                 {
-                    this.isSummaryReportSelected = value;
+                    isSummaryReportSelected = value;
                     OnPropertyChanged("IsSummaryReportSelected");
                 }
             }
@@ -143,9 +143,9 @@ namespace PunchIn.ViewModels
         {
             get 
             {
-                WorkTypes[] workTypes = this.workTypesFilter.Where(w => w.IsSelected == true).Select(w => w.WorkType).ToArray();
-                List<ReportExportItem> list = this.reportList.Where(r => workTypes.Contains(r.WorkType) &&
-                    r.WeekOfYear == this.weekOfYearFilter).ToList();
+                WorkType[] workTypes = workTypesFilter.Where(w => w.IsSelected == true).Select(w => w.WorkType).ToArray();
+                List<ReportExportItem> list = reportList.Where(r => workTypes.Contains(r.WorkType) &&
+                    r.WeekOfYear == weekOfYearFilter).ToList();
                 WeeklyHoursCompleted = list.Sum(w => w.HoursCompleted);
                 return new ObservableCollection<ReportExportItem>(list);
             }
@@ -155,8 +155,8 @@ namespace PunchIn.ViewModels
         {
             get
             {
-                if (this.checkedCommand == null)
-                    this.checkedCommand = new DelegateCommand
+                if (checkedCommand == null)
+                    checkedCommand = new DelegateCommand
                     {
                         CanExecuteFunc = (o) => true,
                         CommandAction = (o) =>
@@ -164,19 +164,19 @@ namespace PunchIn.ViewModels
                                 OnPropertyChanged("ReportItems");
                             }
                     };
-                return this.checkedCommand;
+                return checkedCommand;
             }
         }
         
         private ReportExportItem selectedItem;
         public ReportExportItem SelectedItem
         {
-            get { return this.selectedItem; }
+            get { return selectedItem; }
             set
             {
-                if (this.selectedItem != value)
+                if (selectedItem != value)
                 {
-                    this.selectedItem = value;
+                    selectedItem = value;
                     OnPropertyChanged("SelectedItem");
                 }
             }
@@ -211,7 +211,7 @@ namespace PunchIn.ViewModels
             dlg.InitialDirectory = GlobalConfig.DatabaseFolder;
             dlg.DefaultExt = ".csv";
             dlg.Filter = "CSV (Comma Delimited) (*.csv)|*.csv";
-            Nullable<bool> result = dlg.ShowDialog();
+            bool? result = dlg.ShowDialog();
             if (result == true)
                 return dlg.FileName;
             else return string.Empty;
@@ -227,9 +227,9 @@ namespace PunchIn.ViewModels
         {
             get
             {
-                if (this.refreshReportItemsCommand == null)
+                if (refreshReportItemsCommand == null)
                 {
-                    this.refreshReportItemsCommand = new DelegateCommand
+                    refreshReportItemsCommand = new DelegateCommand
                     {
                         CanExecuteFunc = (o) => true,
                         CommandAction = (o) =>
@@ -238,7 +238,7 @@ namespace PunchIn.ViewModels
                             }
                     };
                 }
-                return this.refreshReportItemsCommand;
+                return refreshReportItemsCommand;
             }
         }
         private ICommand exportToExcelCommand;
@@ -249,8 +249,8 @@ namespace PunchIn.ViewModels
         {
             get
             {
-                if (this.exportToExcelCommand == null)
-                    this.exportToExcelCommand = new DelegateCommand
+                if (exportToExcelCommand == null)
+                    exportToExcelCommand = new DelegateCommand
                     {
                         CanExecuteFunc = (o) => !IsBusy,
                         CommandAction = (o) =>
@@ -284,7 +284,7 @@ namespace PunchIn.ViewModels
                             IsBusy = false;
                         }
                     };
-                return this.exportToExcelCommand;
+                return exportToExcelCommand;
             }
         }
         #endregion
@@ -292,7 +292,7 @@ namespace PunchIn.ViewModels
 
     public class WorkTypesListCheckbox : ViewModelBase
     {
-        public WorkTypes WorkType { get; set; }
+        public WorkType WorkType { get; set; }
         public string Text { get; set; }
         public ICommand Command { get; set; }
         public bool IsSelected { get; set; }

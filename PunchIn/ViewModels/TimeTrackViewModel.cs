@@ -11,24 +11,24 @@ namespace PunchIn.ViewModels
 {
     public class TimeTrackViewModel : ViewModelBase
     {
-        private readonly PunchInService client;
-        internal PunchInService Client { get { return this.client; } }
+        private readonly PunchInService service;
+        internal PunchInService Service { get { return service; } }
         #region ctor and init
         public TimeTrackViewModel()
         {
-            client = new PunchInService();
-            this.Refresh();
+            service = new PunchInService();
+            Refresh();
         }
         public TimeTrackViewModel(List<WorkItem> items)
         {
-            client = new PunchInService();
+            service = new PunchInService();
             WorkItems = items;
         }
         private void Refresh()
         {
             Task.Run(async () =>
             {
-                WorkItems = await client.GetWorkItemsAsync();
+                WorkItems = await service.GetWorkItemsAsync();
                 IsDirty = false;
             });
         }
@@ -57,9 +57,9 @@ namespace PunchIn.ViewModels
             get { return currentWorkItem; }
             set
             {
-                if (this.currentWorkItem != value)
+                if (currentWorkItem != value)
                 {
-                    this.currentWorkItem = value;
+                    currentWorkItem = value;
                     OnPropertyChanged("CurrentWorkItem");
 
                     if (CurrentWorkItem != null)
@@ -76,9 +76,9 @@ namespace PunchIn.ViewModels
             get { return currentEntry; }
             set
             {
-                if (this.currentEntry != value)
+                if (currentEntry != value)
                 {
-                    this.currentEntry = value;
+                    currentEntry = value;
                     OnPropertyChanged("CurrentEntry");
                     OnPropertyChanged("CanModifyEntry");
                 }
@@ -106,7 +106,7 @@ namespace PunchIn.ViewModels
         #region Public Methods
         public WorkItem GetWorkItemById(Guid id)
         {
-            return this.client.GetItemById(id);
+            return service.GetItemById(id);
         }
         public void SelectWorkItemById(Guid id)
         {
@@ -120,16 +120,16 @@ namespace PunchIn.ViewModels
         {
             get
             {
-                if (this.refreshWorkItemsCommand == null)
-                    this.refreshWorkItemsCommand = new DelegateCommand
+                if (refreshWorkItemsCommand == null)
+                    refreshWorkItemsCommand = new DelegateCommand
                     {
                         CanExecuteFunc = (o) => IsDirty,
                         CommandAction = (o) =>
                         {
-                            this.Refresh();
+                            Refresh();
                         }
                     };
-                return this.refreshWorkItemsCommand;
+                return refreshWorkItemsCommand;
             }
         }
 
@@ -138,19 +138,19 @@ namespace PunchIn.ViewModels
         {
             get
             {
-                if (this.saveWorkItemCommand == null)
-                    this.saveWorkItemCommand = new DelegateCommand
+                if (saveWorkItemCommand == null)
+                    saveWorkItemCommand = new DelegateCommand
                     {
-                        CanExecuteFunc = (o) => this.CurrentWorkItem != null,
+                        CanExecuteFunc = (o) => CurrentWorkItem != null,
                         CommandAction = (o) =>
                         {
-                            client.SaveWorkItem(CurrentWorkItem);
+                            service.SaveWorkItem(CurrentWorkItem);
                             IsDirty = false;
                             if (o is Action)
                                 (o as Action).Invoke();
                         }
                     };
-                return this.saveWorkItemCommand;
+                return saveWorkItemCommand;
             }
         }
 
@@ -159,23 +159,23 @@ namespace PunchIn.ViewModels
         {
             get
             {
-                if (this.addWorkItemCommand == null)
-                    this.addWorkItemCommand = new DelegateCommand
+                if (addWorkItemCommand == null)
+                    addWorkItemCommand = new DelegateCommand
                     {
                         CanExecuteFunc = (o) => true,
                         CommandAction = (o) =>
                         {
                             if (null != o && o is WorkItem)
-                                this.CurrentWorkItem = o as WorkItem;
+                                CurrentWorkItem = o as WorkItem;
                             else
-                                this.CurrentWorkItem = new WorkItem();
+                                CurrentWorkItem = new WorkItem();
                             if (WorkItems.FirstOrDefault(w => w.Id == CurrentWorkItem.Id) == default(WorkItem))
-                                WorkItems.Add(this.CurrentWorkItem);
+                                WorkItems.Add(CurrentWorkItem);
                             OnPropertyChanged("WorkItems");
                             IsDirty = true;
                         }
                     };
-                return this.addWorkItemCommand;
+                return addWorkItemCommand;
             }
         }
 
@@ -184,10 +184,10 @@ namespace PunchIn.ViewModels
         {
             get
             {
-                if (this.addEntryCommand == null)
-                    this.addEntryCommand = new DelegateCommand
+                if (addEntryCommand == null)
+                    addEntryCommand = new DelegateCommand
                     {
-                        CanExecuteFunc = (o) => this.CurrentWorkItem != null,
+                        CanExecuteFunc = (o) => CurrentWorkItem != null,
                         CommandAction = (o) =>
                         {
                             TimeEntry entry;
@@ -195,11 +195,11 @@ namespace PunchIn.ViewModels
                                 entry = o as TimeEntry;
                             else
                                 entry = new TimeEntry { StartDate = DateTime.Now };
-                            this.CurrentWorkItem.Entries.Add(entry);
-                            this.CurrentEntry = entry;
+                            CurrentWorkItem.Entries.Add(entry);
+                            CurrentEntry = entry;
                         }
                     };
-                return this.addEntryCommand;
+                return addEntryCommand;
             }
         }
         #endregion

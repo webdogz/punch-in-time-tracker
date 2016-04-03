@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PunchIn.ViewModels
+namespace PunchIn.Core.Contracts
 {
     public interface IGuidPK
     {

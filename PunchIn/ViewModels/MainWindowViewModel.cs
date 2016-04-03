@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using PunchIn.Core.Contracts;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Shell;
 
@@ -84,13 +80,13 @@ namespace PunchIn.ViewModels
         {
             get
             {
-                if (this.punchCommand == null)
-                    this.punchCommand = new DelegateCommand
+                if (punchCommand == null)
+                    punchCommand = new DelegateCommand
                     {
                         CanExecuteFunc = (o) => true,
                         CommandAction = (o) => NotifyIconViewModel.Current.PunchInCommand.Execute(o)
                     };
-                return this.punchCommand;
+                return punchCommand;
             }
         }
         #endregion

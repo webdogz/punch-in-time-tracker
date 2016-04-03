@@ -1,5 +1,5 @@
 ﻿
-namespace PunchIn.ViewModels
+namespace PunchIn.Core.Contracts
 {
     public interface ICleanUp
     {

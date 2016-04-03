@@ -68,13 +68,13 @@ namespace PunchIn.ViewModels
         public SettingsAppearanceViewModel()
         {
             // add the default themes
-            this.themes.Add(new Link { DisplayName = "dark", Source = AppearanceManager.DarkThemeSource });
-            this.themes.Add(new Link { DisplayName = "light", Source = AppearanceManager.LightThemeSource });
+            themes.Add(new Link { DisplayName = "dark", Source = AppearanceManager.DarkThemeSource });
+            themes.Add(new Link { DisplayName = "light", Source = AppearanceManager.LightThemeSource });
 
             // add additional themes
-            this.themes.Add(new Link { DisplayName = "underworld", Source = new Uri("/PunchIn;component/Assets/Themes/underworld.xaml", UriKind.Relative) });
-            this.themes.Add(new Link { DisplayName = "hello-kitty", Source = new Uri("/PunchIn;component/Assets/Themes/hello-kitty.xaml", UriKind.Relative) });
-            this.themes.Add(new Link { DisplayName = "my-background", Source = new Uri("/PunchIn;component/Assets/Themes/my-background.xaml", UriKind.Relative) });
+            themes.Add(new Link { DisplayName = "underworld", Source = new Uri("/PunchIn;component/Assets/Themes/underworld.xaml", UriKind.Relative) });
+            themes.Add(new Link { DisplayName = "hello-kitty", Source = new Uri("/PunchIn;component/Assets/Themes/hello-kitty.xaml", UriKind.Relative) });
+            themes.Add(new Link { DisplayName = "my-background", Source = new Uri("/PunchIn;component/Assets/Themes/my-background.xaml", UriKind.Relative) });
 
             //GetAvailableUserThemes();
 
@@ -94,7 +94,7 @@ namespace PunchIn.ViewModels
             {
                 foreach (FileInfo file in themesDir.GetFiles("*.xaml"))
                 {
-                    this.themes.Add(new Link { DisplayName = file.Name, Source = new Uri(Path.Combine("pack://siteoforigin:,,,/", relativePath, file.Name), UriKind.Absolute) });
+                    themes.Add(new Link { DisplayName = file.Name, Source = new Uri(Path.Combine("pack://siteoforigin:,,,/", relativePath, file.Name), UriKind.Absolute) });
                 }
             }
         }
@@ -121,15 +121,15 @@ namespace PunchIn.ViewModels
         {
             // synchronizes the selected viewmodel theme with the actual theme used by the appearance manager.
             Uri currentTheme = AppearanceManager.Current.ThemeSource;
-            this.SelectedTheme = this.themes.FirstOrDefault(l => l.Source.Equals(currentTheme));
+            SelectedTheme = themes.FirstOrDefault(l => l.Source.Equals(currentTheme));
 
             // and make sure accent color is up-to-date
-            this.SelectedAccentColor = AppearanceManager.Current.AccentColor;
+            SelectedAccentColor = AppearanceManager.Current.AccentColor;
 
             if (AppearanceManager.Current.UserSettingsLoaded)
             {
-                Properties.Settings.Default.SelectedAccentColor = this.SelectedAccentColor;
-                Properties.Settings.Default.SelectedThemeSource = this.SelectedTheme.Source;
+                Properties.Settings.Default.SelectedAccentColor = SelectedAccentColor;
+                Properties.Settings.Default.SelectedThemeSource = SelectedTheme.Source;
                 Properties.Settings.Default.Save();
             }
         }
@@ -145,7 +145,7 @@ namespace PunchIn.ViewModels
         #region Properties
         public LinkCollection Themes
         {
-            get { return this.themes; }
+            get { return themes; }
         }
 
         public string[] Palettes
@@ -155,30 +155,30 @@ namespace PunchIn.ViewModels
 
         public Color[] AccentColors
         {
-            get { return this.selectedPalette == PaletteMetro ? this.metroAccentColors : this.wpAccentColors; }
+            get { return selectedPalette == PaletteMetro ? metroAccentColors : wpAccentColors; }
         }
 
         public string SelectedPalette
         {
-            get { return this.selectedPalette; }
+            get { return selectedPalette; }
             set
             {
-                if (this.selectedPalette != value) {
-                    this.selectedPalette = value;
+                if (selectedPalette != value) {
+                    selectedPalette = value;
                     OnPropertyChanged("AccentColors");
 
-                    this.SelectedAccentColor = this.AccentColors.FirstOrDefault();
+                    SelectedAccentColor = AccentColors.FirstOrDefault();
                 }
             }
         }
 
         public Link SelectedTheme
         {
-            get { return this.selectedTheme; }
+            get { return selectedTheme; }
             set
             {
-                if (this.selectedTheme != value) {
-                    this.selectedTheme = value;
+                if (selectedTheme != value) {
+                    selectedTheme = value;
                     OnPropertyChanged("SelectedTheme");
 
                     // and update the actual theme
@@ -189,11 +189,11 @@ namespace PunchIn.ViewModels
 
         public Color SelectedAccentColor
         {
-            get { return this.selectedAccentColor; }
+            get { return selectedAccentColor; }
             set
             {
-                if (this.selectedAccentColor != value) {
-                    this.selectedAccentColor = value;
+                if (selectedAccentColor != value) {
+                    selectedAccentColor = value;
                     OnPropertyChanged("SelectedAccentColor");
 
                     AppearanceManager.Current.AccentColor = value;

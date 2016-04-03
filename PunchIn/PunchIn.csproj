@@ -134,11 +134,15 @@
     </Compile>
     <Compile Include="Models\ReportModels.cs" />
     <Compile Include="Models\SPExportItem.cs" />
+    <Compile Include="Models\WorkType.cs" />
     <Compile Include="Pages\Content\SettingsDisplayFormats.xaml.cs">
       <DependentUpon>SettingsDisplayFormats.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\Content\SettingsFileLocations.xaml.cs">
       <DependentUpon>SettingsFileLocations.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Content\SettingsGeneral.xaml.cs">
+      <DependentUpon>SettingsGeneral.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\ReportsWeekly.xaml.cs">
       <DependentUpon>ReportsWeekly.xaml</DependentUpon>
@@ -148,11 +152,7 @@
     </Compile>
     <Compile Include="Services\CsvExporter.cs" />
     <Compile Include="Services\CsvExportService.cs" />
-    <Compile Include="Services\IExporter.cs" />
     <Compile Include="ViewModels\Common\DbViewModelBase.cs" />
-    <Compile Include="ViewModels\Common\ICanDirty.cs" />
-    <Compile Include="ViewModels\Common\ICleanUp.cs" />
-    <Compile Include="ViewModels\Common\IGuidPK.cs" />
     <Compile Include="ViewModels\Converters\HiLiteCurrentWorkItemConverter.cs" />
     <Compile Include="ViewModels\Converters\DisableCurrentWorkItemConverter.cs" />
     <Compile Include="ViewModels\Converters\ModelListToViewModelListConverter.cs" />
@@ -176,8 +176,7 @@
     <Compile Include="Models\WorkItem.cs" />
     <Compile Include="Services\PunchInService.cs" />
     <Compile Include="ViewModels\Common\DelegateCommand.cs" />
-    <Compile Include="Models\Enums.cs" />
-    <Compile Include="ViewModels\IMenuItemViewModel.cs" />
+    <Compile Include="Models\Status.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\MenuItemViewModel.cs" />
     <Compile Include="ViewModels\PunchMenuItemViewModel.cs" />
@@ -247,6 +246,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\PunchIn.Core\PunchIn.Core.csproj">
+      <Project>{3bfe45fb-b032-4fb9-9ed6-999d49df8417}</Project>
+      <Name>PunchIn.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Webdogz.UI\Webdogz.UI.csproj">
       <Project>{f4d26b03-4bdd-48b7-9b50-1ab5ee4fc3ce}</Project>
       <Name>Webdogz.UI</Name>
@@ -358,6 +361,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\Content\SettingsAppearance.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\Content\SettingsGeneral.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

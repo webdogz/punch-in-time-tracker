@@ -1,4 +1,5 @@
-﻿using PunchIn.Models;
+﻿using PunchIn.Core.Contracts;
+using PunchIn.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace PunchIn.ViewModels
         private bool _initialised = false;
         public WorkItemViewModel()
         {
-            this.Entries = new List<TimeEntryViewModel>();
+            Entries = new List<TimeEntryViewModel>();
         }
         public void Init()
         {
@@ -21,12 +22,12 @@ namespace PunchIn.ViewModels
         public Guid Id { get; set; }
         public int? TfsId
         {
-            get { return this.tfsId; }
+            get { return tfsId; }
             set
             {
-                if (this.tfsId != value)
+                if (tfsId != value)
                 {
-                    this.tfsId = value;
+                    tfsId = value;
                     EnsurePropertyChanged(value, "TfsId");
                 }
             }
@@ -35,12 +36,12 @@ namespace PunchIn.ViewModels
 
         public int? ServiceCall
         {
-            get { return this.serviceCall; }
+            get { return serviceCall; }
             set
             {
-                if (this.serviceCall != value)
+                if (serviceCall != value)
                 {
-                    this.serviceCall = value;
+                    serviceCall = value;
                     EnsurePropertyChanged(value, "ServiceCall");
                 }
             }
@@ -49,12 +50,12 @@ namespace PunchIn.ViewModels
 
         public int? Change
         {
-            get { return this.change; }
+            get { return change; }
             set
             {
-                if (this.change != value)
+                if (change != value)
                 {
-                    this.change = value;
+                    change = value;
                     EnsurePropertyChanged(value, "Change");
                 }
             }
@@ -63,12 +64,12 @@ namespace PunchIn.ViewModels
 
         public string Title
         {
-            get { return this.title; }
+            get { return title; }
             set
             {
-                if (this.title != value)
+                if (title != value)
                 {
-                    this.title = value;
+                    title = value;
                     EnsurePropertyChanged(value, "Title");
                 }
             }
@@ -77,52 +78,52 @@ namespace PunchIn.ViewModels
 
         public double Effort
         {
-            get { return this.effort; }
+            get { return effort; }
             set
             {
-                if (this.effort != value)
+                if (effort != value)
                 {
-                    this.effort = value;
+                    effort = value;
                     EnsurePropertyChanged(value, "Effort");
                 }
             }
         }
         private double effort;
 
-        public States Status
+        public Status Status
         {
-            get { return this.status; }
+            get { return status; }
             set
             {
-                if (this.status != value)
+                if (status != value)
                 {
-                    this.status = value;
+                    status = value;
                     EnsurePropertyChanged(value, "Status");
                 }
             }
         }
-        private States status;
+        private Status status;
 
-        public WorkTypes WorkType
+        public WorkType WorkType
         {
-            get { return this.workType; }
+            get { return workType; }
             set
             {
-                if (this.workType != value)
+                if (workType != value)
                 {
-                    this.workType = value;
+                    workType = value;
                     EnsurePropertyChanged(value, "WorkType");
                 }
             }
         }
-        private WorkTypes workType;
+        private WorkType workType;
 
         public List<TimeEntryViewModel> Entries { get; set; }
 
         #region Bubble Properties
         public bool IsDirty
         {
-            get { return this.isDirty; }
+            get { return isDirty; }
             set
             {
                 ForceIsDirty(value, true);
@@ -141,21 +142,21 @@ namespace PunchIn.ViewModels
         #endregion
 
         #region Enum Lists
-        public IEnumerable<States> StatesList
+        public IEnumerable<Status> StatesList
         {
-            get { return Enum.GetValues(typeof(States)).Cast<States>(); }
+            get { return Enum.GetValues(typeof(Status)).Cast<Status>(); }
         }
 
-        public IEnumerable<WorkTypes> WorkTypesList
+        public IEnumerable<WorkType> WorkTypesList
         {
-            get { return Enum.GetValues(typeof(WorkTypes)).Cast<WorkTypes>(); }
+            get { return Enum.GetValues(typeof(WorkType)).Cast<WorkType>(); }
         }
         #endregion
 
         #region Methods
         public void ForceIsDirty(bool dirty, bool notify)
         {
-            this.isDirty = dirty;
+            isDirty = dirty;
             if (notify)
                 OnPropertyChanged("IsDirty");
         }
@@ -166,7 +167,7 @@ namespace PunchIn.ViewModels
         /// <returns>New WorkItemViewModel mapped from WorkItem</returns>
         public static WorkItemViewModel ConvertFrom(WorkItem workItem)
         {
-            return ToViewModel<WorkItem, WorkItemViewModel>(workItem, EmitMapper.ObjectMapperManager.DefaultInstance
+            return ToViewModel(workItem, EmitMapper.ObjectMapperManager.DefaultInstance
                         .GetMapper<WorkItem, WorkItemViewModel>(
                             new EmitMapper.MappingConfiguration.DefaultMapConfig().ConvertGeneric(typeof(IList<TimeEntry>), typeof(IList<TimeEntryViewModel>),
                                 new EmitMapper.MappingConfiguration.DefaultCustomConverterProvider(typeof(Converters.ModelListToViewModelListConverter<TimeEntry, TimeEntryViewModel>))
@@ -193,7 +194,7 @@ namespace PunchIn.ViewModels
         public override bool Equals(object obj)
         {
             WorkItemViewModel o = (obj as WorkItemViewModel);
-            if (o != null) return o.Id.Equals(this.Id);
+            if (o != null) return o.Id.Equals(Id);
             return base.Equals(obj);
         }
         public override int GetHashCode()
@@ -209,7 +210,7 @@ namespace PunchIn.ViewModels
                 ids += string.Format("SC: {0}\n", ServiceCall);
             if (Change.HasValue)
                 ids += string.Format("CH: {0}\n", Change);
-            return string.Format("{0}{1}", ids, this.Title);
+            return string.Format("{0}{1}", ids, Title);
         }
         #endregion
     }

@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 using System.Collections.Generic;
 using System;
-using PunchIn.Services;
+using PunchIn.Core.Contracts;
 
 namespace PunchIn.ViewModels
 {
@@ -12,7 +12,7 @@ namespace PunchIn.ViewModels
     {
         public TrackerViewModel() : base(NotifyIconViewModel.Current.ViewModel.WorkItems)
         {
-            this.dirtyWorkItems = new List<WorkItem>();
+            dirtyWorkItems = new List<WorkItem>();
             NotifyIconViewModel.Current.PropertyChanged += NotifyIcon_PropertyChanged;
             NotifyIconViewModel.Current.Manager = this;
         }
@@ -56,12 +56,12 @@ namespace PunchIn.ViewModels
         private ObservableCollection<WorkItemViewModel> observableWorkItems;
         public ObservableCollection<WorkItemViewModel> ObservableWorkItems
         {
-            get { return this.observableWorkItems; }
+            get { return observableWorkItems; }
             set
             {
-                if (this.observableWorkItems != value)
+                if (observableWorkItems != value)
                 {
-                    this.observableWorkItems = value;
+                    observableWorkItems = value;
                     OnPropertyChanged("ObservableWorkItems");
                 }
             }
@@ -72,17 +72,17 @@ namespace PunchIn.ViewModels
         {
             get
             {
-                return this.selectedWorkItemViewModel;
+                return selectedWorkItemViewModel;
             }
             set
             {
-                if (this.selectedWorkItemViewModel != value)
+                if (selectedWorkItemViewModel != value)
                 {
-                    if (this.selectedWorkItemViewModel != null)
-                        this.selectedWorkItemViewModel.PropertyChanged -= SelectedWorkItemViewModel_PropertyChanged;
-                    this.selectedWorkItemViewModel = value;
-                    if (this.selectedWorkItemViewModel != null)
-                        this.selectedWorkItemViewModel.PropertyChanged += SelectedWorkItemViewModel_PropertyChanged;
+                    if (selectedWorkItemViewModel != null)
+                        selectedWorkItemViewModel.PropertyChanged -= SelectedWorkItemViewModel_PropertyChanged;
+                    selectedWorkItemViewModel = value;
+                    if (selectedWorkItemViewModel != null)
+                        selectedWorkItemViewModel.PropertyChanged += SelectedWorkItemViewModel_PropertyChanged;
                     OnPropertyChanged("SelectedWorkItemViewModel", "IsSelectedWorkItemNotSelected", "WorkItemSummaryHoursCompleted");
                 }
             }
@@ -91,21 +91,21 @@ namespace PunchIn.ViewModels
         private TimeEntryViewModel selectedEntryViewModel;
         public TimeEntryViewModel SelectedEntryViewModel
         {
-            get { return this.selectedEntryViewModel; }
+            get { return selectedEntryViewModel; }
             set
             {
-                if (this.selectedEntryViewModel != value)
+                if (selectedEntryViewModel != value)
                 {
-                    if (this.selectedEntryViewModel != null)
-                        this.selectedEntryViewModel.PropertyChanged -= SelectedWorkItemViewModel_PropertyChanged;
-                    this.selectedEntryViewModel = value;
-                    if (this.selectedEntryViewModel != null)
+                    if (selectedEntryViewModel != null)
+                        selectedEntryViewModel.PropertyChanged -= SelectedWorkItemViewModel_PropertyChanged;
+                    selectedEntryViewModel = value;
+                    if (selectedEntryViewModel != null)
                     {
-                        this.selectedEntryViewModel.Init();
-                        this.selectedEntryViewModel.PropertyChanged += SelectedWorkItemViewModel_PropertyChanged;
+                        selectedEntryViewModel.Init();
+                        selectedEntryViewModel.PropertyChanged += SelectedWorkItemViewModel_PropertyChanged;
                     }
                     OnPropertyChanged("SelectedEntryViewModel");
-                    base.CurrentEntry = value == null ? null : this.selectedEntryViewModel.TimeEntry;
+                    base.CurrentEntry = value == null ? null : selectedEntryViewModel.TimeEntry;
                 }
             }
         }
@@ -114,19 +114,19 @@ namespace PunchIn.ViewModels
         {
             get 
             {
-                if (this.selectedWorkItemViewModel == null)
+                if (selectedWorkItemViewModel == null)
                 {
                     WorkItemSummaryHoursRemaining = 0;
                     WorkItemSummaryEffort = 0;
                     return 0;
                 }
                 TimeSpan span = new TimeSpan();
-                this.selectedWorkItemViewModel.Entries.ForEach(new Action<TimeEntryViewModel>(e =>
+                selectedWorkItemViewModel.Entries.ForEach(new Action<TimeEntryViewModel>(e =>
                 {
                     DateTime end = e.EndDate ?? e.StartDate;
                     span = span.Add(end - e.StartDate);
                 }));
-                WorkItemSummaryEffort = this.selectedWorkItemViewModel.Effort * 8;
+                WorkItemSummaryEffort = selectedWorkItemViewModel.Effort * 8;
                 WorkItemSummaryHoursRemaining = WorkItemSummaryEffort - span.TotalHours;
                 return span.TotalHours;
             }
@@ -135,12 +135,12 @@ namespace PunchIn.ViewModels
         private double workItemSummaryEffort;
         public double WorkItemSummaryEffort
         {
-            get { return this.workItemSummaryEffort; }
+            get { return workItemSummaryEffort; }
             set
             {
-                if (this.workItemSummaryEffort != value)
+                if (workItemSummaryEffort != value)
                 {
-                    this.workItemSummaryEffort = value;
+                    workItemSummaryEffort = value;
                     OnPropertyChanged("WorkItemSummaryEffort");
                 }
             }
@@ -148,12 +148,12 @@ namespace PunchIn.ViewModels
         private double workItemSummaryHoursRemaining;
         public double WorkItemSummaryHoursRemaining
         {
-            get { return this.workItemSummaryHoursRemaining; }
+            get { return workItemSummaryHoursRemaining; }
             set
             {
-                if (this.workItemSummaryHoursRemaining != value)
+                if (workItemSummaryHoursRemaining != value)
                 {
-                    this.workItemSummaryHoursRemaining = value;
+                    workItemSummaryHoursRemaining = value;
                     OnPropertyChanged("WorkItemSummaryHoursRemaining");
                 }
             }
@@ -163,10 +163,10 @@ namespace PunchIn.ViewModels
         {
             get
             {
-                if (this.selectedWorkItemViewModel != null)
+                if (selectedWorkItemViewModel != null)
                 {
                     return (!Guid.Empty.Equals(NotifyIconViewModel.Current.CurrentWorkItemId) &&
-                            NotifyIconViewModel.Current.CurrentWorkItemId != this.selectedWorkItemViewModel.Id);
+                            NotifyIconViewModel.Current.CurrentWorkItemId != selectedWorkItemViewModel.Id);
                 }
                 return true;
             }
@@ -175,19 +175,19 @@ namespace PunchIn.ViewModels
         private List<WorkItem> dirtyWorkItems;
         public List<WorkItem> DirtyWorkItems
         {
-            get { return this.dirtyWorkItems; }
+            get { return dirtyWorkItems; }
         }
         #endregion
 
         #region Enum Lists
-        public IEnumerable<States> StatesList
+        public IEnumerable<Status> StatesList
         {
-            get { return Enum.GetValues(typeof(States)).Cast<States>(); }
+            get { return Enum.GetValues(typeof(Status)).Cast<Status>(); }
         }
 
-        public IEnumerable<WorkTypes> WorkTypesList
+        public IEnumerable<WorkType> WorkTypesList
         {
-            get { return Enum.GetValues(typeof(WorkTypes)).Cast<WorkTypes>(); }
+            get { return Enum.GetValues(typeof(WorkType)).Cast<WorkType>(); }
         }
         #endregion
 
@@ -220,7 +220,7 @@ namespace PunchIn.ViewModels
 
         private void SetObservableWorkItems()
         {
-            var selected = this.selectedWorkItemViewModel;
+            var selected = selectedWorkItemViewModel;
             Converters.ModelListToViewModelListConverter<WorkItem, WorkItemViewModel> converter =
                         new Converters.ModelListToViewModelListConverter<WorkItem, WorkItemViewModel>();
             ObservableWorkItems = new ObservableCollection<WorkItemViewModel>(converter.Convert(WorkItems, null));
@@ -291,11 +291,11 @@ namespace PunchIn.ViewModels
                 ICanDirty item = (sender as ICanDirty);
                 if (item.IsDirty)
                 {
-                    if (!this.selectedWorkItemViewModel.IsDirty)
-                        this.selectedWorkItemViewModel.ForceIsDirty(true, false); // no notify
+                    if (!selectedWorkItemViewModel.IsDirty)
+                        selectedWorkItemViewModel.ForceIsDirty(true, false); // no notify
                     IsDirty = true;
                 }
-                UpdateSelectedWorkItem(this.selectedWorkItemViewModel);
+                UpdateSelectedWorkItem(selectedWorkItemViewModel);
             }
         }
         #endregion
@@ -306,9 +306,9 @@ namespace PunchIn.ViewModels
         {
             get
             {
-                if (this._newCommand == null)
+                if (_newCommand == null)
                 {
-                    this._newCommand = new DelegateCommand
+                    _newCommand = new DelegateCommand
                     {
                         CanExecuteFunc = (o) => NotifyIconViewModel.Current.NewWorkItemCommand.CanExecute(true),
                         CommandAction = (o) =>
@@ -325,22 +325,22 @@ namespace PunchIn.ViewModels
         {
             get
             {
-                if (this._saveCommand == null)
+                if (_saveCommand == null)
                 {
-                    this._saveCommand = new DelegateCommand
+                    _saveCommand = new DelegateCommand
                     {
                         CanExecuteFunc = (o) => IsDirty,
                         CommandAction = (o) =>
                         {
                             foreach (WorkItem item in DirtyWorkItems)
-                                this.Client.SaveWorkItem(item);
+                                Service.SaveWorkItem(item);
                             DirtyWorkItems.Clear();
                             IsDirty = false;
                             SetObservableWorkItems();
                         }
                     };
                 }
-                return this._saveCommand;
+                return _saveCommand;
             }
         }
         private ICommand _deleteWorkItemCommand;
@@ -348,9 +348,9 @@ namespace PunchIn.ViewModels
         {
             get
             {
-                if (this._deleteWorkItemCommand == null)
+                if (_deleteWorkItemCommand == null)
                 {
-                    this._deleteWorkItemCommand = new DelegateCommand
+                    _deleteWorkItemCommand = new DelegateCommand
                     {
                         CanExecuteFunc = (o) => CurrentWorkItem != null,
                         CommandAction = (o) =>
@@ -363,8 +363,8 @@ namespace PunchIn.ViewModels
                                     confirmMsg, "Are you sure?", 
                                     System.Windows.MessageBoxButton.YesNo) == System.Windows.MessageBoxResult.Yes)
                                 {
-                                    this.Client.DeleteWorkItem(SelectedWorkItemViewModel.Id);
-                                    this.RemoveWorkItem(SelectedWorkItemViewModel);
+                                    Service.DeleteWorkItem(SelectedWorkItemViewModel.Id);
+                                    RemoveWorkItem(SelectedWorkItemViewModel);
                                     if (CurrentWorkItem != null && CurrentWorkItem.Id == SelectedWorkItemViewModel.Id)
                                         CurrentWorkItem = null;
                                     SelectedWorkItemViewModel = null;
@@ -381,7 +381,7 @@ namespace PunchIn.ViewModels
                         }
                     };
                 }
-                return this._deleteWorkItemCommand;
+                return _deleteWorkItemCommand;
             }
         }
         private ICommand _selectedCurrentWorkItemCommand;
@@ -389,14 +389,14 @@ namespace PunchIn.ViewModels
         {
             get
             {
-                if (this._selectedCurrentWorkItemCommand == null)
+                if (_selectedCurrentWorkItemCommand == null)
                 {
-                    this._selectedCurrentWorkItemCommand = new DelegateCommand
+                    _selectedCurrentWorkItemCommand = new DelegateCommand
                     {
                         CanExecuteFunc = (o) => IsSelectedWorkItemNotSelected,
                         CommandAction = (o) =>
                         {
-                            WorkItem wi = this.selectedWorkItemViewModel.WorkItem;
+                            WorkItem wi = selectedWorkItemViewModel.WorkItem;
                             if (CurrentWorkItem != wi)
                             {
                                 if (NotifyIconViewModel.Current.CurrentTimeEntry != null)
@@ -408,7 +408,7 @@ namespace PunchIn.ViewModels
                         }
                     };
                 }
-                return this._selectedCurrentWorkItemCommand;
+                return _selectedCurrentWorkItemCommand;
             }
         }
         #endregion
@@ -419,10 +419,10 @@ namespace PunchIn.ViewModels
             try
             {
                 NotifyIconViewModel.Current.PropertyChanged -= NotifyIcon_PropertyChanged;
-                if (this.selectedWorkItemViewModel != null)
-                    this.selectedWorkItemViewModel.PropertyChanged -= SelectedWorkItemViewModel_PropertyChanged;
-                if (this.selectedEntryViewModel != null)
-                    this.selectedEntryViewModel.PropertyChanged -= SelectedWorkItemViewModel_PropertyChanged;
+                if (selectedWorkItemViewModel != null)
+                    selectedWorkItemViewModel.PropertyChanged -= SelectedWorkItemViewModel_PropertyChanged;
+                if (selectedEntryViewModel != null)
+                    selectedEntryViewModel.PropertyChanged -= SelectedWorkItemViewModel_PropertyChanged;
                 if (NotifyIconViewModel.Current.Manager == this)
                     NotifyIconViewModel.Current.Manager = null;
             }

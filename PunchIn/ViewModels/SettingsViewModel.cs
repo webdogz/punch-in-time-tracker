@@ -12,17 +12,19 @@ namespace PunchIn.ViewModels
             "SharePointListName", "SharePointSiteUri",
             "DefaultDatePickerFormatString", "DefaultDateTimePickerFormatString",
             "SharePointSiteUri","SharePointListName",
-            "DefaultUserShortcutFolder", "DefaultUserDatabaseFolderLocation"
+            "DefaultUserShortcutFolder", "DefaultUserDatabaseFolderLocation",
+            "PunchCardMode"
         };
         public SettingsViewModel()
         {
-            this.sharePointSiteUri = Properties.Settings.Default.SharePointSiteUri;
-            this.sharePointListName = Properties.Settings.Default.SharePointListName;
-            this.defaultDatePickerFormatString = Properties.Settings.Default.DefaultDatePickerFormatString;
-            this.defaultDateTimePickerFormatString = Properties.Settings.Default.DefaultDateTimePickerFormatString;
-            this.defaultUserShortcutFolder = Properties.Settings.Default.DefaultUserShortcutFolderLocation;
-            this.defaultUserDatabaseFolder = Properties.Settings.Default.DefaultUserDatabaseFolderLocation;
-            this.PropertyChanged += SettingsViewModel_PropertyChanged;
+            sharePointSiteUri = Properties.Settings.Default.SharePointSiteUri;
+            sharePointListName = Properties.Settings.Default.SharePointListName;
+            defaultDatePickerFormatString = Properties.Settings.Default.DefaultDatePickerFormatString;
+            defaultDateTimePickerFormatString = Properties.Settings.Default.DefaultDateTimePickerFormatString;
+            defaultUserShortcutFolder = Properties.Settings.Default.DefaultUserShortcutFolderLocation;
+            defaultUserDatabaseFolder = Properties.Settings.Default.DefaultUserDatabaseFolderLocation;
+            punchCardMode = Properties.Settings.Default.PunchCardMode;
+            PropertyChanged += SettingsViewModel_PropertyChanged;
         }
 
         void SettingsViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -46,27 +48,48 @@ namespace PunchIn.ViewModels
 
         public string PreviewDefaultDateFormat
         {
-            get { return GetDateFormatted(this.defaultDatePickerFormatString); }
+            get { return GetDateFormatted(defaultDatePickerFormatString); }
         }
         public string PreviewDefaultDateTimeFormat
         {
-            get { return GetDateFormatted(this.defaultDateTimePickerFormatString); }
+            get { return GetDateFormatted(defaultDateTimePickerFormatString); }
+        }
+
+        public IEnumerable<Core.PunchCardMode> PunchCardModes
+        {
+            get { return Enum.GetValues(typeof(Core.PunchCardMode)).Cast<Core.PunchCardMode>(); }
         }
         #endregion
 
         #region Properties
-        
-        private string defaultUserDatabaseFolder;
-        public string DefaultUserDatabaseFolder
+
+        private Core.PunchCardMode punchCardMode;
+        public Core.PunchCardMode PunchCardMode
         {
-            get { return this.defaultUserDatabaseFolder; }
+            get { return punchCardMode; }
             set
             {
                 // TODO: add ValidationError
-                if (this.defaultUserDatabaseFolder != value &&
+                if (punchCardMode != value)
+                {
+                    punchCardMode = value;
+                    Properties.Settings.Default.PunchCardMode = value;
+                    OnPropertyChanged("PunchCardMode");
+                }
+            }
+        }
+
+        private string defaultUserDatabaseFolder;
+        public string DefaultUserDatabaseFolder
+        {
+            get { return defaultUserDatabaseFolder; }
+            set
+            {
+                // TODO: add ValidationError
+                if (defaultUserDatabaseFolder != value &&
                     System.IO.Directory.Exists(value))
                 {
-                    this.defaultUserDatabaseFolder = value;
+                    defaultUserDatabaseFolder = value;
                     OnPropertyChanged("DefaultUserDatabaseFolder");
                 }
             }
@@ -74,14 +97,14 @@ namespace PunchIn.ViewModels
         private string defaultUserShortcutFolder;
         public string DefaultUserShortcutFolder
         {
-            get { return this.defaultUserShortcutFolder; }
+            get { return defaultUserShortcutFolder; }
             set
             {
                 // TODO: add ValidationError
-                if (this.defaultUserShortcutFolder != value &&
+                if (defaultUserShortcutFolder != value &&
                     System.IO.Directory.Exists(value))
                 {
-                    this.defaultUserShortcutFolder = value;
+                    defaultUserShortcutFolder = value;
                     Properties.Settings.Default.DefaultUserShortcutFolderLocation = value;
                     OnPropertyChanged("DefaultUserShortcutFolder");
                 }
@@ -90,12 +113,12 @@ namespace PunchIn.ViewModels
         private string defaultDatePickerFormatString;
         public string DefaultDatePickerFormatString
         {
-            get { return this.defaultDatePickerFormatString; }
+            get { return defaultDatePickerFormatString; }
             set
             {
-                if (this.defaultDatePickerFormatString != value)
+                if (defaultDatePickerFormatString != value)
                 {
-                    this.defaultDatePickerFormatString = value;
+                    defaultDatePickerFormatString = value;
                     Properties.Settings.Default.DefaultDatePickerFormatString = value;
                     OnPropertyChanged("DefaultDatePickerFormatString");
                 }
@@ -104,12 +127,12 @@ namespace PunchIn.ViewModels
         private string defaultDateTimePickerFormatString;
         public string DefaultDateTimePickerFormatString
         {
-            get { return this.defaultDateTimePickerFormatString; }
+            get { return defaultDateTimePickerFormatString; }
             set
             {
-                if (this.defaultDateTimePickerFormatString != value)
+                if (defaultDateTimePickerFormatString != value)
                 {
-                    this.defaultDateTimePickerFormatString = value;
+                    defaultDateTimePickerFormatString = value;
                     Properties.Settings.Default.DefaultDateTimePickerFormatString = value;
                     OnPropertyChanged("DefaultDateTimePickerFormatString");
                 }
@@ -118,12 +141,12 @@ namespace PunchIn.ViewModels
         private string sharePointListName;
         public string SharePointListName
         {
-            get { return this.sharePointListName; }
+            get { return sharePointListName; }
             set
             {
-                if (this.sharePointListName != value)
+                if (sharePointListName != value)
                 {
-                    this.sharePointListName = value;
+                    sharePointListName = value;
                     Properties.Settings.Default.SharePointListName = value;
                     OnPropertyChanged("SharePointListName");
                 }
@@ -132,12 +155,12 @@ namespace PunchIn.ViewModels
         private Uri sharePointSiteUri;
         public Uri SharePointSiteUri
         {
-            get { return this.sharePointSiteUri; }
+            get { return sharePointSiteUri; }
             set
             {
-                if (this.sharePointSiteUri != value)
+                if (sharePointSiteUri != value)
                 {
-                    this.sharePointSiteUri = value;
+                    sharePointSiteUri = value;
                     Properties.Settings.Default.SharePointSiteUri = value;
                     OnPropertyChanged("SharePointSiteUri");
                 }

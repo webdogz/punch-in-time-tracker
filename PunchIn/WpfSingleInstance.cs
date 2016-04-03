@@ -13,7 +13,7 @@ namespace PunchIn
         internal static void Make(string name, Application app)
         {
             EventWaitHandle eventWaitHandle = null;
-            String eventName = Environment.MachineName + "-" + name;
+            string eventName = Environment.MachineName + "-" + name;
             bool isFirstInstance = false;
 
             try
@@ -47,7 +47,7 @@ namespace PunchIn
 
         private delegate void dispatcherInvoker();
 
-        private static void waitOrTimerCallback(Object state, Boolean timedOut)
+        private static void waitOrTimerCallback(object state, bool timedOut)
         {
             Application app = (Application)state;
             app.Dispatcher.BeginInvoke(
@@ -79,20 +79,14 @@ namespace PunchIn
         }
 
         #region Store Application Startup Args - TODO: Remove this shit
-        private static readonly String isolatedStorageFileName = "PunchStartupArgs.tmp";
+        private static readonly string isolatedStorageFileName = "PunchStartupArgs.tmp";
 
         private static void SaveActivationData()
         {
             string startupArg = GetActivationData();
             if (!string.IsNullOrWhiteSpace(startupArg))
             {
-                IsolatedStorageFile isoStore =
-                    IsolatedStorageFile.GetStore(
-                        IsolatedStorageScope.User | IsolatedStorageScope.Assembly,
-                        null,
-                        null);
-
-                IsolatedStorageFileStream isoStream = new IsolatedStorageFileStream(isolatedStorageFileName, FileMode.Create, isoStore);
+                IsolatedStorageFileStream isoStream = GetIsolatedStorageFileStream(GetIsolatedStorageFile(), isolatedStorageFileName, FileMode.OpenOrCreate);
                 StreamWriter sw = new StreamWriter(isoStream);
                 sw.Write(startupArg);
                 sw.Close();
@@ -101,19 +95,25 @@ namespace PunchIn
 
         private static void ProcessActivationData()
         {
-            IsolatedStorageFile isoStore =
-                IsolatedStorageFile.GetStore(
-                    IsolatedStorageScope.User | IsolatedStorageScope.Assembly,
-                    null,
-                    null);
-
-            IsolatedStorageFileStream isoStream = new IsolatedStorageFileStream(isolatedStorageFileName, FileMode.OpenOrCreate, isoStore);
+            IsolatedStorageFile isoFile = GetIsolatedStorageFile();
+            IsolatedStorageFileStream isoStream = GetIsolatedStorageFileStream(isoFile, isolatedStorageFileName, FileMode.OpenOrCreate);
             StreamReader sr = new StreamReader(isoStream);
             string arg = sr.ReadToEnd();
             sr.Close();
-
-            isoStore.DeleteFile(isolatedStorageFileName);
+            
+            isoFile.DeleteFile(isolatedStorageFileName);
             App.ProcessArg(arg);
+        }
+        private static IsolatedStorageFile GetIsolatedStorageFile()
+        {
+            return IsolatedStorageFile.GetStore(
+                    IsolatedStorageScope.User | IsolatedStorageScope.Assembly,
+                    null,
+                    null);
+        }
+        private static IsolatedStorageFileStream GetIsolatedStorageFileStream(IsolatedStorageFile isoStore, string filename, FileMode fileMode)
+        {
+            return new IsolatedStorageFileStream(filename, fileMode, isoStore);
         }
         #endregion
 

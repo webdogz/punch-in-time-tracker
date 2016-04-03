@@ -9,13 +9,13 @@ namespace PunchIn.Models
         {
             if (id.Equals(Guid.Empty))
                 id = Guid.NewGuid();
-            this.Id = id;
-            this.StartDate = DateTime.Now;
+            Id = id;
+            StartDate = DateTime.Now;
         }
         public Guid Id { get; set; }
         public string Description { get; set; }
         public DateTime StartDate { get; set; }
-        public Nullable<DateTime> EndDate { get; set; }
-        public States Status { get; set; }
+        public DateTime? EndDate { get; set; }
+        public Status Status { get; set; }
     }
 }

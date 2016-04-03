@@ -11,8 +11,9 @@
         <vm:SettingsViewModel />
     </UserControl.DataContext>
     <Grid Style="{StaticResource ContentRoot}">
-        <wui:ModernTab SelectedSource="/Pages/Content/SettingsAppearance.xaml" Layout="List">
+        <wui:ModernTab SelectedSource="/Pages/Content/SettingsGeneral.xaml" Layout="List">
             <wui:ModernTab.Links>
+                <wui:Link DisplayName="General" Source="/Pages/Content/SettingsGeneral.xaml" />
                 <wui:Link DisplayName="Appearance" Source="/Pages/Content/SettingsAppearance.xaml" />
                 <wui:Link DisplayName="File Locations" Source="/Pages/Content/SettingsFileLocations.xaml" />
                 <wui:Link DisplayName="Display Formats" Source="/Pages/Content/SettingsDisplayFormats.xaml" />

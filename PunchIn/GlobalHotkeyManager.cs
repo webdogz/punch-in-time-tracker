@@ -59,7 +59,7 @@ namespace PunchIn
                 }
                 NotifyIconViewModel.Current.PunchInCommand.Execute(null);
                 if (NotifyIconViewModel.Current.CurrentTimeEntry == null && !string.IsNullOrWhiteSpace(msg))
-                    this.notifyIcon.ShowBalloonTip("Punched Out", msg, BalloonIcon.Info);
+                    notifyIcon.ShowBalloonTip("Punched Out", msg, BalloonIcon.Info);
             }
         }
 
