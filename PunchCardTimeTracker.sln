@@ -1,9 +1,12 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PunchIn", "PunchIn\PunchIn.csproj", "{AA1FEAC9-039F-4B35-A333-0AE93864BA13}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3BFE45FB-B032-4FB9-9ED6-999D49DF8417} = {3BFE45FB-B032-4FB9-9ED6-999D49DF8417}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestPunchIn", "UnitTestPunchIn\UnitTestPunchIn.csproj", "{75A4431D-D36C-42F1-AC60-E63545D651AA}"
 EndProject
