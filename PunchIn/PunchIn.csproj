@@ -92,8 +92,9 @@
     <Reference Include="EmitMapper">
       <HintPath>..\Assemblies\EmitMapper.dll</HintPath>
     </Reference>
-    <Reference Include="LiteDB">
-      <HintPath>..\packages\LiteDB.1.0.4\lib\net40\LiteDB.dll</HintPath>
+    <Reference Include="LiteDB, Version=2.0.0.0, Culture=neutral, PublicKeyToken=4ee40123013c9f27, processorArchitecture=MSIL">
+      <HintPath>..\packages\LiteDB.2.0.0-rc\lib\net40\LiteDB.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="PresentationFramework.Aero2" />
     <Reference Include="System" />
@@ -125,6 +126,7 @@
     <Compile Include="Controls\BindableRadioButton.cs" />
     <Compile Include="Controls\ImageButton.cs" />
     <Compile Include="Controls\TrayDialog.cs" />
+    <Compile Include="Data\PunchDatabase.cs" />
     <Compile Include="Extensions\BindableStaticResourceExtension.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="GlobalConfig.cs" />

@@ -20,16 +20,12 @@ namespace PunchIn.ViewModels
         #region Methods
         public void PunchIn()
         {
-            if (!parent.CanModifyEntry)
-                parent.AddEntryCommand.Execute(CurrentEntry);
-            //todo: to save or not to save?
-            parent.SaveWorkItemCommand.Execute(null);
+            parent.PunchIn(CurrentEntry);
         }
         public void PunchOut()
         {
             CurrentEntry.EndDate = DateTime.Now;
-            CurrentEntry.Status = Status.Done;
-            parent.SaveWorkItemCommand.Execute(new Action(() => this.parent.CurrentEntry = null));
+            parent.PunchOut(CurrentEntry);
         }
         #endregion
 

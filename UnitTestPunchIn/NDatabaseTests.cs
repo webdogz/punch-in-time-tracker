@@ -25,7 +25,6 @@ namespace UnitTestPunchIn
             {
                 var col = db.GetCollection<WorkItem>(CollectionNames.WorkItems);
                 var rnd = new Random();
-                var items = new List<WorkItem>();
                 for (int i = 0; i < Helpers.MaxWorkItemsToCreate; i++)
                 {
                     WorkItem item = new WorkItem()
@@ -51,9 +50,9 @@ namespace UnitTestPunchIn
                         };
                         item.Entries.Add(entry);
                     }
-                    items.Add(item);
+                    col.Insert(item);
                 }
-                col.InsertBulk(items);
+                
                 int cnt = col.Count();
                 Assert.AreEqual(Helpers.MaxWorkItemsToCreate, cnt);
             }

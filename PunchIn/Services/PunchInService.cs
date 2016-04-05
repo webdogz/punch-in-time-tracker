@@ -1,10 +1,9 @@
 ﻿using LiteDB;
+using PunchIn.Data;
 using PunchIn.Extensions;
 using PunchIn.Models;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -19,9 +18,9 @@ namespace PunchIn.Services
         public List<WorkItem> GetWorkItems()
         {
             List<WorkItem> list;
-            using (var db = new LiteDatabase(this.DbName))
+            using (var db = new PunchDatabase())
             {
-                list = db.GetCollection<WorkItem>(CollectionNames.WorkItems).FindAll().ToList();
+                list = db.WorkItems.FindAll().ToList();
             }
             if (list != null)
                 return list;
@@ -36,14 +35,14 @@ namespace PunchIn.Services
         /// <returns>The WorkItem</returns>
         public WorkItem GetItemById(Guid id)
         {
-            using (var db = new LiteDatabase(this.DbName))
+            using (var db = new PunchDatabase())
             {
                 return GetItemById(id, db);
             }
         }
-        private WorkItem GetItemById(Guid id, LiteDatabase db)
+        private WorkItem GetItemById(Guid id, PunchDatabase db)
         {
-            return db.GetCollection<WorkItem>(CollectionNames.WorkItems).FindOne(w => w.Id == id);
+            return db.WorkItems.FindOne(w => w.Id == id);
         }
 
         /// <summary>
@@ -52,10 +51,10 @@ namespace PunchIn.Services
         /// <param name="workItem">WorkItem to be saved</param>
         public void SaveWorkItem(WorkItem workItem)
         {
-            using (var db = new LiteDatabase(this.DbName))
+            using (var db = new PunchDatabase())
             {
                 //WorkItem toWorkItem = GetItemById(workItem.Id, db);
-                var col = db.GetCollection<WorkItem>(CollectionNames.WorkItems);
+                var col = db.WorkItems;
                 //if (toWorkItem == null)
                 if (col.FindById(new BsonValue(workItem.Id)) == null)
                     col.Insert(workItem);
@@ -68,15 +67,15 @@ namespace PunchIn.Services
 
         public void DeleteWorkItem(Guid workItemId)
         {
-            using (var db = new LiteDatabase(this.DbName))
+            using (var db = new PunchDatabase())
             {
-                db.GetCollection<WorkItem>(CollectionNames.WorkItems).Delete(wi => wi.Id == workItemId);
+                db.WorkItems.Delete(wi => wi.Id == workItemId);
             }
         }
         #region Reporting
-        private IOrderedQueryable<ReportByWeekGroup> GetItemsGroupedByWeek(LiteDatabase db)
+        private IOrderedQueryable<ReportByWeekGroup> GetItemsGroupedByWeek(PunchDatabase db)
         {
-            var reportItems = db.GetCollection<WorkItem>(CollectionNames.WorkItems).FindAll().AsQueryable<WorkItem>()
+            var reportItems = db.WorkItems.FindAll().AsQueryable<WorkItem>()
                 .SelectMany(item => item.Entries.Select(e => new ReportByWeekItem
                 {
                     ItemGuid = item.Id,
@@ -121,7 +120,7 @@ namespace PunchIn.Services
         public List<ReportExportItem> GetSummaryReportExportItems(Predicate<ReportByWeekGroup> predicate)
         {
             List<ReportExportItem> exportItems = new List<ReportExportItem>();
-            using (var db = new LiteDatabase(this.DbName))
+            using (var db = new PunchDatabase())
             {
                 foreach (var item in GetItemsGroupedByWeek(db).Where(g => predicate(g)))
                 {
@@ -195,7 +194,7 @@ namespace PunchIn.Services
         /// <returns>List of <see cref="ReportExportItem"/></returns>
         public List<ReportExportItem> GetReportExportItems(Predicate<ReportByWeekGroup> predicate)
         {
-            using (var db = new LiteDatabase(this.DbName))
+            using (var db = new PunchDatabase())
             {
                 var exportItems = new List<ReportExportItem>();
                 var items = GetItemsGroupedByWeek(db).Where(g => predicate(g));
@@ -258,7 +257,7 @@ namespace PunchIn.Services
             get
             {
                 if (_dbName == null)
-                    _dbName = GlobalConfig.DatabaseLocation;
+                    _dbName = "filename=" + GlobalConfig.DatabaseLocation + ";version=1";
                 return _dbName;
             }
         }

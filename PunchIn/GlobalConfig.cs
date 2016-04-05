@@ -7,6 +7,10 @@ namespace PunchIn
     {
         const string ApplicationName = "Punch Time Tracker";
         #region Database Config
+        public static int DatabaseVersion
+        {
+            get { return 1; }
+        }
         public static string DatabaseName
         {
             get
@@ -30,6 +34,10 @@ namespace PunchIn
                     return Properties.Settings.Default.CurrentUserDatabaseLocation;
                 return Path.Combine(DatabaseFolder, DatabaseName);
             }
+        }
+        public static string ConnectionString
+        {
+            get { return "filename=" + DatabaseLocation + ";version=" + DatabaseVersion; }
         }
         #endregion
 
@@ -56,7 +64,7 @@ namespace PunchIn
             if (string.IsNullOrWhiteSpace(Properties.Settings.Default.DefaultUserShortcutFolderLocation))
             {
                 Properties.Settings.Default.DefaultUserShortcutFolderLocation =
-                    Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Favorites), ApplicationName); ;
+                    Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Favorites), ApplicationName);
             }
             // SharePoint Uri
             if (Properties.Settings.Default.SharePointSiteUri == null ||

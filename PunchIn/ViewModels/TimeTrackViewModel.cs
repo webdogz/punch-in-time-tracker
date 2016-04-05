@@ -112,6 +112,20 @@ namespace PunchIn.ViewModels
         {
             CurrentWorkItem = WorkItems.FirstOrDefault(w => w.Id == id);
         }
+        public void PunchIn(TimeEntry timeEntry)
+        {
+            if (!CanModifyEntry)
+                AddEntryCommand.Execute(timeEntry);
+            //todo: to save or not to save?
+            SaveWorkItemCommand.Execute(null);
+        }
+        public void PunchOut(TimeEntry timeEntry)
+        {
+            if (!timeEntry.EndDate.HasValue)
+                timeEntry.EndDate = DateTime.Now;
+            timeEntry.Status = Status.Done;
+            SaveWorkItemCommand.Execute(new Action(() => CurrentEntry = null));
+        }
         #endregion
 
         #region Commands
