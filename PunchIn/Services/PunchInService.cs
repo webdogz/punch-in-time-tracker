@@ -20,7 +20,7 @@ namespace PunchIn.Services
             List<WorkItem> list;
             using (var db = new PunchDatabase())
             {
-                list = db.WorkItems.FindAll().ToList();
+                list = db.WorkItems.Include(e => e.Entries).FindAll().ToList();
             }
             if (list != null)
                 return list;
@@ -42,7 +42,7 @@ namespace PunchIn.Services
         }
         private WorkItem GetItemById(Guid id, PunchDatabase db)
         {
-            return db.WorkItems.FindOne(w => w.Id == id);
+            return db.WorkItems.Include(e => e.Entries).FindOne(w => w.Id == id);
         }
 
         /// <summary>
@@ -53,15 +53,20 @@ namespace PunchIn.Services
         {
             using (var db = new PunchDatabase())
             {
-                //WorkItem toWorkItem = GetItemById(workItem.Id, db);
-                var col = db.WorkItems;
-                //if (toWorkItem == null)
-                if (col.FindById(new BsonValue(workItem.Id)) == null)
-                    col.Insert(workItem);
-                else
+                var times = db.Times;
+                var wits = db.WorkItems;
+
+                foreach (var entry in workItem.Entries)
                 {
-                    col.Update(workItem);
+                    if (times.FindById(new BsonValue(entry.Id)) == null)
+                        times.Insert(entry);
+                    else
+                        times.Update(entry);
                 }
+                if (wits.FindById(new BsonValue(workItem.Id)) == null)
+                    wits.Insert(workItem);
+                else
+                    wits.Update(workItem);
             }
         }
 
@@ -69,7 +74,12 @@ namespace PunchIn.Services
         {
             using (var db = new PunchDatabase())
             {
-                db.WorkItems.Delete(wi => wi.Id == workItemId);
+                var times = db.Times;
+                var wits = db.WorkItems.Include(e => e.Entries);
+                var workItem = wits.FindById(new BsonValue(workItemId));
+                foreach (var entry in workItem.Entries)
+                    times.Delete(new BsonValue(entry.Id));
+                wits.Delete(new BsonValue(workItem.Id));
             }
         }
         #region Reporting
