@@ -42,7 +42,7 @@ namespace PunchIn.Services
         }
         private WorkItem GetItemById(Guid id, PunchDatabase db)
         {
-            return db.WorkItems.Include(e => e.Entries).FindOne(w => w.Id == id);
+            return db.WorkItems.Include(e => e.Entries).FindById(new BsonValue(id));
         }
 
         /// <summary>
@@ -85,7 +85,7 @@ namespace PunchIn.Services
         #region Reporting
         private IOrderedQueryable<ReportByWeekGroup> GetItemsGroupedByWeek(PunchDatabase db)
         {
-            var reportItems = db.WorkItems.FindAll().AsQueryable<WorkItem>()
+            var reportItems = db.WorkItems.Include(e => e.Entries).FindAll().AsQueryable<WorkItem>()
                 .SelectMany(item => item.Entries.Select(e => new ReportByWeekItem
                 {
                     ItemGuid = item.Id,
@@ -257,24 +257,6 @@ namespace PunchIn.Services
             {
                 SaveWorkItem(item);
             });
-        }
-        #endregion
-
-        #region Helpers
-        string _dbName;
-        string DbName
-        {
-            get
-            {
-                if (_dbName == null)
-                    _dbName = "filename=" + GlobalConfig.DatabaseLocation + ";version=1";
-                return _dbName;
-            }
-        }
-        class CollectionNames
-        {
-            public const string WorkItems = "workitems";
-            public const string TimeEntries = "times";
         }
         #endregion
     }
